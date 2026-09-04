@@ -92,6 +92,11 @@ class User extends Authenticatable
         return $this->hasMany(Notification::class);
     }
 
+    public function rejections()
+    {
+        return $this->hasMany(ProfessionalRejection::class, 'professional_id');
+    }
+
     public function unreadNotifications()
     {
         return $this->notifications()->whereNull('read_at');

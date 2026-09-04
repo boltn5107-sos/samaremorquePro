@@ -92,7 +92,7 @@
 <?php if (isset($__componentOriginalce262628e3a8d44dc38fd1f3965181bc)): ?>
 <?php $component = $__componentOriginalce262628e3a8d44dc38fd1f3965181bc; ?>
 <?php unset($__componentOriginalce262628e3a8d44dc38fd1f3965181bc); ?>
-<?php endif; ?> Professionnel</p>
+<?php endif; ?> <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php endif; ?><?php if($activeIntervention->professional): ?> <?php echo e($activeIntervention->professional->isRemorqueur() ? 'Remorqueur' : 'Depanneur'); ?> <?php else: ?> Intervenant <?php endif; ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if ENDBLOCK]><![endif]--><?php endif; ?></p>
                         <p class="font-medium text-slate-900"><?php echo e($activeIntervention->professional?->full_name ?? 'En attente...'); ?></p>
                     </div>
                     <div class="bg-slate-50 rounded-lg p-3">
@@ -168,7 +168,7 @@
 <?php if (isset($__componentOriginalce262628e3a8d44dc38fd1f3965181bc)): ?>
 <?php $component = $__componentOriginalce262628e3a8d44dc38fd1f3965181bc; ?>
 <?php unset($__componentOriginalce262628e3a8d44dc38fd1f3965181bc); ?>
-<?php endif; ?> Suivre le professionnel
+<?php endif; ?> Suivre l'intervenant
                 </a>
             </div>
         <?php endif; ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if ENDBLOCK]><![endif]--><?php endif; ?>

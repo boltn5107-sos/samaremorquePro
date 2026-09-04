@@ -310,8 +310,9 @@
 <?php endif; ?> Accepter
                                         </button>
                                     </form>
-                                    <form method="POST" action="<?php echo e(route('depanneur.intervention.reject', $demand)); ?>">
+                                    <form method="POST" action="<?php echo e(route('depanneur.intervention.reject', $demand)); ?>" onsubmit="return confirm('Confirmer le refus ?')">
                                         <?php echo csrf_field(); ?>
+                                        <input type="hidden" name="reason" value="Refuse par le depanneur">
                                         <button type="submit" class="btn-secondary py-1.5 px-3 text-sm">
                                             <?php if (isset($component)) { $__componentOriginalce262628e3a8d44dc38fd1f3965181bc = $component; } ?>
 <?php if (isset($attributes)) { $__attributesOriginalce262628e3a8d44dc38fd1f3965181bc = $attributes; } ?>

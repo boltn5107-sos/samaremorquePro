@@ -3,9 +3,8 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\{
     ProfileController,
-    InterventionController,
-    LocationController,
-    NotificationController
+    NotificationController,
+    SeoController
 };
 use App\Http\Controllers\Client\{
     ClientDashboardController,
@@ -55,8 +54,12 @@ Route::get('/', function () {
         return redirect()->route($roleRoute);
     }
 
-    return redirect()->route('login');
+    return view('landing');
 })->name('home');
+
+// SEO
+Route::get('/sitemap.xml', [SeoController::class, 'sitemap'])->name('sitemap');
+Route::get('/robots.txt', [SeoController::class, 'robots'])->name('robots');
 
 Route::middleware('guest')->group(function () {
     Route::get('login', [AuthenticatedSessionController::class, 'create'])->name('login');
@@ -81,6 +84,9 @@ Route::middleware('auth')->group(function () {
     Route::middleware('verified')->group(function () {
         Route::get('profile', [ProfileController::class, 'edit'])->name('profile.edit');
         Route::patch('profile', [ProfileController::class, 'update'])->name('profile.update');
+        Route::post('profile/photo', [ProfileController::class, 'updatePhoto'])->name('profile.photo');
+        Route::post('profile/remorque', [ProfileController::class, 'updateRemorque'])->name('profile.remorque');
+        Route::post('profile/services', [ProfileController::class, 'updateServices'])->name('profile.services');
         Route::delete('profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
         Route::prefix('client')->middleware('role:client')->name('client.')->group(function () {
@@ -93,6 +99,7 @@ Route::middleware('auth')->group(function () {
             Route::get('/intervention/{intervention}/professionnel-position', [ClientInterventionController::class, 'professionalPosition'])->name('intervention.professional-position');
             Route::get('/intervention/{intervention}', [ClientInterventionController::class, 'show'])->name('intervention.show');
             Route::post('/intervention/{intervention}/annuler', [ClientInterventionController::class, 'cancel'])->name('intervention.cancel');
+            Route::post('/intervention/{intervention}/noter', [ClientInterventionController::class, 'rate'])->name('intervention.rate');
             Route::post('/profile', [ClientProfileController::class, 'update'])->name('profile.update');
             Route::post('/profile/phone', [ClientProfileController::class, 'updatePhone'])->name('profile.phone');
             Route::post('/profile/photo', [ClientProfileController::class, 'updatePhoto'])->name('profile.photo');

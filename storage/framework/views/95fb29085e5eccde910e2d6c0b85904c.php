@@ -4,6 +4,18 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?php echo $__env->yieldContent('title', 'Connexion'); ?> - <?php echo e(config('app.name')); ?></title>
+
+    <meta name="description" content="Connectez-vous a SamaRemorque - Plateforme de remorquage et depannage routier au Senegal.">
+    <meta name="robots" content="noindex, nofollow">
+    <link rel="canonical" href="<?php echo e(url()->current()); ?>">
+
+    <meta property="og:site_name" content="<?php echo e(config('app.name')); ?>">
+    <meta property="og:title" content="<?php echo $__env->yieldContent('title', 'Connexion'); ?>">
+    <meta property="og:type" content="website">
+    <meta property="og:locale" content="fr_SN">
+
+    <meta name="theme-color" content="#0f172a">
+    <link rel="icon" type="image/png" href="<?php echo e(asset('favicon.png')); ?>">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="icon" type="image/svg+xml" href="<?php echo e(asset('favicon.svg')); ?>">

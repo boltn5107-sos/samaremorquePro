@@ -34,12 +34,11 @@
                         <form method="POST" action="{{ route('depanneur.intervention.status', $intervention) }}" class="space-y-4">
                             @csrf
                             <div>
-                                <label for="status" class="label">Statut</label>
+                                <label for="status" class="label">Prochain statut</label>
                                 <select id="status" name="status" required class="input">
-                                    <option value="depanneur_en_route" {{ $intervention->status === 'depanneur_en_route' ? 'selected' : '' }}>En route</option>
-                                    <option value="arrivee_sur_place" {{ $intervention->status === 'arrivee_sur_place' ? 'selected' : '' }}>Arrive sur place</option>
-                                    <option value="vehicule_pris_en_charge" {{ $intervention->status === 'vehicule_pris_en_charge' ? 'selected' : '' }}>Vehicule pris en charge</option>
-                                    <option value="intervention_terminee" {{ $intervention->status === 'intervention_terminee' ? 'selected' : '' }}>Intervention terminee</option>
+                                    @foreach($intervention->nextStatuses() as $next)
+                                        <option value="{{ $next }}">{{ $intervention->statusLabelFor($next) }}</option>
+                                    @endforeach
                                 </select>
                             </div>
                             <div>
@@ -62,9 +61,13 @@
                         Client
                     </h2>
                     <div class="flex items-center gap-3 mb-4">
-                        <div class="p-2.5 rounded-lg bg-slate-100 text-slate-600">
-                            <x-icon name="user" class="w-5 h-5" />
-                        </div>
+                        @if($intervention->client->photo)
+                            <img src="{{ asset('storage/' . $intervention->client->photo) }}" alt="" class="w-12 h-12 rounded-full object-cover bg-slate-100">
+                        @else
+                            <div class="w-12 h-12 rounded-full flex items-center justify-center bg-orange-100 text-orange-600 font-semibold">
+                                {{ strtoupper(substr($intervention->client->first_name, 0, 1)) }}{{ strtoupper(substr($intervention->client->last_name, 0, 1)) }}
+                            </div>
+                        @endif
                         <div>
                             <p class="font-semibold text-slate-900">{{ $intervention->client->full_name }}</p>
                             <p class="flex items-center gap-1 text-sm text-slate-500">
@@ -72,6 +75,20 @@
                                 {{ $intervention->client->phone }}
                             </p>
                         </div>
+                    </div>
+                    @php
+                        $clientPhone = preg_replace('/[^0-9]/', '', $intervention->client->phone ?? '');
+                        $clientWhatsapp = $clientPhone ? 'https://wa.me/221' . preg_replace('/^221/', '', $clientPhone) : '#';
+                    @endphp
+                    <div class="flex gap-2 mb-4">
+                        <a href="tel:{{ $intervention->client->phone }}" class="btn-secondary flex-1 text-sm py-2">
+                            <x-icon name="phone" class="w-4 h-4" />
+                            Appeler
+                        </a>
+                        <a href="{{ $clientWhatsapp }}" target="_blank" rel="noopener" class="px-4 py-2 text-sm font-semibold rounded-lg text-white bg-emerald-600 hover:bg-emerald-700 inline-flex items-center justify-center gap-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M12.04 2c-5.46 0-9.91 4.45-9.91 9.91 0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91S17.5 2 12.04 2zm5.83 14.16c-.24.69-1.4 1.32-1.94 1.36-.52.04-1.18.19-3.97-.82-3.34-1.22-5.44-4.4-5.6-4.6-.16-.2-1.34-1.78-1.34-3.4 0-1.62.85-2.41 1.15-2.74.3-.33.66-.41.87-.41.22 0 .44 0 .63.01.2.01.47-.08.74.56.27.65 1.28 3.02 1.35 3.24.07.22.12.48-.07.75-.19.27-.29.44-.57.67-.29.24-.61.53-.87.72-.29.24-.59.5-.25.98.34.48 1.5 2.47 3.22 3.99 2.21 1.97 4.07 2.5 4.64 2.68.57.18.9.15 1.23-.09.33-.24.1.53.31-.53z"/></svg>
+                            WhatsApp
+                        </a>
                     </div>
                     <dl class="space-y-3 text-sm">
                         <div>
@@ -86,6 +103,14 @@
                             <div>
                                 <dt class="text-slate-500 flex items-center gap-1.5"><x-icon name="alert-triangle" class="w-4 h-4" /> Description</dt>
                                 <dd class="font-medium text-slate-700">{{ $intervention->description }}</dd>
+                            </div>
+                        @endif
+                        @if($intervention->photo)
+                            <div>
+                                <dt class="text-slate-500 flex items-center gap-1.5"><x-icon name="camera" class="w-4 h-4" /> Photo de la panne</dt>
+                                <a href="{{ asset('storage/' . $intervention->photo) }}" target="_blank" rel="noopener">
+                                    <img src="{{ asset('storage/' . $intervention->photo) }}" alt="Photo de la panne" class="mt-2 w-full max-w-xs rounded-lg border border-slate-200">
+                                </a>
                             </div>
                         @endif
                     </dl>
@@ -127,6 +152,16 @@
             document.addEventListener('DOMContentLoaded', function () {
                 const lat = {{ $intervention->client_lat ?? 14.7167 }};
                 const lng = {{ $intervention->client_lng ?? -17.4677 }};
+                @php
+                    $authUser = Auth::user();
+                    $myLocation = $authUser ? $authUser->locations()->latest('recorded_at')->first() : null;
+                    $myLat = $myLocation?->lat;
+                    $myLng = $myLocation?->lng;
+                @endphp
+                @if($myLat && $myLng)
+                const myLat = {{ $myLat }};
+                const myLng = {{ $myLng }};
+                @endif
 
                 const map = L.map('map').setView([lat, lng], 15);
 
@@ -145,6 +180,42 @@
                 L.marker([lat, lng], { icon: clientIcon }).addTo(map)
                     .bindPopup('<strong>Point de prise en charge</strong>')
                     .openPopup();
+
+                @if($myLat && $myLng)
+                const proIcon = L.divIcon({
+                    className: 'custom-div-icon',
+                    html: '<div class="marker-dot marker-pro"></div>',
+                    iconSize: [20, 20],
+                    iconAnchor: [10, 10]
+                });
+                L.marker([myLat, myLng], { icon: proIcon }).addTo(map)
+                    .bindPopup('<strong>Votre position</strong>');
+
+                const trainPoints = [[lat, lng], [myLat, myLng]];
+                L.polyline(trainPoints, { color: '#f97316', weight: 3, opacity: 0.8 }).addTo(map);
+
+                function haversineKm(a1, b1, a2, b2) {
+                    const R = 6371;
+                    const dLat = (a2 - a1) * Math.PI / 180;
+                    const dLng = (b2 - b1) * Math.PI / 180;
+                    const aa = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+                        Math.cos(a1 * Math.PI / 180) * Math.cos(a2 * Math.PI / 180) *
+                        Math.sin(dLng / 2) * Math.sin(dLng / 2);
+                    return R * 2 * Math.atan2(Math.sqrt(aa), Math.sqrt(1 - aa));
+                }
+                const distKm = haversineKm(lat, lng, myLat, myLng);
+                const distText = distKm < 1 ? Math.round(distKm * 1000) + ' m' : distKm.toFixed(1) + ' km';
+                L.control({ position: 'topright' }).onAdd = function () {
+                    const div = L.DomUtil.create('div', 'leaflet-bar');
+                    div.style.padding = '6px 10px';
+                    div.style.backgroundColor = 'white';
+                    div.style.fontWeight = '600';
+                    div.style.fontSize = '13px';
+                    div.innerHTML = 'Distance: ' + distText;
+                    return div;
+                }.bind(this);
+                L.control({ position: 'topright' }).addTo(map);
+                @endif
             });
         </script>
     @endpush

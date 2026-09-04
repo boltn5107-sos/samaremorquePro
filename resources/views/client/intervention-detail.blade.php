@@ -51,9 +51,20 @@
                                 <dd class="font-medium text-slate-700">{{ $intervention->description }}</dd>
                             </div>
                         @endif
+                        @if($intervention->photo)
+                            <div>
+                                <dt class="text-slate-500 flex items-center gap-1.5"><x-icon name="camera" class="w-4 h-4" /> Photo de la panne</dt>
+                                <a href="{{ asset('storage/' . $intervention->photo) }}" target="_blank" rel="noopener">
+                                    <img src="{{ asset('storage/' . $intervention->photo) }}" alt="Photo de la panne" class="mt-1 w-full max-w-xs rounded-lg border border-slate-200">
+                                </a>
+                            </div>
+                        @endif
                         @if($intervention->professional)
                             <div class="pt-3 border-t border-slate-200">
-                                <dt class="text-slate-500 flex items-center gap-1.5 mb-2"><x-icon name="truck" class="w-4 h-4" /> Professionnel</dt>
+                                <dt class="text-slate-500 flex items-center gap-1.5 mb-2">
+                                    <x-icon name="truck" class="w-4 h-4" />
+                                    {{ $intervention->professional->isRemorqueur() ? 'Remorqueur' : 'Depanneur' }}
+                                </dt>
                                 <dd class="flex items-center gap-3">
                                     @if($intervention->professional->photo)
                                         <img src="{{ asset('storage/' . $intervention->professional->photo) }}" alt="" class="w-12 h-12 rounded-full object-cover bg-slate-100">
@@ -86,7 +97,7 @@
                         @else
                             <div class="pt-3 border-t border-slate-200 text-slate-500 flex items-center gap-2">
                                 <x-icon name="clock" class="w-4 h-4" />
-                                En attente d'un professionnel...
+                                En attente d'un remorqueur ou depanneur...
                             </div>
                         @endif
                     </dl>
@@ -129,6 +140,67 @@
                             Annuler l'intervention
                         </button>
                     </form>
+                @else
+                    <div class="card p-6">
+                        <h2 class="text-lg font-semibold text-slate-900 mb-2 flex items-center gap-2">
+                            <x-icon name="star" class="w-5 h-5 text-orange-500" />
+                            Noter le professionnel
+                        </h2>
+                        <p class="text-sm text-slate-600 mb-4">Merci de noter votre experience avec {{ $intervention->professional ? $intervention->professional->full_name : 'le professionnel' }}.</p>
+
+                        @if($intervention->hasBeenRated())
+                            <div class="text-center">
+                            <div class="flex justify-center gap-1 mb-3">
+                                @for($i = 1; $i <= 5; $i++)
+                                    @if($i <= $intervention->rating)
+                                        <x-icon name="star-filled" class="w-7 h-7 text-orange-400" />
+                                    @else
+                                        <x-icon name="star" class="w-7 h-7 text-slate-300" />
+                                    @endif
+                                @endfor
+                            </div>
+                                @if($intervention->rating_comment)
+                                    <p class="text-sm text-slate-600 italic">"{{ $intervention->rating_comment }}"</p>
+                                @endif
+                                <p class="text-xs text-slate-400 mt-2">Note envoyee le {{ $intervention->rated_at->format('d/m/Y H:i') }}</p>
+                                <form method="POST" action="{{ route('client.intervention.rate', $intervention) }}" class="mt-4">
+                                    @csrf
+                                    <input type="hidden" name="rating" value="{{ $intervention->rating }}">
+                                    <div>
+                                        <label for="rating_comment" class="label">Modifier le commentaire</label>
+                                        <textarea id="rating_comment" name="rating_comment" rows="2" class="input">{{ $intervention->rating_comment }}</textarea>
+                                    </div>
+                                    <button type="submit" class="btn-secondary w-full mt-3">
+                                        <x-icon name="check" class="w-4 h-4" />
+                                        Mettre a jour la note
+                                    </button>
+                                </form>
+                            </div>
+                        @else
+                            <form method="POST" action="{{ route('client.intervention.rate', $intervention) }}">
+                                @csrf
+                                <div class="flex justify-center gap-2 mb-4" id="rating-stars">
+                                    @for($i = 1; $i <= 5; $i++)
+                                        <button type="button" data-value="{{ $i }}" class="rating-star text-slate-300 hover:text-orange-400 transition-colors" aria-label="{{ $i }} etoiles">
+                                            <x-icon name="star" class="w-9 h-9" />
+                                        </button>
+                                    @endfor
+                                </div>
+                                <input type="hidden" id="rating" name="rating" value="0">
+                                <div>
+                                    <label for="rating_comment" class="label">Commentaire (optionnel)</label>
+                                    <textarea id="rating_comment" name="rating_comment" rows="2" class="input"></textarea>
+                                </div>
+                                <button type="submit" id="rating-submit" class="btn-primary w-full mt-3" disabled>
+                                    <x-icon name="check" class="w-4 h-4" />
+                                    Envoyer la note
+                                </button>
+                                @error('rating')
+                                    <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
+                                @enderror
+                            </form>
+                        @endif
+                    </div>
                 @endif
             </div>
         </div>
@@ -188,7 +260,7 @@
                 function updateProPosition(point) {
                     if (!proMarker) {
                         proMarker = L.marker([point.lat, point.lng], { icon: proIcon }).addTo(map)
-                            .bindPopup('<strong>{{ $intervention->professional ? $intervention->professional->full_name : 'Professionnel' }}</strong>');
+                            .bindPopup('<strong>{{ $intervention->professional ? $intervention->professional->full_name : 'Intervenant' }}</strong>');
                     } else {
                         proMarker.setLatLng([point.lat, point.lng]);
                     }
@@ -212,6 +284,35 @@
                             })
                             .catch(function () {});
                     }, 8000);
+                }
+
+                // Notation par etoiles
+                const starContainer = document.getElementById('rating-stars');
+                const ratingInput = document.getElementById('rating');
+                const ratingSubmit = document.getElementById('rating-submit');
+                if (starContainer && ratingInput && ratingSubmit) {
+                    let selected = 0;
+                    const starButtons = starContainer.querySelectorAll('.rating-star');
+
+                    function paint(value) {
+                        starButtons.forEach(function (btn, idx) {
+                            const icon = btn.querySelector('svg');
+                            if (icon) {
+                                icon.setAttribute('fill', idx < value ? 'currentColor' : 'none');
+                                btn.classList.toggle('text-orange-400', idx < value);
+                                btn.classList.toggle('text-slate-300', idx >= value);
+                            }
+                        });
+                    }
+
+                    starButtons.forEach(function (btn) {
+                        btn.addEventListener('click', function () {
+                            selected = parseInt(btn.getAttribute('data-value'), 10);
+                            ratingInput.value = selected;
+                            paint(selected);
+                            ratingSubmit.disabled = false;
+                        });
+                    });
                 }
             });
         </script>

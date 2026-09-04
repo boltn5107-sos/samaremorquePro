@@ -80,8 +80,9 @@
                                             <x-icon name="check" class="w-4 h-4" /> Accepter
                                         </button>
                                     </form>
-                                    <form method="POST" action="{{ route('remorqueur.intervention.reject', $demand) }}">
+                                    <form method="POST" action="{{ route('remorqueur.intervention.reject', $demand) }}" onsubmit="return confirm('Confirmer le refus ?')">
                                         @csrf
+                                        <input type="hidden" name="reason" value="Refuse par le remorqueur">
                                         <button type="submit" class="btn-secondary py-1.5 px-3 text-sm">
                                             <x-icon name="x" class="w-4 h-4" /> Refuser
                                         </button>

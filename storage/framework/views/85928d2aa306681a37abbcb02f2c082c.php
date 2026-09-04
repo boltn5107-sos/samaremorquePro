@@ -3,11 +3,34 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Plateforme de remorquage et depannage routier au Senegal">
+    <title><?php echo $__env->yieldContent('title', config('app.name')); ?> - <?php echo e(config('app.name')); ?></title>
+
+    
+    <meta name="description" content="<?php echo $__env->yieldContent('meta_description', 'SamaRemorque - Plateforme de remorquage et depannage routier au Senegal. Trouvez rapidement un remorqueur ou un depanneur pres de vous.'); ?>">
+    <meta name="keywords" content="remorquage, depannage, remorqueur, depanneur, panne, vehicule, Senegal, Dakar, assistance routiere, remorque voiture">
+    <meta name="author" content="SamaRemorque">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="<?php echo e(url()->current()); ?>">
+
+    
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="<?php echo e(config('app.name')); ?>">
+    <meta property="og:title" content="<?php echo $__env->yieldContent('title', config('app.name')); ?>">
+    <meta property="og:description" content="<?php echo $__env->yieldContent('meta_description', 'Service de remorquage et depannage routier au Senegal. Trouvez un remorqueur ou depanneur proche de vous.'); ?>">
+    <meta property="og:url" content="<?php echo e(url()->current()); ?>">
+    <meta property="og:image" content="<?php echo $__env->yieldContent('og_image', asset('favicon.png')); ?>">
+    <meta property="og:locale" content="fr_SN">
+
+    
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="<?php echo $__env->yieldContent('title', config('app.name')); ?>">
+    <meta name="twitter:description" content="<?php echo $__env->yieldContent('meta_description', 'Service de remorquage et depannage routier au Senegal.'); ?>">
+    <meta name="twitter:image" content="<?php echo $__env->yieldContent('og_image', asset('favicon.png')); ?>">
+
+    
     <meta name="theme-color" content="#0f172a">
-    <title><?php echo $__env->yieldContent('title', config('app.name')); ?></title>
     <link rel="manifest" href="/manifest.json">
-    <link rel="icon" type="image/svg+xml" href="/favicon.png">
+    <link rel="icon" type="image/png" href="/favicon.png">
     <link rel="apple-touch-icon" href="/favicon.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>

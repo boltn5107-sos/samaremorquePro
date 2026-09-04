@@ -30,7 +30,7 @@
                 </div>
                 <div class="grid grid-cols-2 gap-3 text-sm">
                     <div class="bg-slate-50 rounded-lg p-3">
-                        <p class="text-xs text-slate-500 flex items-center gap-1"><x-icon name="user" class="w-3.5 h-3.5" /> Professionnel</p>
+                        <p class="text-xs text-slate-500 flex items-center gap-1"><x-icon name="user" class="w-3.5 h-3.5" /> @if($activeIntervention->professional) {{ $activeIntervention->professional->isRemorqueur() ? 'Remorqueur' : 'Depanneur' }} @else Intervenant @endif</p>
                         <p class="font-medium text-slate-900">{{ $activeIntervention->professional?->full_name ?? 'En attente...' }}</p>
                     </div>
                     <div class="bg-slate-50 rounded-lg p-3">
@@ -43,7 +43,7 @@
                     </div>
                 </div>
                 <a href="{{ route('client.intervention.show', $activeIntervention) }}" class="btn-primary w-full mt-4">
-                    <x-icon name="map" class="w-4 h-4" /> Suivre le professionnel
+                    <x-icon name="map" class="w-4 h-4" /> Suivre l'intervenant
                 </a>
             </div>
         @endif

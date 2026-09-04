@@ -28,9 +28,9 @@ class TestDataSeeder extends Seeder
 
             $this->seedClients();
             $this->seedProfessionals();
-            $this->seedLocations();
             $this->seedDepanneurServices();
             $this->seedInterventions();
+            $this->seedLocations();
         });
     }
 
@@ -82,6 +82,18 @@ class TestDataSeeder extends Seeder
                 'bio' => 'Remorqueur professionnel depuis 8 ans, materiel fiable.',
                 'license_number' => 'RM-2021-001', 'experience_years' => 8, 'hourly_rate' => 15000,
             ],
+            [
+                'email' => 'ibrahima@senegaltowing.sn', 'first_name' => 'Ibrahima', 'last_name' => 'Gueye',
+                'phone' => '+221775555555', 'zone_intervention' => 'Dakar Plateau, Senegal',
+                'bio' => 'Remorquage rapide et soigne, disponible 24h/24.',
+                'license_number' => 'RM-2020-014', 'experience_years' => 6, 'hourly_rate' => 14000,
+            ],
+            [
+                'email' => 'mamadou@senegaltowing.sn', 'first_name' => 'Mamadou', 'last_name' => 'Kane',
+                'phone' => '+221776666666', 'zone_intervention' => 'Thies, Senegal',
+                'bio' => 'Plateau 5 tonnes, specialiste des poids lourds et utilitaires.',
+                'license_number' => 'RM-2019-027', 'experience_years' => 10, 'hourly_rate' => 18000,
+            ],
         ];
 
         foreach ($remorqueurs as $data) {
@@ -123,6 +135,20 @@ class TestDataSeeder extends Seeder
                 'bio' => 'Technicienne depannage toutes marques, disponible 24h/24.',
                 'license_number' => 'DP-2022-014', 'experience_years' => 5, 'hourly_rate' => 12000,
                 'services' => ['Depannage batterie', 'Depannage crevaison', 'Depannage demarrage'],
+            ],
+            [
+                'email' => 'amadou@senegaltowing.sn', 'first_name' => 'Amadou', 'last_name' => 'Cisse',
+                'phone' => '+221777777777', 'zone_intervention' => 'Pikine, Dakar',
+                'bio' => 'Depanneur polyvalent, rapidite et efficacite garanties.',
+                'license_number' => 'DP-2021-031', 'experience_years' => 4, 'hourly_rate' => 11000,
+                'services' => ['Depannage batterie', 'Panne mecanique', 'Depannage crevaison'],
+            ],
+            [
+                'email' => 'nene@senegaltowing.sn', 'first_name' => 'Nene', 'last_name' => 'Diallo',
+                'phone' => '+221778888888', 'zone_intervention' => 'Rufisque, Dakar',
+                'bio' => 'Depannage batterie et demarrage a tout moment, materiel mobile.',
+                'license_number' => 'DP-2023-009', 'experience_years' => 3, 'hourly_rate' => 10000,
+                'services' => ['Depannage batterie', 'Depannage demarrage'],
             ],
         ];
 
@@ -170,25 +196,34 @@ class TestDataSeeder extends Seeder
             ['lat' => 14.7167, 'lng' => -17.4677, 'address' => 'Dakar Plateau'],
             ['lat' => 14.7521, 'lng' => -17.4770, 'address' => 'Dakar Yoff'],
             ['lat' => 14.7526, 'lng' => -17.3907, 'address' => 'Pikine'],
+            ['lat' => 14.6699, 'lng' => -17.4399, 'address' => 'Dakar Centre'],
+            ['lat' => 14.6854, 'lng' => -17.4429, 'address' => 'Colobane, Dakar'],
+            ['lat' => 14.7161, 'lng' => -17.4677, 'address' => 'Rufisque'],
         ];
 
         $i = 0;
         foreach ($pros as $pro) {
             $spot = $spots[$i % count($spots)];
+
             Location::updateOrCreate(
                 ['user_id' => $pro->id, 'lat' => $spot['lat'], 'lng' => $spot['lng']],
                 ['address' => $spot['address'], 'recorded_at' => now()]
             );
 
+            // Un professionnel deja assigne a une intervention en cours est "occupe"
+            $busy = $pro->interventionsAsProfessional()
+                ->whereNotIn('status', [Intervention::STATUS_COMPLETED, Intervention::STATUS_CANCELLED])
+                ->exists();
+
             if ($pro->isRemorqueur()) {
                 Remorqueur::updateOrCreate(
                     ['user_id' => $pro->id],
-                    ['is_available' => true]
+                    ['is_available' => ! $busy]
                 );
             } elseif ($pro->isDepanneur()) {
                 Depanneur::updateOrCreate(
                     ['user_id' => $pro->id],
-                    ['is_available' => true]
+                    ['is_available' => ! $busy]
                 );
             }
 
@@ -207,7 +242,7 @@ class TestDataSeeder extends Seeder
     protected function createIntervention(array $data): ?Intervention
     {
         $key = ['client_id' => $data['client_id'], 'description' => $data['description']];
-        $intervention = Intervention::firstOrCreate(
+        $intervention = Intervention::updateOrCreate(
             $key,
             array_diff_key($data, $key)
         );
@@ -267,6 +302,7 @@ class TestDataSeeder extends Seeder
                 'dest' => 'Garage Plateau', 'dlat' => 14.6667, 'dlng' => -17.4331,
                 'lat' => 14.6699, 'lng' => -17.4399, 'addr' => 'Plateau, Dakar',
                 'status' => 'intervention_terminee', 'prof' => $karim,
+                'photo' => 'interventions/demo-panne.jpg',
             ],
             [
                 'client' => $awa, 'vehicle' => $awaVehicleId, 'type' => 'depannage',
@@ -290,12 +326,28 @@ class TestDataSeeder extends Seeder
                 'destination' => $s['dest'],
                 'destination_lat' => $s['dlat'],
                 'destination_lng' => $s['dlng'],
+                'distance_km' => $this->distanceKm($s['lat'], $s['lng'], $s['dlat'], $s['dlng']),
+                'photo' => $s['photo'] ?? null,
                 'status' => $s['status'],
             ]);
 
             $this->seedStatusHistory($intervention, $s['status']);
             $this->seedNotifications($intervention, $s['status']);
         }
+    }
+
+    protected function distanceKm(?float $lat1, ?float $lng1, ?float $lat2, ?float $lng2): ?float
+    {
+        if ($lat1 === null || $lng1 === null || $lat2 === null || $lng2 === null) {
+            return null;
+        }
+        $earthRadius = 6371;
+        $dLat = deg2rad($lat2 - $lat1);
+        $dLng = deg2rad($lng2 - $lng1);
+        $a = sin($dLat / 2) * sin($dLat / 2) +
+            cos(deg2rad($lat1)) * cos(deg2rad($lat2)) *
+            sin($dLng / 2) * sin($dLng / 2);
+        return round($earthRadius * 2 * atan2(sqrt($a), sqrt(1 - $a)), 2);
     }
 
     protected function seedStatusHistory(Intervention $intervention, string $finalStatus): void

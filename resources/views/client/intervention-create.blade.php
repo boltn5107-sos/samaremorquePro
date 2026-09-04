@@ -53,16 +53,16 @@
         <div class="card p-4 mb-6">
             <h2 class="text-lg font-semibold text-slate-900 flex items-center gap-2 mb-1">
                 <x-icon name="truck" class="w-5 h-5 text-orange-500" />
-                Professionnels disponibles a proximite
+                Remorqueurs / Depanneurs disponibles a proximite
             </h2>
             <p class="text-xs text-slate-500 mb-3">Tries par distance croissante - le plus proche en premier.</p>
 
             <div id="pros-empty" class="hidden py-6 text-center text-slate-500">
-                <p>Aucun professionnel disponible pour le moment.</p>
+                <p>Aucun remorqueur ou depanneur disponible pour le moment.</p>
                 <p class="text-xs mt-1">Vous pouvez tout de meme envoyer votre demande.</p>
             </div>
 
-            <div id="pros-loading" class="py-6 text-center text-sm text-slate-500">Recherche des professionnels...</div>
+            <div id="pros-loading" class="py-6 text-center text-sm text-slate-500">Recherche des remorqueurs et depanneurs...</div>
 
             <div id="pros-list" class="space-y-2"></div>
         </div>
@@ -269,7 +269,7 @@
                         lat: window.clientPosition.lat,
                         lng: window.clientPosition.lng,
                         radius: 100,
-                        freshness: 5,
+                        freshness: 720,
                     });
                     const st = serviceSelect ? serviceSelect.value.trim() : '';
                     if (st) params.set('service_type', st);
@@ -280,9 +280,10 @@
                     .then(r => r.json())
                     .then(data => {
                         prosLoading.classList.add('hidden');
-                        window.prosData = data;
-                        sortAndRender(data);
-                        renderSuggestedDestinations(data);
+                        const professionals = data.professionals || data;
+                        window.prosData = professionals;
+                        sortAndRender(professionals);
+                        renderSuggestedDestinations(data.suggested_destinations || [], professionals);
                     })
                     .catch(() => {
                         prosLoading.classList.add('hidden');
@@ -329,6 +330,10 @@
                         '<div class="flex-1 min-w-0">',
                         '  <p class="font-semibold text-slate-900 text-sm truncate">' + pro.full_name + '</p>',
                         '  <p class="text-xs text-slate-500">' + roleLabel + '</p>',
+                        (pro.rating_avg ? '  <p class="flex items-center gap-1 mt-0.5 text-xs text-amber-500">' +
+                            '<svg viewBox="0 0 24 24" class="w-3.5 h-3.5" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>' +
+                            '<span class="text-slate-900 font-semibold">' + pro.rating_avg + '</span>' +
+                            '<span class="text-slate-400">(' + pro.rating_count + ')</span></p>' : ''),
                         '  <div class="flex items-center gap-3 mt-1 text-xs">',
                         '    <span class="chip bg-orange-100 text-orange-700">' + formatDistance(pro.distance_km) + '</span>',
                         pro.hourly_rate ? '<span class="text-slate-500">' + pro.hourly_rate + ' FCFA/h</span>' : '',
@@ -347,25 +352,39 @@
                     prosList.appendChild(card);
                 }
 
-                function renderSuggestedDestinations(pros) {
+                function renderSuggestedDestinations(nearbyDests, pros) {
                     const wrap = document.getElementById('destinations-wrap');
                     const list = document.getElementById('destinations-list');
                     list.innerHTML = '';
                     const seen = new Set();
                     const dests = [];
-                    pros.forEach(pro => {
-                        const d = pro.suggested_destination;
-                        if (d && !seen.has(d)) {
-                            seen.add(d);
-                            dests.push(d);
-                        }
-                    });
+
+                    if (nearbyDests && nearbyDests.length) {
+                        nearbyDests.forEach(function (d) {
+                            const addr = d.address;
+                            if (addr && !seen.has(addr)) {
+                                seen.add(addr);
+                                dests.push(addr);
+                            }
+                        });
+                    }
+
+                    if (pros && pros.length) {
+                        pros.forEach(function (pro) {
+                            const d = pro.suggested_destination;
+                            if (d && !seen.has(d)) {
+                                seen.add(d);
+                                dests.push(d);
+                            }
+                        });
+                    }
+
                     if (!dests.length) {
                         wrap.classList.add('hidden');
                         return;
                     }
                     wrap.classList.remove('hidden');
-                    dests.slice(0, 5).forEach(dest => {
+                    dests.slice(0, 5).forEach(function (dest) {
                         const btn = document.createElement('button');
                         btn.type = 'button';
                         btn.className = 'chip bg-slate-100 text-slate-700 hover:bg-slate-200 cursor-pointer';

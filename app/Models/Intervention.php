@@ -36,6 +36,11 @@ class Intervention extends Model
         return self::STATUS_LABELS[$this->status] ?? ucfirst(str_replace('_', ' ', $this->status));
     }
 
+    public function statusLabelFor(string $status): string
+    {
+        return self::STATUS_LABELS[$status] ?? ucfirst(str_replace('_', ' ', $status));
+    }
+
     public function getStatusColorAttribute(): string
     {
         return match ($this->status) {
@@ -50,6 +55,7 @@ class Intervention extends Model
     protected $fillable = [
         'client_id',
         'professional_id',
+        'target_professional_id',
         'vehicle_id',
         'service_type',
         'description',
@@ -64,6 +70,9 @@ class Intervention extends Model
         'distance_km',
         'estimated_duration_minutes',
         'client_manual_position',
+        'rating',
+        'rating_comment',
+        'rated_at',
     ];
 
     protected $casts = [
@@ -72,7 +81,30 @@ class Intervention extends Model
         'destination_lat' => 'decimal:7',
         'destination_lng' => 'decimal:7',
         'distance_km' => 'decimal:2',
+        'rating' => 'integer',
+        'rated_at' => 'datetime',
     ];
+
+    public const STATUS_PROGRESSION_REMORQUEUR = [
+        self::STATUS_AWAITING_PROFESSIONAL,
+        self::STATUS_REMORQUEUR_EN_ROUTE,
+        self::STATUS_ARRIVED,
+        self::STATUS_PICKED_UP,
+        self::STATUS_COMPLETED,
+    ];
+
+    public const STATUS_PROGRESSION_DEPANNEUR = [
+        self::STATUS_AWAITING_PROFESSIONAL,
+        self::STATUS_DEPANNEUR_EN_ROUTE,
+        self::STATUS_ARRIVED,
+        self::STATUS_PICKED_UP,
+        self::STATUS_COMPLETED,
+    ];
+
+    public function hasBeenRated(): bool
+    {
+        return $this->rating !== null;
+    }
 
     public function client(): BelongsTo
     {
@@ -82,6 +114,11 @@ class Intervention extends Model
     public function professional(): BelongsTo
     {
         return $this->belongsTo(User::class, 'professional_id');
+    }
+
+    public function targetProfessional(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'target_professional_id');
     }
 
     public function vehicle(): BelongsTo
@@ -109,6 +146,11 @@ class Intervention extends Model
         return $this->hasMany(Notification::class);
     }
 
+    public function rejections(): HasMany
+    {
+        return $this->hasMany(ProfessionalRejection::class);
+    }
+
     public function scopeAvailableForProfessional($query, $serviceType, $lat, $lng, $radiusKm = 50)
     {
         return $query->where('status', self::STATUS_AWAITING_PROFESSIONAL)
@@ -125,5 +167,68 @@ class Intervention extends Model
                 ) <= ?",
                 [$lat, $lng, $lat, $radiusKm]
             );
+    }
+
+    public function nextStatuses(): array
+    {
+        $progression = $this->professional && $this->professional->isDepanneur()
+            ? self::STATUS_PROGRESSION_DEPANNEUR
+            : self::STATUS_PROGRESSION_REMORQUEUR;
+
+        $index = array_search($this->status, $progression);
+
+        if ($index === false) {
+            return [$this->status];
+        }
+
+        return array_slice($progression, $index + 1);
+    }
+
+    public function canTransitionTo(string $status): bool
+    {
+        if ($this->status === $status) {
+            return false;
+        }
+
+        return in_array($status, $this->nextStatuses(), true);
+    }
+
+    public static function ratingsForProfessional(int $professionalId): array
+    {
+        $aggregate = self::query()
+            ->where('professional_id', $professionalId)
+            ->whereNotNull('rating')
+            ->whereNotNull('rated_at')
+            ->selectRaw('AVG(rating) as avg_rating, COUNT(*) as total_ratings')
+            ->first();
+
+        return [
+            'average' => $aggregate && $aggregate->avg_rating !== null
+                ? round((float) $aggregate->avg_rating, 1)
+                : null,
+            'count' => $aggregate ? (int) $aggregate->total_ratings : 0,
+        ];
+    }
+
+    public static function ratingsForProfessionals(array $professionalIds): array
+    {
+        if (empty($professionalIds)) {
+            return [];
+        }
+
+        $rows = self::query()
+            ->whereIn('professional_id', $professionalIds)
+            ->whereNotNull('rating')
+            ->whereNotNull('rated_at')
+            ->selectRaw('professional_id, AVG(rating) as avg_rating, COUNT(*) as total_ratings')
+            ->groupBy('professional_id')
+            ->get();
+
+        return $rows->mapWithKeys(fn ($row) => [
+            (int) $row->professional_id => [
+                'average' => round((float) $row->avg_rating, 1),
+                'count' => (int) $row->total_ratings,
+            ],
+        ])->all();
     }
 }

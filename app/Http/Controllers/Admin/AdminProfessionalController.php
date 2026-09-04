@@ -24,7 +24,9 @@ class AdminProfessionalController extends Controller
 
         $professional->load('remorqueurProfile', 'depanneurProfile', 'remorque', 'services', 'interventionsAsProfessional');
 
-        return view('admin.professional-detail', compact('professional'));
+        $rating = \App\Models\Intervention::ratingsForProfessional($professional->id);
+
+        return view('admin.professional-detail', compact('professional', 'rating'));
     }
 
     public function validate(Request $request, User $professional)

@@ -19,6 +19,10 @@ class DepanneurDashboardController extends Controller
 
         $pendingDemands = Intervention::where('status', Intervention::STATUS_AWAITING_PROFESSIONAL)
             ->where('service_type', 'depannage')
+            ->where(function ($q) use ($user) {
+                $q->whereNull('target_professional_id')
+                    ->orWhere('target_professional_id', $user->id);
+            })
             ->orderByDesc('created_at')
             ->limit(10)
             ->get();

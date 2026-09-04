@@ -50,15 +50,15 @@ class ClientInterventionController extends Controller
         $lat = (float) $request->lat;
         $lng = (float) $request->lng;
         $radiusKm = (float) ($request->radius ?? 50);
-        $freshnessMinutes = (int) ($request->freshness ?? 5);
+        $freshnessMinutes = (int) ($request->freshness ?? 720);
         $serviceType = $request->service_type;
 
         $distanceSql = "(
             6371 * acos(
-                cos(radians(?)) *
+                cos(radians({$lat})) *
                 cos(radians(locations.lat)) *
-                cos(radians(locations.lng) - radians(?)) +
-                sin(radians(?)) *
+                cos(radians(locations.lng) - radians({$lng})) +
+                sin(radians({$lat})) *
                 sin(radians(locations.lat))
             )
         )";
@@ -69,7 +69,7 @@ class ClientInterventionController extends Controller
             ->where('users.is_validated', true)
             ->where('users.is_active', true)
             ->where('locations.recorded_at', '>=', now()->subMinutes($freshnessMinutes))
-            ->whereRaw($distanceSql . ' <= ?', [$lat, $lng, $lat, $radiusKm]);
+            ->whereRaw($distanceSql . ' <= ' . $radiusKm);
 
         if ($serviceType) {
             $slug = strtolower($serviceType);
@@ -101,15 +101,15 @@ class ClientInterventionController extends Controller
                 'depanneurs.hourly_rate as depanneur_rate',
                 DB::raw($distanceSql . ' as distance_km'),
             ])
-            ->addBinding($lat, 'select')
-            ->addBinding($lng, 'select')
-            ->addBinding($lat, 'select')
             ->orderBy('distance_km', 'asc')
             ->orderByDesc('locations.recorded_at')
             ->limit(20)
             ->get();
 
-        $professionals = $rows->map(function ($row) {
+        $professionals = $rows
+            ->unique('id')
+            ->values()
+            ->map(function ($row) {
             $rate = $row->remorqueur_rate ?? $row->depanneur_rate;
             $suggestedDestination = $row->location_address
                 ?: ($row->zone_intervention ?: null);
@@ -132,7 +132,59 @@ class ClientInterventionController extends Controller
             ];
         });
 
-        return response()->json($professionals);
+        $ratings = Intervention::ratingsForProfessionals($professionals->pluck('id')->all());
+        $professionals = $professionals->map(function ($p) use ($ratings) {
+            $p['rating_avg'] = $ratings[$p['id']]['average'] ?? null;
+            $p['rating_count'] = $ratings[$p['id']]['count'] ?? 0;
+
+            return $p;
+        });
+
+        $suggestedDestinations = $this->findNearbyDestinations($lat, $lng, $radiusKm);
+
+        return response()->json([
+            'professionals' => $professionals,
+            'suggested_destinations' => $suggestedDestinations,
+        ]);
+    }
+
+    protected function findNearbyDestinations(float $lat, float $lng, float $radiusKm): array
+    {
+        $distanceSql = "(
+            6371 * acos(
+                cos(radians({$lat})) *
+                cos(radians(locations.lat)) *
+                cos(radians(locations.lng) - radians({$lng})) +
+                sin(radians({$lat})) *
+                sin(radians(locations.lat))
+            )
+        )";
+
+        $destinations = DB::table('locations')
+            ->join('users', 'users.id', '=', 'locations.user_id')
+            ->where('users.role', 'depanneur')
+            ->where('users.is_validated', true)
+            ->where('users.is_active', true)
+            ->whereRaw($distanceSql . ' <= ' . $radiusKm)
+            ->whereRaw($distanceSql . ' > 0')
+            ->select([
+                'locations.address',
+                'locations.lat',
+                'locations.lng',
+                DB::raw($distanceSql . ' as distance_km'),
+            ])
+            ->orderBy('distance_km', 'asc')
+            ->limit(5)
+            ->get()
+            ->filter(fn ($d) => ! empty($d->address))
+            ->map(fn ($d) => [
+                'address' => $d->address,
+                'distance_km' => round((float) $d->distance_km, 1),
+            ])
+            ->values()
+            ->toArray();
+
+        return $destinations;
     }
 
     public function store(Request $request)
@@ -163,6 +215,7 @@ class ClientInterventionController extends Controller
 
         $intervention = Intervention::create([
             'client_id' => Auth::id(),
+            'target_professional_id' => $validated['selected_professional_id'] ?? null,
             'vehicle_id' => $validated['vehicle_id'] ?? null,
             'service_type' => $validated['service_type'],
             'description' => $validated['description'] ?? null,
@@ -270,7 +323,42 @@ class ClientInterventionController extends Controller
             'note' => 'Annulee par le client',
         ]);
 
+        if ($intervention->professional_id) {
+            $professional = $intervention->professional;
+            if ($professional?->isRemorqueur()) {
+                $professional->remorqueurProfile()->update(['is_available' => true]);
+            } elseif ($professional?->isDepanneur()) {
+                $professional->depanneurProfile()->update(['is_available' => true]);
+            }
+        }
+
         return redirect()->route('client.intervention.index')->with('status', 'intervention-cancelled');
+    }
+
+    public function rate(Request $request, Intervention $intervention)
+    {
+        abort_if($intervention->client_id !== Auth::id(), 403);
+
+        if ($intervention->status !== Intervention::STATUS_COMPLETED) {
+            abort(422, "L'intervention doit etre terminee pour pouvoir etre notee.");
+        }
+
+        if (! $intervention->professional_id) {
+            abort(422, 'Aucun professionnel ne peut etre note.');
+        }
+
+        $validated = $request->validate([
+            'rating' => ['required', 'integer', 'between:1,5'],
+            'rating_comment' => ['nullable', 'string', 'max:1000'],
+        ]);
+
+        $intervention->update([
+            'rating' => (int) $validated['rating'],
+            'rating_comment' => $validated['rating_comment'] ?? null,
+            'rated_at' => now(),
+        ]);
+
+        return back()->with('status', 'intervention-rated');
     }
 
     protected function storePhoto(Request $request): ?string

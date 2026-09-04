@@ -7,6 +7,7 @@ use App\Models\Intervention;
 use App\Models\InterventionStatus;
 use App\Models\Location;
 use App\Models\Notification;
+use App\Models\ProfessionalRejection;
 use App\Services\InterventionMatchingService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -32,6 +33,7 @@ class InterventionApiController extends Controller
 
         $intervention = Intervention::create([
             'client_id' => Auth::id(),
+            'target_professional_id' => $validated['selected_professional_id'] ?? null,
             'vehicle_id' => $validated['vehicle_id'] ?? null,
             'service_type' => $validated['service_type'],
             'description' => $validated['description'] ?? null,
@@ -78,9 +80,16 @@ class InterventionApiController extends Controller
 
     public function incoming(Request $request)
     {
+        $userId = $request->user()->id;
+
         $interventions = Intervention::with('client')
             ->where('status', Intervention::STATUS_AWAITING_PROFESSIONAL)
             ->where('service_type', $request->user()->isDepanneur() ? 'depannage' : 'remorquage')
+            ->where(function ($q) use ($userId) {
+                $q->whereNull('target_professional_id')
+                    ->orWhere('target_professional_id', $userId);
+            })
+            ->whereNotIn('id', ProfessionalRejection::where('professional_id', $userId)->pluck('intervention_id'))
             ->orderByDesc('created_at')
             ->get();
 
@@ -112,6 +121,12 @@ class InterventionApiController extends Controller
             'user_id' => Auth::id(),
         ]);
 
+        if ($request->user()->isRemorqueur()) {
+            $request->user()->remorqueurProfile()->update(['is_available' => false]);
+        } elseif ($request->user()->isDepanneur()) {
+            $request->user()->depanneurProfile()->update(['is_available' => false]);
+        }
+
         Notification::create([
             'user_id' => $intervention->client_id,
             'type' => 'intervention_update',
@@ -129,6 +144,30 @@ class InterventionApiController extends Controller
 
     public function reject(Request $request, Intervention $intervention)
     {
+        if ($intervention->status !== Intervention::STATUS_AWAITING_PROFESSIONAL) {
+            return response()->json(['message' => 'Cette intervention a deja ete traitee.'], 422);
+        }
+
+        ProfessionalRejection::updateOrCreate(
+            [
+                'intervention_id' => $intervention->id,
+                'professional_id' => $request->user()->id,
+            ],
+            ['reason' => $request->input('reason')]
+        );
+
+        Notification::create([
+            'user_id' => $intervention->client_id,
+            'type' => 'intervention_update',
+            'notifiable_type' => Intervention::class,
+            'notifiable_id' => $intervention->id,
+            'data' => [
+                'title' => 'Demande refusee',
+                'body' => 'Votre demande a ete refusee par ' . $request->user()->full_name . '.',
+                'url' => '/client/intervention/' . $intervention->id,
+            ],
+        ]);
+
         return response()->json(null, 204);
     }
 
@@ -151,6 +190,14 @@ class InterventionApiController extends Controller
             'note' => $validated['note'] ?? null,
             'user_id' => Auth::id(),
         ]);
+
+        if ($validated['status'] === Intervention::STATUS_COMPLETED) {
+            if ($request->user()->isRemorqueur()) {
+                $request->user()->remorqueurProfile()->update(['is_available' => true]);
+            } elseif ($request->user()->isDepanneur()) {
+                $request->user()->depanneurProfile()->update(['is_available' => true]);
+            }
+        }
 
         return response()->json($intervention->load('statuses'));
     }

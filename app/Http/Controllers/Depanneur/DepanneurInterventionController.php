@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Intervention;
 use App\Models\InterventionStatus;
 use App\Models\Notification;
-use App\Models\Depanneur;
+use App\Models\ProfessionalRejection;
 use App\Services\GeolocationService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -17,9 +17,19 @@ class DepanneurInterventionController extends Controller
 
     public function incoming()
     {
+        $rejectedIds = ProfessionalRejection::where('professional_id', Auth::id())
+            ->pluck('intervention_id');
+
+        $userId = Auth::id();
+
         $interventions = Intervention::with('client')
             ->where('status', Intervention::STATUS_AWAITING_PROFESSIONAL)
             ->where('service_type', 'depannage')
+            ->where(function ($q) use ($userId) {
+                $q->whereNull('target_professional_id')
+                    ->orWhere('target_professional_id', $userId);
+            })
+            ->whereNotIn('id', $rejectedIds)
             ->orderByDesc('created_at')
             ->get();
 
@@ -64,9 +74,64 @@ class DepanneurInterventionController extends Controller
             'user_id' => Auth::id(),
         ]);
 
+        Auth::user()->depanneurProfile()->update(['is_available' => false]);
+
         $this->notifyClient($intervention, 'Votre depanneur est en route.');
 
         return back()->with('status', 'intervention-accepted');
+    }
+
+    public function reject(Request $request, Intervention $intervention)
+    {
+        abort_if($intervention->status !== Intervention::STATUS_AWAITING_PROFESSIONAL, 422);
+
+        ProfessionalRejection::updateOrCreate(
+            [
+                'intervention_id' => $intervention->id,
+                'professional_id' => Auth::id(),
+            ],
+            ['reason' => $request->input('reason')]
+        );
+
+        $this->notifyClient(
+            $intervention,
+            'Votre demande de depannage a ete refusee par ' . Auth::user()->full_name . '.'
+        );
+
+        return back()->with('status', 'intervention-rejected');
+    }
+
+    public function updateStatus(Request $request, Intervention $intervention)
+    {
+        abort_if($intervention->professional_id !== Auth::id(), 403);
+
+        if (in_array($intervention->status, [Intervention::STATUS_COMPLETED, Intervention::STATUS_CANCELLED])) {
+            abort(409, "L'intervention est terminee ou annulee.");
+        }
+
+        $validated = $request->validate([
+            'status' => ['required', 'in:depanneur_en_route,arrivee_sur_place,vehicule_pris_en_charge,intervention_terminee'],
+            'note' => ['nullable', 'string', 'max:1000'],
+        ]);
+
+        abort_if(! $intervention->canTransitionTo($validated['status']), 422, 'Progression de statut invalide.');
+
+        $intervention->update(['status' => $validated['status']]);
+
+        InterventionStatus::create([
+            'intervention_id' => $intervention->id,
+            'status' => $validated['status'],
+            'note' => $validated['note'] ?? null,
+            'user_id' => Auth::id(),
+        ]);
+
+        if ($validated['status'] === Intervention::STATUS_COMPLETED) {
+            Auth::user()->depanneurProfile()->update(['is_available' => true]);
+        }
+
+        $this->notifyClient($intervention, ucfirst(str_replace('_', ' ', $validated['status'])));
+
+        return back()->with('status', 'status-updated');
     }
 
     protected function notifyClient(Intervention $intervention, string $body): void
@@ -82,35 +147,5 @@ class DepanneurInterventionController extends Controller
                 'url' => '/client/intervention/' . $intervention->id,
             ],
         ]);
-    }
-
-    public function reject(Request $request, Intervention $intervention)
-    {
-        abort_if($intervention->status !== Intervention::STATUS_AWAITING_PROFESSIONAL, 422);
-
-        return back()->with('status', 'intervention-rejected');
-    }
-
-    public function updateStatus(Request $request, Intervention $intervention)
-    {
-        abort_if($intervention->professional_id !== Auth::id(), 403);
-
-        $validated = $request->validate([
-            'status' => ['required', 'in:depanneur_en_route,arrivee_sur_place,vehicule_pris_en_charge,intervention_terminee'],
-            'note' => ['nullable', 'string', 'max:1000'],
-        ]);
-
-        $intervention->update(['status' => $validated['status']]);
-
-        InterventionStatus::create([
-            'intervention_id' => $intervention->id,
-            'status' => $validated['status'],
-            'note' => $validated['note'] ?? null,
-            'user_id' => Auth::id(),
-        ]);
-
-        $this->notifyClient($intervention, ucfirst(str_replace('_', ' ', $validated['status'])));
-
-        return back()->with('status', 'status-updated');
     }
 }
