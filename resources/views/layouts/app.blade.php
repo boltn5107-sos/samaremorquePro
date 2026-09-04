@@ -6,7 +6,8 @@
     <title>@yield('title', config('app.name')) - {{ config('app.name') }}</title>
 
     {{-- SEO --}}
-    <meta name="google-site-verification" content="5RZr_MjxvRBL_yoqOzX9gERC8ey1btQ61t2Og1WhVKY" />
+    
+    
     <meta name="description" content="@yield('meta_description', 'SamaRemorque - Plateforme de remorquage et depannage routier au Senegal. Trouvez rapidement un remorqueur ou un depanneur pres de vous.')">
     <meta name="keywords" content="remorquage, depannage, remorqueur, depanneur, panne, vehicule, Senegal, Dakar, assistance routiere, remorque voiture">
     <meta name="author" content="SamaRemorque">
@@ -55,6 +56,7 @@
   }
 }
 </script>
+<meta name="google-site-verification" content="5RZr_MjxvRBL_yoqOzX9gERC8ey1btQ61t2Og1WhVKY" />
 </head>
 <body class="font-sans antialiased bg-slate-50 text-slate-900">
     <div id="app">
