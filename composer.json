@@ -4,13 +4,14 @@
     "description": "Plateforme de remorquage et depannage routier au Senegal - Laravel + MySQL + PWA",
     "require": {
         "php": "^8.2",
-        "laravel/framework": "^11.0",
-        "laravel/breeze": "^2.0",
-        "laravel/sanctum": "^4.0",
-        "laravel/reverb": "^1.0",
-        "laravel/pulse": "^1.0",
         "guzzlehttp/guzzle": "^7.8",
-        "pusher/pusher-php-server": "^7.2"
+        "laravel/breeze": "^2.0",
+        "laravel/framework": "^11.0",
+        "laravel/pulse": "^1.0",
+        "laravel/reverb": "^1.0",
+        "laravel/sanctum": "^4.0",
+        "pusher/pusher-php-server": "^7.2",
+        "spatie/laravel-sitemap": "^8.0"
     },
     "require-dev": {
         "fakerphp/faker": "^1.23",

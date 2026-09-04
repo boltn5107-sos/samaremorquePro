@@ -6,6 +6,7 @@
     <title>@yield('title', config('app.name')) - {{ config('app.name') }}</title>
 
     {{-- SEO --}}
+    <meta name="google-site-verification" content="5RZr_MjxvRBL_yoqOzX9gERC8ey1btQ61t2Og1WhVKY" />
     <meta name="description" content="@yield('meta_description', 'SamaRemorque - Plateforme de remorquage et depannage routier au Senegal. Trouvez rapidement un remorqueur ou un depanneur pres de vous.')">
     <meta name="keywords" content="remorquage, depannage, remorqueur, depanneur, panne, vehicule, Senegal, Dakar, assistance routiere, remorque voiture">
     <meta name="author" content="SamaRemorque">
@@ -38,6 +39,22 @@
     <link href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" rel="stylesheet">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @livewireStyles
+
+    <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "LocalBusiness",
+  "name": "SamaRemorque",
+  "description": "Plateforme de remorquage et depannage routier au Senegal",
+  "url": "https://samaremorquepro.onrender.com",
+  "telephone": "+221774467596",
+  "address": {
+    "@type": "PostalAddress",
+    "addressLocality": "Dakar",
+    "addressCountry": "SN"
+  }
+}
+</script>
 </head>
 <body class="font-sans antialiased bg-slate-50 text-slate-900">
     <div id="app">
