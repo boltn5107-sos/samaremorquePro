@@ -9,9 +9,9 @@
 /phpunit.xml
 /public/mix-manifest.json
 /public/build
-/public/css
+
 /public/js
-/public/fonts
+
 /public/images
 /public/icon-*.png
 /public/favicon.svg
