@@ -19,7 +19,7 @@ class AppServiceProvider extends ServiceProvider
         ResetPassword::toMailUsing(function ($notifiable, $token) {
             return (new MailMessage)
                 ->subject('Reinitialisation du mot de passe')
-                ->line('Vous recevez ce message car nous avons recu une demande de reinitialisation de mot de passe.')
+                ->line('Vous recevez ce message car nous avons recu une demande de reinitialisation du mot de passe.')
                 ->action('Reinitialiser le mot de passe', url(route('password.reset', $token, false)))
                 ->line('Si vous n avez pas fait cette demande, ignorez ce message.');
         });
@@ -27,5 +27,9 @@ class AppServiceProvider extends ServiceProvider
         View::composer('*', function ($view) {
             $view->with('appName', config('app.name'));
         });
+
+        if ($this->app->environment('production')) {
+            \URL::forceScheme('https');
+        }
     }
 }

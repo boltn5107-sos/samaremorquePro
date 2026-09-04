@@ -9,14 +9,9 @@
 /phpunit.xml
 /public/mix-manifest.json
 /public/build
-
+/public/css
 /public/js
-
-/public/images
-/public/icon-*.png
-/public/favicon.svg
-/public/manifest.json
-/public/sw.js
+/public/fonts
 /coverage
 /.env
 /.env.backup
