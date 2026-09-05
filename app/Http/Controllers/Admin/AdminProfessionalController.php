@@ -55,4 +55,70 @@ class AdminProfessionalController extends Controller
 
         return back()->with('status', 'professional-reactivated');
     }
+
+    public function edit(User $professional)
+    {
+        abort_if(!in_array($professional->role, ['remorqueur', 'depanneur']), 404);
+
+        $professional->load('remorqueurProfile', 'depanneurProfile', 'remorque');
+
+        return view('admin.professional-edit', compact('professional'));
+    }
+
+    public function update(Request $request, User $professional)
+    {
+        abort_if(!in_array($professional->role, ['remorqueur', 'depanneur']), 404);
+
+        $validated = $request->validate([
+            'first_name' => ['required', 'string', 'max:100'],
+            'last_name' => ['required', 'string', 'max:100'],
+            'phone' => ['required', 'string', 'max:30'],
+            'zone_intervention' => ['nullable', 'string', 'max:255'],
+            'bio' => ['nullable', 'string', 'max:500'],
+            'hourly_rate' => ['nullable', 'numeric', 'min:0'],
+        ]);
+
+        $professional->update([
+            'first_name' => $validated['first_name'],
+            'last_name' => $validated['last_name'],
+            'phone' => $validated['phone'],
+            'zone_intervention' => $validated['zone_intervention'] ?? null,
+            'bio' => $validated['bio'] ?? null,
+        ]);
+
+        if ($professional->isRemorqueur() && $professional->remorqueurProfile) {
+            $professional->remorqueurProfile->update([
+                'hourly_rate' => $validated['hourly_rate'] ?? null,
+            ]);
+        } elseif ($professional->isDepanneur() && $professional->depanneurProfile) {
+            $professional->depanneurProfile->update([
+                'hourly_rate' => $validated['hourly_rate'] ?? null,
+            ]);
+        }
+
+        return redirect()
+            ->route('admin.professionnels.show', $professional)
+            ->with('status', 'Professionnel mis a jour.');
+    }
+
+    public function destroy(Request $request, User $professional)
+    {
+        abort_if(!in_array($professional->role, ['remorqueur', 'depanneur']), 404);
+
+        foreach ($professional->interventionsAsProfessional as $intervention) {
+            $intervention->statuses()->delete();
+            $intervention->notifications()->delete();
+            $intervention->rejections()->delete();
+            $intervention->delete();
+        }
+
+        $professional->remorqueurProfile?->delete();
+        $professional->depanneurProfile?->delete();
+        $professional->remorque?->delete();
+        $professional->locations()->delete();
+        $professional->delete();
+
+        return redirect()->route('admin.professionnels.index')
+            ->with('status', 'Professionnel supprime.');
+    }
 }

@@ -43,4 +43,24 @@ class AdminClientController extends Controller
 
         return back()->with('status', 'client-reactivated');
     }
+
+    public function destroy(Request $request, User $client)
+    {
+        abort_if($client->role !== 'client', 404);
+
+        foreach ($client->interventionsAsClient as $intervention) {
+            $intervention->statuses()->delete();
+            $intervention->notifications()->delete();
+            $intervention->rejections()->delete();
+            $intervention->delete();
+        }
+
+        $client->vehicles()->delete();
+        $client->clientProfile?->delete();
+        $client->locations()->delete();
+        $client->delete();
+
+        return redirect()->route('admin.clients.index')
+            ->with('status', 'Client supprime.');
+    }
 }

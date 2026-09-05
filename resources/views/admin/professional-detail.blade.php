@@ -86,6 +86,11 @@
                 <div class="bg-white shadow rounded-lg p-6 mb-6">
                     <h2 class="text-xl font-semibold text-slate-900 mb-4">Actions</h2>
                     <div class="space-y-3">
+                        <a href="{{ route('admin.professionnels.edit', $professional) }}"
+                           class="w-full inline-flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-orange-600 hover:bg-orange-700">
+                            Editer le compte
+                        </a>
+
                         @if(!$professional->is_validated)
                             <form method="POST" action="{{ route('admin.professionnels.validate', $professional) }}">
                                 @csrf
@@ -110,6 +115,15 @@
                                 </button>
                             </form>
                         @endif
+
+                        <form method="POST" action="{{ route('admin.professionnels.destroy', $professional) }}"
+                              onsubmit="return confirm('Supprimer definitivement ce professionnel, son profil et toutes ses interventions ? Cette action est irreversible.')">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="w-full inline-flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-700">
+                                Supprimer definitivement
+                            </button>
+                        </form>
                     </div>
                 </div>
             </div>

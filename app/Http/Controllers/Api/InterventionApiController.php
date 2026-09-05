@@ -127,17 +127,19 @@ class InterventionApiController extends Controller
             $request->user()->depanneurProfile()->update(['is_available' => false]);
         }
 
-        Notification::create([
-            'user_id' => $intervention->client_id,
-            'type' => 'intervention_update',
-            'notifiable_type' => Intervention::class,
-            'notifiable_id' => $intervention->id,
-            'data' => [
-                'title' => 'Intervention acceptee',
-                'body' => 'Un professionnel est en route.',
-                'url' => '/client/intervention/' . $intervention->id,
-            ],
-        ]);
+        if ($intervention->client_id !== null) {
+            Notification::create([
+                'user_id' => $intervention->client_id,
+                'type' => 'intervention_update',
+                'notifiable_type' => Intervention::class,
+                'notifiable_id' => $intervention->id,
+                'data' => [
+                    'title' => 'Intervention acceptee',
+                    'body' => 'Un professionnel est en route.',
+                    'url' => '/client/intervention/' . $intervention->id,
+                ],
+            ]);
+        }
 
         return response()->json($intervention->fresh('statuses'));
     }
@@ -156,17 +158,19 @@ class InterventionApiController extends Controller
             ['reason' => $request->input('reason')]
         );
 
-        Notification::create([
-            'user_id' => $intervention->client_id,
-            'type' => 'intervention_update',
-            'notifiable_type' => Intervention::class,
-            'notifiable_id' => $intervention->id,
-            'data' => [
-                'title' => 'Demande refusee',
-                'body' => 'Votre demande a ete refusee par ' . $request->user()->full_name . '.',
-                'url' => '/client/intervention/' . $intervention->id,
-            ],
-        ]);
+        if ($intervention->client_id !== null) {
+            Notification::create([
+                'user_id' => $intervention->client_id,
+                'type' => 'intervention_update',
+                'notifiable_type' => Intervention::class,
+                'notifiable_id' => $intervention->id,
+                'data' => [
+                    'title' => 'Demande refusee',
+                    'body' => 'Votre demande a ete refusee par ' . $request->user()->full_name . '.',
+                    'url' => '/client/intervention/' . $intervention->id,
+                ],
+            ]);
+        }
 
         return response()->json(null, 204);
     }

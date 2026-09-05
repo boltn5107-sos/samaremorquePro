@@ -145,7 +145,7 @@
 <?php $component = $__componentOriginalce262628e3a8d44dc38fd1f3965181bc; ?>
 <?php unset($__componentOriginalce262628e3a8d44dc38fd1f3965181bc); ?>
 <?php endif; ?> Client</p>
-                        <p class="font-medium text-slate-900"><?php echo e($activeIntervention->client->full_name); ?></p>
+                        <p class="font-medium text-slate-900"><?php echo e($activeIntervention->client_name); ?></p>
                     </div>
                     <div class="bg-slate-50 rounded-lg p-3">
                         <p class="text-xs text-slate-500 flex items-center gap-1"><?php if (isset($component)) { $__componentOriginalce262628e3a8d44dc38fd1f3965181bc = $component; } ?>
@@ -283,7 +283,7 @@
                                     <p class="text-xs text-slate-400"><?php echo e($demand->created_at->diffForHumans()); ?></p>
                                 </div>
                                 <div class="flex gap-2">
-                                    <form method="POST" action="<?php echo e(route('remorqueur.intervention.accept', $demand)); ?>">
+                                    <form method="POST" action="<?php echo e(route('remorqueur.intervention.accept', $demand)); ?>" onsubmit="var b=this.querySelector('button'); b.disabled = true; b.classList.add('opacity-50');">
                                         <?php echo csrf_field(); ?>
                                         <button type="submit" class="btn-primary py-1.5 px-3 text-sm">
                                             <?php if (isset($component)) { $__componentOriginalce262628e3a8d44dc38fd1f3965181bc = $component; } ?>
@@ -310,7 +310,7 @@
 <?php endif; ?> Accepter
                                         </button>
                                     </form>
-                                    <form method="POST" action="<?php echo e(route('remorqueur.intervention.reject', $demand)); ?>" onsubmit="return confirm('Confirmer le refus ?')">
+                                    <form method="POST" action="<?php echo e(route('remorqueur.intervention.reject', $demand)); ?>" onsubmit="if(!confirm('Confirmer le refus ?')) return false; var b=this.querySelector('button'); b.disabled = true; b.classList.add('opacity-50');">
                                         <?php echo csrf_field(); ?>
                                         <input type="hidden" name="reason" value="Refuse par le remorqueur">
                                         <button type="submit" class="btn-secondary py-1.5 px-3 text-sm">

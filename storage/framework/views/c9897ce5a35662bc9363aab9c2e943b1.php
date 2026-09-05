@@ -148,6 +148,11 @@
                 <div class="bg-white shadow rounded-lg p-6 mb-6">
                     <h2 class="text-xl font-semibold text-slate-900 mb-4">Actions</h2>
                     <div class="space-y-3">
+                        <a href="<?php echo e(route('admin.professionnels.edit', $professional)); ?>"
+                           class="w-full inline-flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-orange-600 hover:bg-orange-700">
+                            Editer le compte
+                        </a>
+
                         <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php endif; ?><?php if(!$professional->is_validated): ?>
                             <form method="POST" action="<?php echo e(route('admin.professionnels.validate', $professional)); ?>">
                                 <?php echo csrf_field(); ?>
@@ -172,6 +177,15 @@
                                 </button>
                             </form>
                         <?php endif; ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if ENDBLOCK]><![endif]--><?php endif; ?>
+
+                        <form method="POST" action="<?php echo e(route('admin.professionnels.destroy', $professional)); ?>"
+                              onsubmit="return confirm('Supprimer definitivement ce professionnel, son profil et toutes ses interventions ? Cette action est irreversible.')">
+                            <?php echo csrf_field(); ?>
+                            <?php echo method_field('DELETE'); ?>
+                            <button type="submit" class="w-full inline-flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-700">
+                                Supprimer definitivement
+                            </button>
+                        </form>
                     </div>
                 </div>
             </div>

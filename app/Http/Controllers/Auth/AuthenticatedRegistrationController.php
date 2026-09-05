@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Models\Client;
 use App\Models\Depanneur;
+use App\Models\Intervention;
 use App\Models\Remorqueur;
 use App\Models\User;
 use Illuminate\Auth\Events\Registered;
@@ -43,6 +44,10 @@ class AuthenticatedRegistrationController extends Controller
 
         $this->createProfile($user, $request->role);
 
+        if ($request->role === 'client' && $request->filled('tracking')) {
+            $this->claimGuestIntervention($user, $request->tracking);
+        }
+
         event(new Registered($user));
 
         Auth::login($user);
@@ -63,5 +68,23 @@ class AuthenticatedRegistrationController extends Controller
             'depanneur' => Depanneur::firstOrCreate(['user_id' => $user->id]),
             default => null,
         };
+    }
+
+    protected function claimGuestIntervention(User $user, string $trackingCode): void
+    {
+        $intervention = Intervention::query()
+            ->where('tracking_code', $trackingCode)
+            ->whereNull('client_id')
+            ->first();
+
+        if (! $intervention) {
+            return;
+        }
+
+        $intervention->update([
+            'client_id' => $user->id,
+            'client_name' => $user->full_name,
+            'client_phone' => $user->phone,
+        ]);
     }
 }

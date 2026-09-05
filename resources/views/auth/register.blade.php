@@ -6,6 +6,13 @@
     <form method="POST" action="{{ route('register') }}" class="space-y-6">
         @csrf
 
+        @if(request('tracking'))
+            <input type="hidden" name="tracking" value="{{ request('tracking') }}">
+            <div class="bg-orange-50 border border-orange-200 text-orange-800 rounded-md px-3 py-2.5 text-sm">
+                Votre intervention <strong>{{ request('tracking') }}</strong> sera liee a votre compte apres l'inscription.
+            </div>
+        @endif
+
         <div class="grid grid-cols-2 gap-4">
             <div>
                 <label for="first_name" class="block text-sm font-medium text-slate-700">Prenom</label>

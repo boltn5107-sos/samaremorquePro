@@ -66,7 +66,65 @@
                     <div id="map" style="height: 400px; width: 100%;" class="rounded-lg border border-slate-200"></div>
                 </div>
 
-                <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php endif; ?><?php if($intervention->status !== 'intervention_terminee' && $intervention->status !== 'annulee'): ?>
+                <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php endif; ?><?php if($intervention->status === 'intervention_terminee'): ?>
+                    <div class="card p-6 bg-emerald-50 border-emerald-200">
+                        <h2 class="text-lg font-semibold text-emerald-700 mb-1 flex items-center gap-2">
+                            <?php if (isset($component)) { $__componentOriginalce262628e3a8d44dc38fd1f3965181bc = $component; } ?>
+<?php if (isset($attributes)) { $__attributesOriginalce262628e3a8d44dc38fd1f3965181bc = $attributes; } ?>
+<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.icon','data' => ['name' => 'check','class' => 'w-5 h-5']] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
+<?php $component->withName('icon'); ?>
+<?php if ($component->shouldRender()): ?>
+<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
+<?php if (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag): ?>
+<?php $attributes = $attributes->except(\Illuminate\View\AnonymousComponent::ignoredParameterNames()); ?>
+<?php endif; ?>
+<?php $component->withAttributes(['name' => 'check','class' => 'w-5 h-5']); ?>
+<?php \Livewire\Features\SupportCompiledWireKeys\SupportCompiledWireKeys::processComponentKey($component); ?>
+
+<?php echo $__env->renderComponent(); ?>
+<?php endif; ?>
+<?php if (isset($__attributesOriginalce262628e3a8d44dc38fd1f3965181bc)): ?>
+<?php $attributes = $__attributesOriginalce262628e3a8d44dc38fd1f3965181bc; ?>
+<?php unset($__attributesOriginalce262628e3a8d44dc38fd1f3965181bc); ?>
+<?php endif; ?>
+<?php if (isset($__componentOriginalce262628e3a8d44dc38fd1f3965181bc)): ?>
+<?php $component = $__componentOriginalce262628e3a8d44dc38fd1f3965181bc; ?>
+<?php unset($__componentOriginalce262628e3a8d44dc38fd1f3965181bc); ?>
+<?php endif; ?>
+                            Intervention terminee
+                        </h2>
+                        <p class="text-sm text-emerald-600">Merci pour votre travail. Vous redevenez disponible pour de nouvelles demandes.</p>
+                    </div>
+                <?php elseif($intervention->status === 'annulee'): ?>
+                    <div class="card p-6 bg-slate-50 border-slate-200">
+                        <h2 class="text-lg font-semibold text-slate-600 mb-1 flex items-center gap-2">
+                            <?php if (isset($component)) { $__componentOriginalce262628e3a8d44dc38fd1f3965181bc = $component; } ?>
+<?php if (isset($attributes)) { $__attributesOriginalce262628e3a8d44dc38fd1f3965181bc = $attributes; } ?>
+<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.icon','data' => ['name' => 'x','class' => 'w-5 h-5']] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
+<?php $component->withName('icon'); ?>
+<?php if ($component->shouldRender()): ?>
+<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
+<?php if (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag): ?>
+<?php $attributes = $attributes->except(\Illuminate\View\AnonymousComponent::ignoredParameterNames()); ?>
+<?php endif; ?>
+<?php $component->withAttributes(['name' => 'x','class' => 'w-5 h-5']); ?>
+<?php \Livewire\Features\SupportCompiledWireKeys\SupportCompiledWireKeys::processComponentKey($component); ?>
+
+<?php echo $__env->renderComponent(); ?>
+<?php endif; ?>
+<?php if (isset($__attributesOriginalce262628e3a8d44dc38fd1f3965181bc)): ?>
+<?php $attributes = $__attributesOriginalce262628e3a8d44dc38fd1f3965181bc; ?>
+<?php unset($__attributesOriginalce262628e3a8d44dc38fd1f3965181bc); ?>
+<?php endif; ?>
+<?php if (isset($__componentOriginalce262628e3a8d44dc38fd1f3965181bc)): ?>
+<?php $component = $__componentOriginalce262628e3a8d44dc38fd1f3965181bc; ?>
+<?php unset($__componentOriginalce262628e3a8d44dc38fd1f3965181bc); ?>
+<?php endif; ?>
+                            Intervention annulee
+                        </h2>
+                        <p class="text-sm text-slate-500">Cette intervention a ete annulee et ne peut plus etre modifiee.</p>
+                    </div>
+                <?php else: ?>
                     <div class="card p-6">
                         <h2 class="text-lg font-semibold text-slate-900 mb-4 flex items-center gap-2">
                             <?php if (isset($component)) { $__componentOriginalce262628e3a8d44dc38fd1f3965181bc = $component; } ?>
@@ -93,7 +151,8 @@
 <?php endif; ?>
                             Mettre a jour le statut
                         </h2>
-                        <form method="POST" action="<?php echo e(route('depanneur.intervention.status', $intervention)); ?>" class="space-y-4">
+                        <form method="POST" action="<?php echo e(route('depanneur.intervention.status', $intervention)); ?>" class="space-y-4"
+                              onsubmit="var b=this.querySelector('button[type=submit]'); b.disabled=true; b.classList.add('opacity-50');">
                             <?php echo csrf_field(); ?>
                             <div>
                                 <label for="status" class="label">Prochain statut</label>
@@ -102,10 +161,6 @@
                                         <option value="<?php echo e($next); ?>"><?php echo e($intervention->statusLabelFor($next)); ?></option>
                                     <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><?php \Livewire\Features\SupportCompiledWireKeys\SupportCompiledWireKeys::endLoop(); ?><?php endif; ?><?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if ENDBLOCK]><![endif]--><?php \Livewire\Features\SupportCompiledWireKeys\SupportCompiledWireKeys::closeLoop(); ?><?php endif; ?>
                                 </select>
-                            </div>
-                            <div>
-                                <label for="note" class="label">Note</label>
-                                <textarea id="note" name="note" rows="3" class="input"></textarea>
                             </div>
                             <button type="submit" class="btn-primary w-full">
                                 <?php if (isset($component)) { $__componentOriginalce262628e3a8d44dc38fd1f3965181bc = $component; } ?>
@@ -165,16 +220,14 @@
                         Client
                     </h2>
                     <div class="flex items-center gap-3 mb-4">
-                        <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php endif; ?><?php if($intervention->client->photo): ?>
-                            <img src="<?php echo e(asset('storage/' . $intervention->client->photo)); ?>" alt="" class="w-12 h-12 rounded-full object-cover bg-slate-100">
+                        <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php endif; ?><?php if($intervention->client_photo): ?>
+                            <img src="<?php echo e(asset('storage/' . $intervention->client_photo)); ?>" alt="" class="w-12 h-12 rounded-full object-cover bg-slate-100">
                         <?php else: ?>
-                            <div class="w-12 h-12 rounded-full flex items-center justify-center bg-orange-100 text-orange-600 font-semibold">
-                                <?php echo e(strtoupper(substr($intervention->client->first_name, 0, 1))); ?><?php echo e(strtoupper(substr($intervention->client->last_name, 0, 1))); ?>
-
-                            </div>
+                            <?php $clientInitials = collect(preg_split('/\s+/', trim($intervention->client_name ?? 'Client sans compte')))->map(fn ($w) => strtoupper(mb_substr($w, 0, 1)))->take(2)->implode(''); ?>
+                            <div class="w-12 h-12 rounded-full flex items-center justify-center bg-orange-100 text-orange-600 font-semibold"><?php echo e($clientInitials ?: '?'); ?></div>
                         <?php endif; ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if ENDBLOCK]><![endif]--><?php endif; ?>
                         <div>
-                            <p class="font-semibold text-slate-900"><?php echo e($intervention->client->full_name); ?></p>
+                            <p class="font-semibold text-slate-900"><?php echo e($intervention->client_name); ?></p>
                             <p class="flex items-center gap-1 text-sm text-slate-500">
                                 <?php if (isset($component)) { $__componentOriginalce262628e3a8d44dc38fd1f3965181bc = $component; } ?>
 <?php if (isset($attributes)) { $__attributesOriginalce262628e3a8d44dc38fd1f3965181bc = $attributes; } ?>
@@ -198,17 +251,22 @@
 <?php $component = $__componentOriginalce262628e3a8d44dc38fd1f3965181bc; ?>
 <?php unset($__componentOriginalce262628e3a8d44dc38fd1f3965181bc); ?>
 <?php endif; ?>
-                                <?php echo e($intervention->client->phone); ?>
+                                <?php echo e($intervention->client_phone ?? 'Numero non renseigne'); ?>
 
                             </p>
+                            <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php endif; ?><?php if($intervention->isGuest()): ?>
+                                <p class="text-xs text-slate-400">Demande sans compte (<?php echo e($intervention->tracking_code); ?>)</p>
+                            <?php else: ?>
+                                <p class="text-xs text-emerald-600">Client inscrit</p>
+                            <?php endif; ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if ENDBLOCK]><![endif]--><?php endif; ?>
                         </div>
                     </div>
                     <?php
-                        $clientPhone = preg_replace('/[^0-9]/', '', $intervention->client->phone ?? '');
+                        $clientPhone = preg_replace('/[^0-9]/', '', $intervention->client_phone ?? '');
                         $clientWhatsapp = $clientPhone ? 'https://wa.me/221' . preg_replace('/^221/', '', $clientPhone) : '#';
                     ?>
                     <div class="flex gap-2 mb-4">
-                        <a href="tel:<?php echo e($intervention->client->phone); ?>" class="btn-secondary flex-1 text-sm py-2">
+                        <a href="tel:<?php echo e($intervention->client_phone); ?>" class="btn-secondary flex-1 text-sm py-2 <?php echo e($intervention->client_phone ? '' : 'pointer-events-none opacity-50'); ?>">
                             <?php if (isset($component)) { $__componentOriginalce262628e3a8d44dc38fd1f3965181bc = $component; } ?>
 <?php if (isset($attributes)) { $__attributesOriginalce262628e3a8d44dc38fd1f3965181bc = $attributes; } ?>
 <?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.icon','data' => ['name' => 'phone','class' => 'w-4 h-4']] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
@@ -233,7 +291,7 @@
 <?php endif; ?>
                             Appeler
                         </a>
-                        <a href="<?php echo e($clientWhatsapp); ?>" target="_blank" rel="noopener" class="px-4 py-2 text-sm font-semibold rounded-lg text-white bg-emerald-600 hover:bg-emerald-700 inline-flex items-center justify-center gap-2">
+                        <a href="<?php echo e($clientWhatsapp); ?>" target="_blank" rel="noopener" class="px-4 py-2 text-sm font-semibold rounded-lg text-white bg-emerald-600 hover:bg-emerald-700 inline-flex items-center justify-center gap-2 <?php echo e($intervention->client_phone ? '' : 'pointer-events-none opacity-50'); ?>">
                             <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M12.04 2c-5.46 0-9.91 4.45-9.91 9.91 0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91S17.5 2 12.04 2zm5.83 14.16c-.24.69-1.4 1.32-1.94 1.36-.52.04-1.18.19-3.97-.82-3.34-1.22-5.44-4.4-5.6-4.6-.16-.2-1.34-1.78-1.34-3.4 0-1.62.85-2.41 1.15-2.74.3-.33.66-.41.87-.41.22 0 .44 0 .63.01.2.01.47-.08.74.56.27.65 1.28 3.02 1.35 3.24.07.22.12.48-.07.75-.19.27-.29.44-.57.67-.29.24-.61.53-.87.72-.29.24-.59.5-.25.98.34.48 1.5 2.47 3.22 3.99 2.21 1.97 4.07 2.5 4.64 2.68.57.18.9.15 1.23-.09.33-.24.1.53.31-.53z"/></svg>
                             WhatsApp
                         </a>

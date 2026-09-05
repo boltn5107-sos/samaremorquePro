@@ -1,3 +1,5 @@
+
+
 <?php $__env->startSection('title', 'Tableau de bord admin'); ?>
 
 <?php $__env->startSection('content'); ?>

@@ -12,6 +12,9 @@
   }
   .leaflet-container {
     font-family: 'Inter', system-ui, sans-serif;
+    position: relative;
+    z-index: 0;
+    isolation: isolate;
   }
 }
 

@@ -4,7 +4,8 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\{
     ProfileController,
     NotificationController,
-    SeoController
+    SeoController,
+    GuestInterventionController
 };
 use App\Http\Controllers\Client\{
     ClientDashboardController,
@@ -60,6 +61,19 @@ Route::get('/', function () {
 // SEO
 Route::get('/sitemap.xml', [SeoController::class, 'sitemap'])->name('sitemap');
 Route::get('/robots.txt', [SeoController::class, 'robots'])->name('robots');
+
+// Public : demande sans compte
+Route::get('/demande', [GuestInterventionController::class, 'create'])->name('guest.create');
+Route::post('/demande', [GuestInterventionController::class, 'store'])->name('guest.store');
+Route::get('/demande/professionnels', [GuestInterventionController::class, 'nearbyProfessionals'])->name('guest.nearby');
+Route::get('/suivi/{trackingCode}', [GuestInterventionController::class, 'track'])->name('guest.track');
+Route::get('/suivi/{trackingCode}/pro-position', [GuestInterventionController::class, 'proPosition'])->name('guest.pro-position');
+Route::get('/suivi/{trackingCode}/statut', [GuestInterventionController::class, 'statusJson'])->name('guest.status');
+Route::post('/suivi/{trackingCode}/annuler', [GuestInterventionController::class, 'cancel'])->name('guest.cancel');
+Route::post('/suivi/{trackingCode}/noter', [GuestInterventionController::class, 'rate'])->name('guest.rate');
+
+// Confidentialite
+Route::view('/confidentialite', 'pages.confidentialite')->name('privacy');
 
 Route::middleware('guest')->group(function () {
     Route::get('login', [AuthenticatedSessionController::class, 'create'])->name('login');
@@ -140,13 +154,19 @@ Route::middleware('auth')->group(function () {
         Route::prefix('admin')->middleware('role:admin')->name('admin.')->group(function () {
             Route::get('/', [AdminDashboardController::class, 'index'])->name('dashboard');
             Route::get('/interventions', [AdminInterventionController::class, 'index'])->name('intervention.index');
+            Route::get('/interventions/export', [AdminInterventionController::class, 'exportCsv'])->name('intervention.export');
+            Route::delete('/intervention/{intervention}', [AdminInterventionController::class, 'destroy'])->name('intervention.destroy');
             Route::get('/intervention/{intervention}', [AdminInterventionController::class, 'show'])->name('intervention.show');
             Route::get('/clients', [AdminClientController::class, 'index'])->name('clients.index');
             Route::get('/client/{client}', [AdminClientController::class, 'show'])->name('clients.show');
             Route::post('/client/{client}/suspendre', [AdminClientController::class, 'suspend'])->name('clients.suspend');
             Route::post('/client/{client}/reactiver', [AdminClientController::class, 'reactivate'])->name('clients.reactivate');
+            Route::delete('/client/{client}', [AdminClientController::class, 'destroy'])->name('clients.destroy');
             Route::get('/professionnels', [AdminProfessionalController::class, 'index'])->name('professionnels.index');
             Route::get('/professionnel/{professional}', [AdminProfessionalController::class, 'show'])->name('professionnels.show');
+            Route::get('/professionnel/{professional}/editer', [AdminProfessionalController::class, 'edit'])->name('professionnels.edit');
+            Route::put('/professionnel/{professional}', [AdminProfessionalController::class, 'update'])->name('professionnels.update');
+            Route::delete('/professionnel/{professional}', [AdminProfessionalController::class, 'destroy'])->name('professionnels.destroy');
             Route::post('/professionnel/{professional}/valider', [AdminProfessionalController::class, 'validate'])->name('professionnels.validate');
             Route::post('/professionnel/{professional}/suspendre', [AdminProfessionalController::class, 'suspend'])->name('professionnels.suspend');
             Route::post('/professionnel/{professional}/reactiver', [AdminProfessionalController::class, 'reactivate'])->name('professionnels.reactivate');

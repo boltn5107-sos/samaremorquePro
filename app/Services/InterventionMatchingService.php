@@ -71,6 +71,9 @@ class InterventionMatchingService
                 'title' => 'Nouvelle demande',
                 'body' => 'Une nouvelle demande ' . $intervention->service_type . ' est disponible pres de vous.',
                 'url' => '/intervention/' . $intervention->id,
+                'photo' => $intervention->photo ? asset('storage/' . $intervention->photo) : null,
+                'client_address' => $intervention->client_address,
+                'client_phone' => $intervention->client_phone,
             ],
         ]);
     }

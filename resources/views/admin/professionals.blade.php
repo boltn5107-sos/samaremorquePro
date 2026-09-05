@@ -12,8 +12,8 @@
         <div class="card overflow-hidden mb-6">
             <ul class="divide-y divide-slate-200">
                 @forelse($professionals as $professional)
-                    <li>
-                        <a href="{{ route('admin.professionnels.show', $professional) }}" class="flex items-center gap-4 px-5 py-4 hover:bg-slate-50">
+                    <li class="flex items-center">
+                        <a href="{{ route('admin.professionnels.show', $professional) }}" class="flex flex-1 items-center gap-4 px-5 py-4 hover:bg-slate-50 min-w-0">
                             <div class="flex-shrink-0 p-2.5 rounded-lg {{ $professional->role === 'remorqueur' ? 'bg-orange-100 text-orange-600' : 'bg-sky-100 text-sky-600' }}">
                                 <x-icon name="{{ $professional->role === 'remorqueur' ? 'truck' : 'wrench' }}" class="w-5 h-5" />
                             </div>
@@ -35,6 +35,15 @@
                             </div>
                             <x-icon name="chevron-right" class="w-4 h-4 text-slate-300 flex-shrink-0" />
                         </a>
+                        <form method="POST" action="{{ route('admin.professionnels.destroy', $professional) }}" class="pr-3 flex-shrink-0"
+                              onsubmit="return confirm('Supprimer definitivement ce professionnel et toutes ses interventions ? Cette action est irreversible.')">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" title="Supprimer"
+                                    class="p-2 rounded-lg text-slate-400 hover:text-red-600 hover:bg-red-50">
+                                <x-icon name="trash" class="w-4 h-4" />
+                            </button>
+                        </form>
                     </li>
                 @empty
                     <li class="px-5 py-12 text-center text-slate-500">

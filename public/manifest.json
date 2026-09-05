@@ -61,10 +61,10 @@
   "screenshots": [],
   "shortcuts": [
     {
-      "name": "Nouvelle intervention",
-      "short_name": "Nouvelle",
-      "description": "Demander une intervention",
-      "url": "/client/intervention/nouvelle",
+      "name": "Demander une assistance",
+      "short_name": "Assistance",
+      "description": "Demander une intervention sans compte",
+      "url": "/demande",
       "icons": [{ "src": "/icon-96.png", "sizes": "96x96" }]
     }
   ]

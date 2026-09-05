@@ -1,36 +1,39 @@
 @extends('layouts.app')
 
-@section('title', 'Demande d\'intervention')
+@section('title', "Nouvelle demande d'intervention")
 
 @section('content')
-    <div class="max-w-3xl mx-auto py-6 px-4 sm:px-6 lg:px-8 mb-16">
-        <h1 class="text-2xl font-bold text-slate-900 mb-6 flex items-center gap-2">
-            <x-icon name="plus" class="w-6 h-6 text-orange-500" />
-            Nouvelle demande d'intervention
-        </h1>
+    <div class="max-w-3xl mx-auto py-6 px-4 sm:px-6 lg:px-8 mb-20">
+        <h1 class="text-2xl font-bold text-slate-900 mb-1">Nouvelle demande d'intervention</h1>
+        <p class="text-sm text-slate-500 mb-6">En cas d'urgence, remplissez rapidement : votre position, le vehicule, la panne, puis envoyez. Vous suivrez ensuite l'intervention depuis votre espace.</p>
 
-        {{-- Localisation --}}
-        <div class="card p-4 mb-6">
-            <div class="flex items-center justify-between mb-3">
-                <h2 class="text-lg font-semibold text-slate-900 flex items-center gap-2">
-                    <x-icon name="map-pin" class="w-5 h-5 text-orange-500" />
-                    Ma position
+        @if($errors->any())
+            <div class="bg-red-50 border border-red-200 text-red-700 rounded-lg p-4 mb-6">
+                @foreach($errors->all() as $error)
+                    <p class="text-sm">{{ $error }}</p>
+                @endforeach
+            </div>
+        @endif
+
+        {{-- 1. Localisation --}}
+        <div class="card p-4 mb-5">
+            <div class="flex items-center justify-between mb-2">
+                <h2 class="font-semibold text-slate-900 flex items-center gap-2">
+                    <span class="inline-flex items-center justify-center w-6 h-6 rounded-full bg-orange-100 text-orange-600 text-xs font-bold">1</span>
+                    Ma position (GPS)
                 </h2>
                 <button type="button" id="locate-btn" class="btn-secondary text-xs px-3 py-2">
                     <x-icon name="refresh" class="w-4 h-4" />
                     Actualiser
                 </button>
             </div>
-
-            <div id="loc-status" class="mb-3 text-sm text-slate-500 flex items-center gap-2">
+            <p id="loc-status" class="mb-3 text-sm text-slate-500 flex items-center gap-2">
                 <span class="w-2 h-2 rounded-full bg-slate-300"></span>
                 Recuperation de votre position GPS...
-            </div>
-
-            <div class="map-shell" style="height: 300px;">
+            </p>
+            <div class="map-shell" style="height: 260px;">
                 <div id="map" style="height: 100%; width: 100%;"></div>
             </div>
-
             <div id="manual-zone" class="mt-4 hidden">
                 <label class="label mb-1">Position manuelle (GPS indisponible)</label>
                 <div class="flex gap-2">
@@ -42,33 +45,20 @@
                 </div>
                 <p class="mt-2 text-xs text-slate-500">Ou deplacez directement le marqueur sur la carte.</p>
             </div>
-
             <div id="used-position" class="mt-3 text-sm text-slate-600 hidden">
                 Position utilisee : <span id="used-position-text" class="font-semibold text-slate-900"></span>
             </div>
             <div id="reverse-geocode" class="mt-1 text-xs text-slate-500"></div>
         </div>
 
-        {{-- Professionnels disponibles --}}
-        <div class="card p-4 mb-6">
-            <h2 class="text-lg font-semibold text-slate-900 flex items-center gap-2 mb-1">
-                <x-icon name="truck" class="w-5 h-5 text-orange-500" />
-                Remorqueurs / Depanneurs disponibles a proximite
+        {{-- 2. Vehicule, panne et contact --}}
+        <div class="card p-5 mb-5">
+            <h2 class="font-semibold text-slate-900 flex items-center gap-2 mb-4">
+                <span class="inline-flex items-center justify-center w-6 h-6 rounded-full bg-orange-100 text-orange-600 text-xs font-bold">2</span>
+                Vehicule, panne et contact
             </h2>
-            <p class="text-xs text-slate-500 mb-3">Tries par distance croissante - le plus proche en premier.</p>
 
-            <div id="pros-empty" class="hidden py-6 text-center text-slate-500">
-                <p>Aucun remorqueur ou depanneur disponible pour le moment.</p>
-                <p class="text-xs mt-1">Vous pouvez tout de meme envoyer votre demande.</p>
-            </div>
-
-            <div id="pros-loading" class="py-6 text-center text-sm text-slate-500">Recherche des remorqueurs et depanneurs...</div>
-
-            <div id="pros-list" class="space-y-2"></div>
-        </div>
-
-        <div class="card p-6">
-            <form method="POST" action="{{ route('client.intervention.store') }}" enctype="multipart/form-data" class="space-y-5" id="intervention-form">
+            <form method="POST" action="{{ route('client.intervention.store') }}" enctype="multipart/form-data" class="space-y-4" id="intervention-form">
                 @csrf
                 <input type="hidden" name="client_lat" id="client_lat">
                 <input type="hidden" name="client_lng" id="client_lng">
@@ -85,77 +75,114 @@
                                 <option value="{{ $vehicle->id }}">{{ $vehicle->brand ?? $vehicle->type }} {{ $vehicle->plate_number ?? '' }}</option>
                             @endforeach
                         </select>
+                        <input type="hidden" id="vehicle_type_hidden" name="vehicle_type_hidden" value="">
                     </div>
                 @endif
 
                 <div>
-                    <label for="vehicle_type" class="label">Type de vehicule</label>
-                    <select id="vehicle_type" name="vehicle_type" required class="input">
-                        <option value="">Selectionnez un type</option>
-                        <option value="voiture">Voiture</option>
-                        <option value="moto">Moto</option>
-                        <option value="camion">Camion</option>
-                        <option value="bus">Bus</option>
-                        <option value="autre">Autre</option>
-                    </select>
+                    <label for="vehicle_type" class="label">Type de vehicule *</label>
+                    @php $expectedVehicleType = old('vehicle_type'); @endphp
+                    <div class="mt-1.5 grid grid-cols-3 gap-2" id="vehicle-type-grid">
+                        @foreach(['voiture' => 'Voiture', 'moto' => 'Moto', 'camion' => 'Camion', 'bus' => 'Bus', 'autre' => 'Autre'] as $value => $label)
+                            <button type="button" data-value="{{ $value }}"
+                                class="vehicle-type-btn px-3 py-2.5 rounded-lg border text-sm font-medium {{ ($expectedVehicleType ?? '') === $value ? 'border-orange-500 bg-orange-50 text-orange-700' : 'border-slate-300 bg-white text-slate-700 hover:border-orange-400' }}">
+                                {{ $label }}
+                            </button>
+                        @endforeach
+                    </div>
+                    <input type="hidden" name="vehicle_type" id="vehicle_type" value="{{ old('vehicle_type') }}">
                     @error('vehicle_type')
                         <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
                     @enderror
                 </div>
 
                 <div>
-                    <label for="service_type" class="label">Type de service</label>
-                    <select id="service_type" name="service_type" required class="input">
-                        <option value="">Selectionnez un service</option>
-                        @foreach($services as $service)
-                            <option value="{{ $service->name }}">{{ $service->name }}</option>
-                        @endforeach
-                    </select>
+                    <label for="service_type" class="label">Type d'assistance *</label>
+                    <div class="mt-1.5 grid grid-cols-2 gap-2">
+                        <button type="button" data-service="remorquage" id="svc-remorquage"
+                            class="service-btn px-3 py-3 rounded-lg border text-sm font-semibold {{ old('service_type') === 'remorquage' ? 'border-orange-500 bg-orange-50 text-orange-700' : 'border-slate-300 bg-white text-slate-700 hover:border-orange-400' }}">
+                            <span class="block text-base">Remorquage</span>
+                            <span class="block text-xs text-slate-400 font-normal mt-0.5">Le vehicule est transporte a une destination</span>
+                        </button>
+                        <button type="button" data-service="depannage" id="svc-depannage"
+                            class="service-btn px-3 py-3 rounded-lg border text-sm font-semibold {{ old('service_type') === 'depannage' ? 'border-orange-500 bg-orange-50 text-orange-700' : 'border-slate-300 bg-white text-slate-700 hover:border-orange-400' }}">
+                            <span class="block text-base">Depannage sur place</span>
+                            <span class="block text-xs text-slate-400 font-normal mt-0.5">Reparation directe (batterie, crevaison...)</span>
+                        </button>
+                    </div>
+                    <input type="hidden" name="service_type" id="service_type" value="{{ old('service_type') }}">
                     @error('service_type')
                         <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
                     @enderror
                 </div>
 
+                {{-- 3. Professionnels proches --}}
+                <div class="card p-4">
+                    <h2 class="font-semibold text-slate-900 flex items-center gap-2 mb-1">
+                        <span class="inline-flex items-center justify-center w-6 h-6 rounded-full bg-orange-100 text-orange-600 text-xs font-bold">3</span>
+                        Remorqueurs / Depanneurs proches
+                    </h2>
+                    <p class="text-xs text-slate-500 mb-3">Tries par distance. Touchez une carte pour la selectionner (optionnel).</p>
+
+                    <div id="pros-empty" class="hidden py-6 text-center text-slate-500">
+                        <p>Aucun remorqueur ou depanneur disponible pour le moment.</p>
+                        <p class="text-xs mt-1">Vous pouvez tout de meme envoyer votre demande.</p>
+                    </div>
+                    <div id="pros-loading" class="py-6 text-center text-sm text-slate-500">Recherche des professionnels a proximite...</div>
+                    <div id="pros-list" class="space-y-2"></div>
+                </div>
+
                 <div>
-                    <label for="destination" class="label">Destination</label>
+                    <label for="destination" class="label">Destination (si remorquage) *</label>
                     <input type="text" id="destination" name="destination" value="{{ old('destination') }}" required class="input" placeholder="Ou doit etre transporte le vehicule ?">
                     @error('destination')
                         <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
                     @enderror
                     <div id="destinations-wrap" class="hidden mt-2">
-                        <p class="text-xs font-medium text-slate-500 mb-1.5">Destinations suggerees (proches du lieu de la panne)</p>
+                        <p class="text-xs font-medium text-slate-500 mb-1.5">Suggestions</p>
                         <div id="destinations-list" class="flex flex-wrap gap-2"></div>
                     </div>
                 </div>
 
                 <div>
                     <label for="description" class="label">Description de la panne</label>
-                    <textarea id="description" name="description" rows="3" class="input" placeholder="Decrivez brievement la panne">{{ old('description') }}</textarea>
-                    @error('description')
-                        <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
-                    @enderror
+                    <textarea id="description" name="description" rows="3" class="input" placeholder="Decrivez brievement ce qui s'est passe">{{ old('description') }}</textarea>
                 </div>
 
                 <div>
-                    <label class="label mb-1">Photo de la panne</label>
+                    <label class="label mb-1">Photo de la panne (optionnel)</label>
                     <input type="file" id="photo" name="photo" accept="image/*" capture="environment"
                         class="mt-1 block w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-orange-50 file:text-orange-700 hover:file:bg-orange-100">
-                    <p class="mt-1 text-xs text-slate-500">La camera du telephone s'ouvrira directement sur certains appareils.</p>
+                    <p class="mt-1 text-xs text-slate-500">La camera s'ouvrira directement sur certains appareils.</p>
                 </div>
-
                 <div id="photo-preview" class="hidden">
                     <img id="photo-preview-img" src="" alt="Apercu de la photo" class="w-40 h-40 object-cover rounded-lg border border-slate-200">
                 </div>
 
-                <div id="location-required-warning" class="hidden text-sm text-red-600 flex items-center gap-2">
-                    <x-icon name="alert-triangle" class="w-4 h-4" />
-                    Veuillez definir votre position (GPS ou manuelle) avant de demander une intervention.
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-2">
+                    <div>
+                        <label for="client_phone" class="label">Telephone du conducteur</label>
+                        <input type="tel" id="client_phone" name="client_phone" value="{{ old('client_phone') }}"
+                               class="input" placeholder="Ex : 77 123 45 67" inputmode="tel">
+                        <p class="text-xs text-slate-400 mt-1">Le professionnel vous appellera a ce numero.</p>
+                    </div>
+                    <div>
+                        <label for="client_name" class="label">Votre prenom (optionnel)</label>
+                        <input type="text" id="client_name" name="client_name" value="{{ old('client_name') }}" class="input" placeholder="Ex : Awa">
+                    </div>
                 </div>
 
-                <button type="submit" id="submit-btn" class="btn-primary w-full py-3.5 text-base">
-                    <x-icon name="zap" class="w-5 h-5" />
-                    Demander une intervention
+                <div id="location-required-warning" class="hidden text-sm text-red-600 flex items-center gap-2">
+                    <x-icon name="alert-triangle" class="w-4 h-4 flex-shrink-0" />
+                    Veuillez definir votre position (GPS ou manuelle) avant d'envoyer votre demande.
+                </div>
+
+                <button type="submit" id="submit-btn"
+                        class="w-full inline-flex items-center justify-center gap-2 py-4 rounded-xl text-base font-bold text-white bg-orange-600 hover:bg-orange-700 active:bg-orange-800 shadow-lg shadow-orange-600/20 transition-colors">
+                    <x-icon name="zap" class="w-6 h-6" />
+                    Envoyer la demande
                 </button>
+                <p class="text-center text-xs text-slate-400">Apres l'envoi, vous pourrez suivre l'intervention depuis votre espace.</p>
             </form>
         </div>
     </div>
@@ -170,13 +197,10 @@
                 const locStatus = document.getElementById('loc-status');
                 const usedPosBox = document.getElementById('used-position');
                 const usedPosText = document.getElementById('used-position-text');
-                const reverseGeocode = document.getElementById('reverse-geocode');
                 const manualZone = document.getElementById('manual-zone');
                 const warnBox = document.getElementById('location-required-warning');
-                const serviceSelect = document.getElementById('service_type');
 
                 const DEFAULT_POS = { lat: 14.7167, lng: -17.4677 };
-
                 window.clientPosition = null;
                 window.selectedProId = null;
                 window.prosData = [];
@@ -206,14 +230,8 @@
                     return km < 1 ? Math.round(km * 1000) + ' m' : km.toFixed(1) + ' km';
                 }
 
-                function computeDistance(lat1, lng1, lat2, lng2) {
-                    const R = 6371;
-                    const dLat = (lat2 - lat1) * Math.PI / 180;
-                    const dLng = (lng2 - lng1) * Math.PI / 180;
-                    const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-                        Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
-                        Math.sin(dLng / 2) * Math.sin(dLng / 2);
-                    return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+                function getServiceType() {
+                    return document.getElementById('service_type').value.trim();
                 }
 
                 function setPosition(lat, lng, options) {
@@ -234,13 +252,11 @@
                     } else {
                         clientMarker.setLatLng([lat, lng]);
                     }
-
                     map.setView([lat, lng], Math.max(map.getZoom(), 12));
 
                     if (options.fetch !== false) {
                         fetchNearby();
                     }
-
                     if (navigator.geolocation) {
                         fetch('https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=' + lat + '&lon=' + lng + '&countrycodes=sn', {
                             headers: { 'User-Agent': 'SamaRemorque/1.0' }
@@ -248,7 +264,9 @@
                             const addr = data.display_name || (data.address && (data.address.road + (data.address.city ? ', ' + data.address.city : ''))) || '';
                             if (addr) {
                                 addressInput.value = addr;
-                                reverseGeocode.textContent = addr;
+                                const reverseGeocode = document.getElementById('reverse-geocode');
+                                if (reverseGeocode) reverseGeocode.textContent = addr;
+                                document.getElementById('used-position-text').textContent = addr;
                             }
                         }).catch(() => {});
                     }
@@ -271,7 +289,7 @@
                         radius: 100,
                         freshness: 720,
                     });
-                    const st = serviceSelect ? serviceSelect.value.trim() : '';
+                    const st = getServiceType();
                     if (st) params.set('service_type', st);
 
                     fetch('{{ route('client.intervention.nearby') }}?' + params.toString(), {
@@ -296,15 +314,11 @@
                     const prosEmpty = document.getElementById('pros-empty');
                     const sorted = pros.slice().sort((a, b) => a.distance_km - b.distance_km);
                     prosList.innerHTML = '';
-                    window.sortedPros = sorted;
-
                     if (!sorted.length) {
                         prosEmpty.classList.remove('hidden');
                         return;
                     }
-
                     prosEmpty.classList.add('hidden');
-
                     sorted.forEach(pro => renderPro(pro));
                 }
 
@@ -324,6 +338,8 @@
 
                     const wa = (pro.phone || '').replace(/[^0-9]/g, '');
                     const waLink = wa ? 'https://wa.me/221' + wa.replace(/^221/, '') : '#';
+                    const phoneAvailable = (pro.phone || '').trim().length > 0;
+                    const btnDisabled = phoneAvailable ? '' : ' pointer-events-none opacity-50';
 
                     card.innerHTML = [
                         avatarHtml,
@@ -340,8 +356,8 @@
                         '  </div>',
                         '</div>',
                         '<div class="flex flex-col gap-1 flex-shrink-0" onclick="event.stopPropagation()">',
-                        '  <a href="tel:' + (pro.phone || '') + '" class="btn-secondary px-2.5 py-1.5 text-xs items-center">Appeler</a>',
-                        '  <a href="' + waLink + '" target="_blank" rel="noopener" class="px-2.5 py-1.5 text-xs font-semibold rounded-lg text-white bg-emerald-600 hover:bg-emerald-700 inline-flex items-center justify-center gap-1">WhatsApp</a>',
+                        '  <a href="tel:' + (pro.phone || '') + '" class="btn-secondary px-2.5 py-1.5 text-xs items-center' + btnDisabled + '">Appeler</a>',
+                        '  <a href="' + waLink + '" target="_blank" rel="noopener" class="px-2.5 py-1.5 text-xs font-semibold rounded-lg text-white bg-emerald-600 hover:bg-emerald-700 inline-flex items-center justify-center gap-1' + btnDisabled + '">WhatsApp</a>',
                         '</div>'
                     ].join('');
 
@@ -361,20 +377,17 @@
 
                     if (nearbyDests && nearbyDests.length) {
                         nearbyDests.forEach(function (d) {
-                            const addr = d.address;
-                            if (addr && !seen.has(addr)) {
-                                seen.add(addr);
-                                dests.push(addr);
+                            if (d.address && !seen.has(d.address)) {
+                                seen.add(d.address);
+                                dests.push(d.address);
                             }
                         });
                     }
-
                     if (pros && pros.length) {
                         pros.forEach(function (pro) {
-                            const d = pro.suggested_destination;
-                            if (d && !seen.has(d)) {
-                                seen.add(d);
-                                dests.push(d);
+                            if (pro.suggested_destination && !seen.has(pro.suggested_destination)) {
+                                seen.add(pro.suggested_destination);
+                                dests.push(pro.suggested_destination);
                             }
                         });
                     }
@@ -413,24 +426,17 @@
                     window.selectedProId = pro.id;
                     document.getElementById('selected_professional_id').value = pro.id;
 
-                    const cards = document.querySelectorAll('.pro-card');
-                    cards.forEach(c => {
+                    document.querySelectorAll('.pro-card').forEach(c => {
                         c.classList.toggle('selected', String(c.dataset.proId) === String(pro.id));
                     });
+
                     proMarkers.clearLayers();
                     window.prosData.forEach(p => {
                         const marker = L.marker([p.lat, p.lng], {
                             icon: p.id === pro.id ? proSelectedIcon : proIcon
                         }).addTo(proMarkers);
-
-                        marker.bindPopup(
-                            '<strong>' + p.full_name + '</strong><br>' +
-                            '<span class="text-xs">' + formatDistance(p.distance_km) + '</span>'
-                        );
-
-                        marker.on('click', function () {
-                            selectPro(p, true);
-                        });
+                        marker.bindPopup('<strong>' + p.full_name + '</strong><br><span class="text-xs">' + formatDistance(p.distance_km) + '</span>');
+                        marker.on('click', function () { selectPro(p, true); });
                     });
 
                     if (window.clientPosition) {
@@ -438,11 +444,9 @@
                             color: '#f97316', dashArray: '5,5', weight: 2, opacity: 0.7
                         }).addTo(map);
                     }
-
                     if (pro.suggested_destination) {
                         document.getElementById('destination').value = pro.suggested_destination;
                     }
-
                     if (!fromMap) {
                         map.flyTo([pro.lat, pro.lng], Math.max(map.getZoom(), 13));
                     }
@@ -454,15 +458,12 @@
                         enableManual();
                         return;
                     }
-
                     setStatus('Recuperation de votre position GPS...', 'orange');
                     navigator.geolocation.getCurrentPosition(function (position) {
-                        const lat = position.coords.latitude;
-                        const lng = position.coords.longitude;
                         setStatus('Position GPS obtenue.', 'emerald');
-                        setPosition(lat, lng, { fetch: true });
+                        setPosition(position.coords.latitude, position.coords.longitude, { fetch: true });
                         manualZone.classList.add('hidden');
-                    }, function (err) {
+                    }, function () {
                         setStatus('GPS indisponible. Saisissez votre position manuellement.', 'red');
                         enableManual();
                         if (window.clientPosition) {
@@ -476,7 +477,6 @@
                 }
 
                 document.getElementById('locate-btn').addEventListener('click', locate);
-
                 document.getElementById('manual-apply').addEventListener('click', function () {
                     const q = document.getElementById('manual-address').value.trim();
                     if (!q) return;
@@ -486,11 +486,11 @@
                         headers: { 'User-Agent': 'SamaRemorque/1.0' }
                     }).then(r => r.json()).then(results => {
                         if (results && results.length) {
-                            const lat = parseFloat(results[0].lat);
-                            const lng = parseFloat(results[0].lon);
-                            setPosition(lat, lng, { fetch: true });
+                            setPosition(parseFloat(results[0].lat), parseFloat(results[0].lon), { fetch: true });
                             addressInput.value = q;
-                            reverseGeocode.textContent = q;
+                            const reverseGeocode = document.getElementById('reverse-geocode');
+                            if (reverseGeocode) reverseGeocode.textContent = q;
+                            document.getElementById('used-position-text').textContent = q;
                             manualZone.classList.add('hidden');
                             setStatus('Position manuelle definie.', 'emerald');
                         } else {
@@ -498,16 +498,29 @@
                             window.clientPosition = window.clientPosition || { lat: DEFAULT_POS.lat, lng: DEFAULT_POS.lng };
                             setPosition(window.clientPosition.lat, window.clientPosition.lng, { fetch: true });
                         }
-                    }).catch(() => {
-                        setStatus('Geolocalisation impossible. Deplacez le marqueur.', 'red');
+                    }).catch(() => setStatus('Geolocalisation impossible. Deplacez le marqueur.', 'red'));
+                });
+
+                document.querySelectorAll('.vehicle-type-btn').forEach(btn => {
+                    btn.addEventListener('click', function () {
+                        document.querySelectorAll('.vehicle-type-btn').forEach(b => {
+                            b.className = 'vehicle-type-btn px-3 py-2.5 rounded-lg border text-sm font-medium border-slate-300 bg-white text-slate-700 hover:border-orange-400';
+                        });
+                        btn.className = 'vehicle-type-btn px-3 py-2.5 rounded-lg border text-sm font-medium border-orange-500 bg-orange-50 text-orange-700';
+                        document.getElementById('vehicle_type').value = btn.dataset.value;
                     });
                 });
 
-                if (serviceSelect) {
-                    serviceSelect.addEventListener('change', function () {
+                document.querySelectorAll('.service-btn').forEach(btn => {
+                    btn.addEventListener('click', function () {
+                        document.querySelectorAll('.service-btn').forEach(b => {
+                            b.className = 'service-btn px-3 py-3 rounded-lg border text-sm font-semibold border-slate-300 bg-white text-slate-700 hover:border-orange-400';
+                        });
+                        btn.className = 'service-btn px-3 py-3 rounded-lg border text-sm font-semibold border-orange-500 bg-orange-50 text-orange-700';
+                        document.getElementById('service_type').value = btn.dataset.service;
                         if (window.clientPosition) fetchNearby();
                     });
-                }
+                });
 
                 document.getElementById('intervention-form').addEventListener('submit', function (e) {
                     if (!latInput.value || !lngInput.value) {
@@ -521,10 +534,8 @@
                 document.getElementById('photo').addEventListener('change', function (e) {
                     const file = e.target.files[0];
                     if (!file) return;
-                    const preview = document.getElementById('photo-preview');
-                    const img = document.getElementById('photo-preview-img');
-                    img.src = URL.createObjectURL(file);
-                    preview.classList.remove('hidden');
+                    document.getElementById('photo-preview-img').src = URL.createObjectURL(file);
+                    document.getElementById('photo-preview').classList.remove('hidden');
                 });
 
                 locate();

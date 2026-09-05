@@ -59,7 +59,41 @@
         "description": "Service de remorquage et depannage routier au Senegal, remorqueurs et depanneurs disponibles 24/7.",
         "areaServed": "SN",
         "url": "<?php echo e(url('/')); ?>",
-        "priceRange": "$$"
+        "priceRange": "$$",
+        "telephone": "+221774467596",
+        "address": {
+            "@type": "PostalAddress",
+            "addressLocality": "Dakar",
+            "addressCountry": "SN"
+        },
+        "contactPoint": [
+            {
+                "@type": "ContactPoint",
+                "telephone": "+221774467596",
+                "contactType": "developpeur",
+                "availableLanguage": ["fr"]
+            },
+            {
+                "@type": "ContactPoint",
+                "telephone": "+221783088290",
+                "contactType": "remorqueur",
+                "areaServed": "Dakar",
+                "availableLanguage": ["fr"]
+            }
+        ]
+    }
+    </script>
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "WebSite",
+        "name": "SamaRemorque",
+        "url": "<?php echo e(url('/')); ?>",
+        "inLanguage": "fr-SN",
+        "publisher": {
+            "@type": "Organization",
+            "name": "SamaRemorque"
+        }
     }
     </script>
 </head>
@@ -123,11 +157,11 @@
                     SamaRemorque connecte les conducteurs en panne aux remorqueurs et depanneurs disponibles en temps reel. Localisation, tarifs, suivi : tout est simplifie.
                 </p>
                 <div class="mt-8 flex flex-col sm:flex-row gap-3">
-                    <a href="<?php echo e(route('register')); ?>" class="btn-primary text-base px-6 py-3.5">
-                        Demander une intervention
+                    <a href="<?php echo e(route('guest.create')); ?>" class="btn-primary text-base px-6 py-3.5">
+                        Demander une assistance
                     </a>
-                    <a href="#fonctionnement" class="btn-secondary bg-white/10 text-white border-white/20 hover:bg-white/20 text-base px-6 py-3.5">
-                        Decouvrir comment ca marche
+                    <a href="#suivi" class="btn-secondary bg-white/10 text-white border-white/20 hover:bg-white/20 text-base px-6 py-3.5">
+                        Suivre ma demande
                     </a>
                 </div>
                 <div class="mt-10 grid grid-cols-3 gap-6 max-w-md">
@@ -147,6 +181,22 @@
             </div>
         </div>
     </header>
+
+    
+    <section id="suivi" class="py-14 bg-slate-900 text-white border-t border-slate-800">
+        <div class="max-w-3xl mx-auto px-4 sm:px-6 text-center">
+            <h2 class="text-2xl font-bold">Avez-vous deja une demande en cours ?</h2>
+            <p class="mt-2 text-sm text-slate-300">Saisissez votre code de suivi pour voir l'etat de votre intervention et la position du professionnel en temps reel.</p>
+            <form action="#" onsubmit="event.preventDefault(); var c = document.getElementById('tracking-input').value.trim(); if (c) location.href = '/suivi/' + encodeURIComponent(c);" class="mt-6 flex flex-col sm:flex-row gap-3 justify-center">
+                <input type="text" id="tracking-input" placeholder="Ex : SR-AB12CD"
+                       class="input text-center sm:text-left sm:flex-1 max-w-sm mx-auto sm:mx-0 uppercase tracking-widest"
+                       style="color: #0f172a;" autocomplete="off">
+                <button type="submit" class="btn-primary whitespace-nowrap">
+                    Suivre ma demande
+                </button>
+            </form>
+        </div>
+    </section>
 
     
     <section id="fonctionnement" class="py-20 bg-slate-50">
@@ -299,8 +349,8 @@
         <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
             <h2 class="text-3xl font-bold text-slate-900">En panne maintenant ?</h2>
             <p class="mt-3 text-slate-600 text-lg">Ne restez pas bloque sur la route. Trouvez un remorqueur ou depanneur des maintenant.</p>
-            <a href="<?php echo e(route('register')); ?>" class="btn-primary mt-8 text-base px-8 py-3.5">
-                Demander une intervention
+            <a href="<?php echo e(route('guest.create')); ?>" class="btn-primary mt-8 text-base px-8 py-3.5">
+                Demander une assistance maintenant
             </a>
         </div>
     </section>
@@ -308,7 +358,7 @@
     
     <footer id="contact" class="bg-slate-900 text-slate-400 py-12">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
                 <div>
                     <div class="flex items-center gap-2">
                         <span class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-white overflow-hidden">
@@ -317,6 +367,36 @@
                         <h3 class="text-white font-bold text-lg">SamaRemorque</h3>
                     </div>
                     <p class="mt-3 text-sm">Plateforme de remorquage et depannage routier au Senegal.</p>
+                    <h4 class="text-white font-semibold mt-5 mb-2">Contact</h4>
+                    <ul class="space-y-2 text-sm">
+                        <li class="flex items-center gap-2">
+                            <svg class="w-4 h-4 text-orange-400 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+                            <div>
+                                <span class="block text-xs text-slate-500">Developpeur</span>
+                                <a href="tel:+221774467596" class="hover:text-orange-400">77 446 75 96</a>
+                            </div>
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <svg class="w-4 h-4 text-orange-400 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+                            <div>
+                                <span class="block text-xs text-slate-500">Remorqueur - Mor Cisse (Dakar)</span>
+                                <a href="tel:+221783088290" class="hover:text-orange-400">+221 78 308 82 90</a>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-white font-semibold mb-3">Contact WhatsApp</h4>
+                    <div class="space-y-2 text-sm">
+                        <a href="https://wa.me/221774467596" target="_blank" rel="noopener"
+                           class="flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white font-medium px-4 py-2 rounded-lg w-full">
+                            Developpeur
+                        </a>
+                        <a href="https://wa.me/221783088290" target="_blank" rel="noopener"
+                           class="flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white font-medium px-4 py-2 rounded-lg w-full">
+                            Remorqueur (Mor Cisse)
+                        </a>
+                    </div>
                 </div>
                 <div>
                     <h4 class="text-white font-semibold mb-3">Navigation</h4>
@@ -324,6 +404,8 @@
                         <li><a href="#fonctionnement" class="hover:text-orange-400">Comment ca marche</a></li>
                         <li><a href="#avantages" class="hover:text-orange-400">Avantages</a></li>
                         <li><a href="#professionnels" class="hover:text-orange-400">Devenir remorqueur</a></li>
+                        <li><a href="#suivi" class="hover:text-orange-400">Suivre une demande</a></li>
+                        <li><a href="<?php echo e(route('privacy')); ?>" class="hover:text-orange-400">Confidentialite</a></li>
                     </ul>
                 </div>
                 <div>

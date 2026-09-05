@@ -41,7 +41,7 @@
                 <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-sm mb-4">
                     <div class="bg-slate-50 rounded-lg p-3">
                         <p class="text-xs text-slate-500 flex items-center gap-1"><x-icon name="user" class="w-3.5 h-3.5" /> Client</p>
-                        <p class="font-medium text-slate-900">{{ $activeIntervention->client->full_name }}</p>
+                        <p class="font-medium text-slate-900">{{ $activeIntervention->client_name }}</p>
                     </div>
                     <div class="bg-slate-50 rounded-lg p-3">
                         <p class="text-xs text-slate-500 flex items-center gap-1"><x-icon name="map-pin" class="w-3.5 h-3.5" /> Destination</p>
@@ -74,13 +74,13 @@
                                     <p class="text-xs text-slate-400">{{ $demand->created_at->diffForHumans() }}</p>
                                 </div>
                                 <div class="flex gap-2">
-                                    <form method="POST" action="{{ route('depanneur.intervention.accept', $demand) }}">
+                                    <form method="POST" action="{{ route('depanneur.intervention.accept', $demand) }}" onsubmit="var b=this.querySelector('button'); b.disabled = true; b.classList.add('opacity-50');">
                                         @csrf
                                         <button type="submit" class="btn-primary py-1.5 px-3 text-sm">
                                             <x-icon name="check" class="w-4 h-4" /> Accepter
                                         </button>
                                     </form>
-                                    <form method="POST" action="{{ route('depanneur.intervention.reject', $demand) }}" onsubmit="return confirm('Confirmer le refus ?')">
+                                    <form method="POST" action="{{ route('depanneur.intervention.reject', $demand) }}" onsubmit="if(!confirm('Confirmer le refus ?')) return false; var b=this.querySelector('button'); b.disabled = true; b.classList.add('opacity-50');">
                                         @csrf
                                         <input type="hidden" name="reason" value="Refuse par le depanneur">
                                         <button type="submit" class="btn-secondary py-1.5 px-3 text-sm">

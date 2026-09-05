@@ -57,7 +57,9 @@ class DepanneurInterventionController extends Controller
 
     public function accept(Request $request, Intervention $intervention)
     {
-        abort_if($intervention->status !== Intervention::STATUS_AWAITING_PROFESSIONAL, 422);
+        if ($intervention->status !== Intervention::STATUS_AWAITING_PROFESSIONAL) {
+            return back()->with('error', 'Cette demande a deja ete traitee.');
+        }
 
         $updated = Intervention::where('id', $intervention->id)
             ->where('status', Intervention::STATUS_AWAITING_PROFESSIONAL)
@@ -66,7 +68,9 @@ class DepanneurInterventionController extends Controller
                 'status' => 'depanneur_en_route',
             ]);
 
-        abort_if(! $updated, 409, 'Cette intervention a deja ete acceptee.');
+        if (! $updated) {
+            return back()->with('error', 'Cette demande a deja ete acceptee par un autre professionnel.');
+        }
 
         InterventionStatus::create([
             'intervention_id' => $intervention->id,
@@ -83,7 +87,9 @@ class DepanneurInterventionController extends Controller
 
     public function reject(Request $request, Intervention $intervention)
     {
-        abort_if($intervention->status !== Intervention::STATUS_AWAITING_PROFESSIONAL, 422);
+        if ($intervention->status !== Intervention::STATUS_AWAITING_PROFESSIONAL) {
+            return back()->with('error', 'Cette demande a deja ete traitee.');
+        }
 
         ProfessionalRejection::updateOrCreate(
             [
@@ -106,7 +112,7 @@ class DepanneurInterventionController extends Controller
         abort_if($intervention->professional_id !== Auth::id(), 403);
 
         if (in_array($intervention->status, [Intervention::STATUS_COMPLETED, Intervention::STATUS_CANCELLED])) {
-            abort(409, "L'intervention est terminee ou annulee.");
+            return back()->with('error', "Cette intervention est deja terminee ou annulee. Aucun changement necessaire.");
         }
 
         $validated = $request->validate([
@@ -114,7 +120,9 @@ class DepanneurInterventionController extends Controller
             'note' => ['nullable', 'string', 'max:1000'],
         ]);
 
-        abort_if(! $intervention->canTransitionTo($validated['status']), 422, 'Progression de statut invalide.');
+        if (! $intervention->canTransitionTo($validated['status'])) {
+            return back()->with('error', 'Impossible de passer a ce statut (statut actuel : ' . $intervention->status_label . ').');
+        }
 
         $intervention->update(['status' => $validated['status']]);
 
@@ -136,6 +144,10 @@ class DepanneurInterventionController extends Controller
 
     protected function notifyClient(Intervention $intervention, string $body): void
     {
+        if ($intervention->client_id === null) {
+            return;
+        }
+
         Notification::create([
             'user_id' => $intervention->client_id,
             'type' => 'intervention_update',

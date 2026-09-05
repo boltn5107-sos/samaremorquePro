@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Str;
 
 class Intervention extends Model
 {
@@ -54,9 +55,13 @@ class Intervention extends Model
 
     protected $fillable = [
         'client_id',
+        'tracking_code',
+        'client_name',
+        'client_phone',
         'professional_id',
         'target_professional_id',
         'vehicle_id',
+        'vehicle_type',
         'service_type',
         'description',
         'photo',
@@ -104,6 +109,48 @@ class Intervention extends Model
     public function hasBeenRated(): bool
     {
         return $this->rating !== null;
+    }
+
+    public static function findByTrackingCode(string $code): ?Intervention
+    {
+        return self::query()
+            ->with('professional', 'professional.locations', 'statuses', 'vehicle')
+            ->where('tracking_code', $code)
+            ->first();
+    }
+
+    public static function generateTrackingCode(): string
+    {
+        do {
+            $code = 'SR-' . strtoupper(Str::random(6));
+        } while (self::query()->where('tracking_code', $code)->exists());
+
+        return $code;
+    }
+
+    public function getVehicleTypeAttribute(?string $value): ?string
+    {
+        return $value ?: optional($this->vehicle)->type;
+    }
+
+    public function getClientNameAttribute(?string $value): string
+    {
+        return $value ?: optional($this->client)->full_name ?: 'Client sans compte';
+    }
+
+    public function getClientPhoneAttribute(?string $value): ?string
+    {
+        return $value ?: $this->client?->phone;
+    }
+
+    public function getClientPhotoAttribute(?string $value): ?string
+    {
+        return $value ?: $this->client?->photo;
+    }
+
+    public function isGuest(): bool
+    {
+        return $this->client_id === null;
     }
 
     public function client(): BelongsTo
