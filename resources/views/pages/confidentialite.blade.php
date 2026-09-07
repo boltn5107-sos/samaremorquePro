@@ -9,8 +9,8 @@
     <link rel="canonical" href="{{ url()->current() }}">
     <meta name="theme-color" content="#0f172a">
     <link rel="manifest" href="/manifest.json">
-    <link rel="icon" type="image/png" href="{{ asset('favicon.png') }}">
-    <link rel="apple-touch-icon" href="{{ asset('favicon.png') }}">
+    <link rel="icon" type="image/png" href="{{ asset('favicon.jpg') }}">
+    <link rel="apple-touch-icon" href="{{ asset('favicon.jpg') }}">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -23,7 +23,7 @@
             <div class="flex justify-between h-16 items-center">
                 <a href="{{ url('/') }}" class="flex items-center gap-2 text-lg font-bold tracking-tight">
                     <span class="inline-flex items-center justify-center w-9 h-9 rounded-lg bg-white overflow-hidden">
-                        <img src="{{ asset('favicon.png') }}" alt="SamaRemorque" class="w-7 h-7 object-contain">
+                        <img src="{{ asset('favicon.jpg') }}" alt="SamaRemorque" class="w-7 h-7 object-contain">
                     </span>
                     <span>SamaRemorque</span>
                 </a>

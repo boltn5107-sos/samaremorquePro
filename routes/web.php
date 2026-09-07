@@ -62,6 +62,12 @@ Route::get('/', function () {
 Route::get('/sitemap.xml', [SeoController::class, 'sitemap'])->name('sitemap');
 Route::get('/robots.txt', [SeoController::class, 'robots'])->name('robots');
 
+Route::view('/depannage-dakar', 'pages.depannage-dakar')->name('seo.depannage-dakar');
+Route::view('/remorquage-dakar', 'pages.remorquage-dakar')->name('seo.remorquage-dakar');
+Route::view('/depannage-urgence-dakar', 'pages.depannage-urgence-dakar')->name('seo.depannage-urgence-dakar');
+Route::view('/remorquage-senegal', 'pages.remorquage-senegal')->name('seo.remorquage-senegal');
+Route::view('/depanneur-dakar', 'pages.depanneur-dakar')->name('seo.depanneur-dakar');
+
 // Public : demande sans compte
 Route::get('/demande', [GuestInterventionController::class, 'create'])->name('guest.create');
 Route::post('/demande', [GuestInterventionController::class, 'store'])->name('guest.store');

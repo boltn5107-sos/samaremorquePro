@@ -1,9 +1,12 @@
-const CACHE_NAME = 'senegal-towing-v2';
+const CACHE_NAME = 'senegal-towing-v3';
 const STATIC_ASSETS = [
   '/manifest.json',
   '/favicon.svg',
   '/icon-192.png',
   '/icon-512.png',
+  '/icon-192-maskable.png',
+  '/icon-512-maskable.png',
+  '/apple-touch-icon.png',
   '/offline.html',
 ];
 

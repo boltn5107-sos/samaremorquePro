@@ -6,34 +6,36 @@
     <title><?php echo $__env->yieldContent('title', config('app.name')); ?> - <?php echo e(config('app.name')); ?></title>
 
     
-    
-    
-    <meta name="description" content="<?php echo $__env->yieldContent('meta_description', 'SamaRemorque - Plateforme de remorquage et depannage routier au Senegal. Trouvez rapidement un remorqueur ou un depanneur pres de vous.'); ?>">
-    <meta name="keywords" content="remorquage, depannage, remorqueur, depanneur, panne, vehicule, Senegal, Dakar, assistance routiere, remorque voiture">
+    <meta name="description" content="<?php echo $__env->yieldContent('meta_description', 'SamaRemorque - Plateforme de remorquage et depannage routier au Senegal. Trouvez rapidement un remorqueur ou un depanneur pres de vous a Dakar et partout au Senegal.'); ?>">
+    <meta name="keywords" content="<?php echo $__env->yieldContent('meta_keywords', 'remorquage Dakar, depannage routier Senegal, remorqueur Dakar, depanneur Senegal, assistance routiere 24/7, remorque voiture, depannage voiture, remorquage pas cher, depannage urgent, Dakar, Pikine, Rufisque, Saint-Louis, Thiès'); ?>">
     <meta name="author" content="SamaRemorque">
-    <meta name="robots" content="index, follow">
-    <link rel="canonical" href="<?php echo e(url()->current()); ?>">
+    <meta name="robots" content="<?php echo $__env->yieldContent('robots', 'index, follow'); ?>">
+    <meta name="geo.region" content="SN">
+    <meta name="geo.placename" content="Dakar">
+    <link rel="canonical" href="<?php echo $__env->yieldContent('canonical', url()->current()); ?>">
 
     
     <meta property="og:type" content="website">
     <meta property="og:site_name" content="<?php echo e(config('app.name')); ?>">
     <meta property="og:title" content="<?php echo $__env->yieldContent('title', config('app.name')); ?>">
     <meta property="og:description" content="<?php echo $__env->yieldContent('meta_description', 'Service de remorquage et depannage routier au Senegal. Trouvez un remorqueur ou depanneur proche de vous.'); ?>">
-    <meta property="og:url" content="<?php echo e(url()->current()); ?>">
-    <meta property="og:image" content="<?php echo $__env->yieldContent('og_image', asset('favicon.png')); ?>">
+    <meta property="og:url" content="<?php echo $__env->yieldContent('canonical', url()->current()); ?>">
+    <meta property="og:image" content="<?php echo $__env->yieldContent('og_image', asset('favicon.jpg')); ?>">
     <meta property="og:locale" content="fr_SN">
 
     
-    <meta name="twitter:card" content="summary">
+    <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="<?php echo $__env->yieldContent('title', config('app.name')); ?>">
     <meta name="twitter:description" content="<?php echo $__env->yieldContent('meta_description', 'Service de remorquage et depannage routier au Senegal.'); ?>">
     <meta name="twitter:image" content="<?php echo $__env->yieldContent('og_image', asset('favicon.png')); ?>">
 
     
+
+    
     <meta name="theme-color" content="#0f172a">
     <link rel="manifest" href="/manifest.json">
     <link rel="icon" type="image/png" href="/favicon.png">
-    <link rel="apple-touch-icon" href="/favicon.png">
+    <link rel="apple-touch-icon" href="/favicon.jpg">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -54,7 +56,15 @@
     "@type": "PostalAddress",
     "addressLocality": "Dakar",
     "addressCountry": "SN"
-  }
+  },
+  "openingHours": "Mo-Su 00:00-23:59",
+  "areaServed": [
+    "Dakar",
+    "Pikine",
+    "Rufisque",
+    "Saint-Louis",
+    "Thiès"
+  ]
 }
 </script>
 <meta name="google-site-verification" content="5RZr_MjxvRBL_yoqOzX9gERC8ey1btQ61t2Og1WhVKY" />

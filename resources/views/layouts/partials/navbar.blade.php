@@ -4,7 +4,7 @@
             <div class="flex items-center gap-3">
                <a href="{{ route('home') }}" class="flex items-center gap-2 text-lg font-bold tracking-tight">
     <span class="inline-flex items-center justify-center w-9 h-9 rounded-lg bg-white overflow-hidden">
-        <img src="{{ asset('favicon.png') }}" alt="{{ config('app.name') }}" class="w-7 h-7 object-contain">
+        <img src="{{ asset('favicon.jpg') }}" alt="{{ config('app.name') }}" class="w-7 h-7 object-contain">
     </span>
     <span>{{ config('app.name') }}</span>
 </a>

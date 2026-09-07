@@ -4,7 +4,7 @@
             <div class="flex items-center gap-3">
                <a href="<?php echo e(route('home')); ?>" class="flex items-center gap-2 text-lg font-bold tracking-tight">
     <span class="inline-flex items-center justify-center w-9 h-9 rounded-lg bg-white overflow-hidden">
-        <img src="<?php echo e(asset('favicon.png')); ?>" alt="<?php echo e(config('app.name')); ?>" class="w-7 h-7 object-contain">
+        <img src="<?php echo e(asset('favicon.jpg')); ?>" alt="<?php echo e(config('app.name')); ?>" class="w-7 h-7 object-contain">
     </span>
     <span><?php echo e(config('app.name')); ?></span>
 </a>

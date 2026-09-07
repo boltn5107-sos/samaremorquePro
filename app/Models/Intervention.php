@@ -188,9 +188,9 @@ class Intervention extends Model
         return $this->hasMany(Location::class);
     }
 
-    public function notifications(): HasMany
+    public function notifications()
     {
-        return $this->hasMany(Notification::class);
+        return $this->morphMany(Notification::class, 'notifiable');
     }
 
     public function rejections(): HasMany
@@ -271,7 +271,7 @@ class Intervention extends Model
             ->groupBy('professional_id')
             ->get();
 
-        return $rows->mapWithKeys(fn ($row) => [
+        return $rows->mapWithKeys(fn($row) => [
             (int) $row->professional_id => [
                 'average' => round((float) $row->avg_rating, 1),
                 'count' => (int) $row->total_ratings,

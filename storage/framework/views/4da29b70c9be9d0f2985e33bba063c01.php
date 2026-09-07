@@ -8,8 +8,8 @@
     <meta name="robots" content="index, follow">
     <meta name="theme-color" content="#0f172a">
     <link rel="manifest" href="/manifest.json">
-    <link rel="icon" type="image/png" href="/favicon.png">
-    <link rel="apple-touch-icon" href="/favicon.png">
+    <link rel="icon" type="image/png" href="/favicon.jpg">
+    <link rel="apple-touch-icon" href="/favicon.jpg">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" rel="stylesheet">
     <?php echo app('Illuminate\Foundation\Vite')(['resources/css/app.css', 'resources/js/app.js']); ?>
@@ -29,7 +29,7 @@
         <div class="max-w-3xl mx-auto px-4 py-3 flex items-center justify-between">
             <a href="<?php echo e(url('/')); ?>" class="flex items-center gap-2 text-lg font-bold tracking-tight">
                 <span class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-white overflow-hidden">
-                    <img src="<?php echo e(asset('favicon.png')); ?>" alt="SamaRemorque" class="w-6 h-6 object-contain">
+                    <img src="<?php echo e(asset('favicon.jpg')); ?>" alt="SamaRemorque" class="w-6 h-6 object-contain">
                 </span>
                 <span>SamaRemorque</span>
             </a>
