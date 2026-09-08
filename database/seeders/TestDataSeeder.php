@@ -259,13 +259,17 @@ class TestDataSeeder extends Seeder
         $karim = User::where('email', 'karim@senegaltowing.sn')->first();
         $fatou = User::where('email', 'fatou@senegaltowing.sn')->first();
 
+        if (! $awa || ! $moussa || ! $clientSeed || ! $remorqueurSeed || ! $depanneurSeed || ! $karim || ! $fatou) {
+            return;
+        }
+
         $awaVehicle = Vehicle::where('user_id', $awa->id)->first();
         $moussaVehicle = Vehicle::where('user_id', $moussa->id)->first();
         $seedVehicle = Vehicle::where('user_id', $clientSeed->id)->first();
 
-        $awaVehicleId = $awaVehicle->id ?? null;
-        $moussaVehicleId = $moussaVehicle->id ?? null;
-        $seedVehicleId = $seedVehicle->id ?? null;
+        $awaVehicleId = optional($awaVehicle)->id;
+        $moussaVehicleId = optional($moussaVehicle)->id;
+        $seedVehicleId = optional($seedVehicle)->id;
 
         $specs = [
             [
