@@ -26,12 +26,46 @@ class TestDataSeeder extends Seeder
         DB::transaction(function () {
             $this->services = Service::pluck('id', 'name')->all();
 
+            $this->cleanStaleSeedData();
+
             $this->seedClients();
             $this->seedProfessionals();
             $this->seedDepanneurServices();
             $this->seedInterventions();
             $this->seedLocations();
         });
+    }
+
+    protected function cleanStaleSeedData(): void
+    {
+        $demoEmails = [
+            'awa@senegaltowing.sn',
+            'moussa@senegaltowing.sn',
+            'karim@senegaltowing.sn',
+            'ibrahima@senegaltowing.sn',
+            'mamadou@senegaltowing.sn',
+            'fatou@senegaltowing.sn',
+            'amadou@senegaltowing.sn',
+            'nene@senegaltowing.sn',
+        ];
+
+        $userIds = User::whereIn('email', $demoEmails)->pluck('id')->all();
+
+        if (! empty($userIds)) {
+            InterventionStatus::whereIn('intervention_id', function ($query) use ($userIds) {
+                $query->select('id')->from('interventions')->whereIn('client_id', $userIds);
+            })->delete();
+
+            Intervention::whereIn('client_id', $userIds)->delete();
+            Notification::whereIn('user_id', $userIds)->delete();
+            Location::whereIn('user_id', $userIds)->delete();
+            Remorque::whereIn('user_id', $userIds)->delete();
+            Vehicle::whereIn('user_id', $userIds)->delete();
+            Client::whereIn('user_id', $userIds)->delete();
+            Remorqueur::whereIn('user_id', $userIds)->delete();
+            Depanneur::whereIn('user_id', $userIds)->delete();
+            User::whereIn('id', $userIds)->delete();
+        }
     }
 
     protected function makeUser(array $attrs): User

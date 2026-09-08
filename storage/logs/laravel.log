@@ -9544,3 +9544,77 @@ Did you mean one of these?
 #67 C:/xampp/htdocs/samaRemorque/senegal-towing/vendor/laravel/framework/src/Illuminate/Foundation/resources/server.php(23): require_once('C://xampp//htdocs...')
 #68 {main}
 "} 
+[2026-09-08 11:37:20] local.ERROR: Command "tinker" is not defined. {"exception":"[object] (Symfony\\Component\\Console\\Exception\\CommandNotFoundException(code: 0): Command \"tinker\" is not defined. at C:/xampp/htdocs/samaRemorque/senegal-towing/vendor/symfony/console/Application.php:759)
+[stacktrace]
+#0 C:/xampp/htdocs/samaRemorque/senegal-towing/vendor/symfony/console/Application.php(298): Symfony/Component/Console/Application->find('tinker')
+#1 C:/xampp/htdocs/samaRemorque/senegal-towing/vendor/symfony/console/Application.php(195): Symfony/Component/Console/Application->doRun(Object(Symfony/Component/Console/Input/ArgvInput), Object(Symfony/Component/Console/Output/ConsoleOutput))
+#2 C:/xampp/htdocs/samaRemorque/senegal-towing/vendor/laravel/framework/src/Illuminate/Foundation/Console/Kernel.php(198): Symfony/Component/Console/Application->run(Object(Symfony/Component/Console/Input/ArgvInput), Object(Symfony/Component/Console/Output/ConsoleOutput))
+#3 C:/xampp/htdocs/samaRemorque/senegal-towing/artisan(11): Illuminate/Foundation/Console/Kernel->handle(Object(Symfony/Component/Console/Input/ArgvInput), Object(Symfony/Component/Console/Output/ConsoleOutput))
+#4 {main}
+"} 
+[2026-09-08 11:38:56] local.ERROR: The "intl" PHP extension is required to use the [format] method. {"exception":"[object] (RuntimeException(code: 0): The \"intl\" PHP extension is required to use the [format] method. at C:/xampp/htdocs/samaRemorque/senegal-towing/vendor/laravel/framework/src/Illuminate/Support/Number.php:385)
+[stacktrace]
+#0 C:/xampp/htdocs/samaRemorque/senegal-towing/vendor/laravel/framework/src/Illuminate/Support/Number.php(38): Illuminate/Support/Number::ensureIntlExtensionIsInstalled()
+#1 C:/xampp/htdocs/samaRemorque/senegal-towing/vendor/laravel/framework/src/Illuminate/Support/Number.php(173): Illuminate/Support/Number::format(80, 2, NULL)
+#2 C:/xampp/htdocs/samaRemorque/senegal-towing/vendor/laravel/framework/src/Illuminate/Database/Console/TableCommand.php(212): Illuminate/Support/Number::fileSize(80, 2)
+#3 C:/xampp/htdocs/samaRemorque/senegal-towing/vendor/laravel/framework/src/Illuminate/Database/Console/TableCommand.php(180): Illuminate/Database/Console/TableCommand->displayForCli(Array)
+#4 C:/xampp/htdocs/samaRemorque/senegal-towing/vendor/laravel/framework/src/Illuminate/Database/Console/TableCommand.php(81): Illuminate/Database/Console/TableCommand->display(Array)
+#5 C:/xampp/htdocs/samaRemorque/senegal-towing/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(36): Illuminate/Database/Console/TableCommand->handle(Object(Illuminate/Database/DatabaseManager))
+#6 C:/xampp/htdocs/samaRemorque/senegal-towing/vendor/laravel/framework/src/Illuminate/Container/Util.php(43): Illuminate/Container/BoundMethod::Illuminate/Container/{closure}()
+#7 C:/xampp/htdocs/samaRemorque/senegal-towing/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(95): Illuminate/Container/Util::unwrapIfClosure(Object(Closure))
+#8 C:/xampp/htdocs/samaRemorque/senegal-towing/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(35): Illuminate/Container/BoundMethod::callBoundMethod(Object(Illuminate/Foundation/Application), Array, Object(Closure))
+#9 C:/xampp/htdocs/samaRemorque/senegal-towing/vendor/laravel/framework/src/Illuminate/Container/Container.php(696): Illuminate/Container/BoundMethod::call(Object(Illuminate/Foundation/Application), Array, Array, NULL)
+#10 C:/xampp/htdocs/samaRemorque/senegal-towing/vendor/laravel/framework/src/Illuminate/Console/Command.php(213): Illuminate/Container/Container->call(Array)
+#11 C:/xampp/htdocs/samaRemorque/senegal-towing/vendor/symfony/console/Command/Command.php(341): Illuminate/Console/Command->execute(Object(Symfony/Component/Console/Input/ArgvInput), Object(Illuminate/Console/OutputStyle))
+#12 C:/xampp/htdocs/samaRemorque/senegal-towing/vendor/laravel/framework/src/Illuminate/Console/Command.php(182): Symfony/Component/Console/Command/Command->run(Object(Symfony/Component/Console/Input/ArgvInput), Object(Illuminate/Console/OutputStyle))
+#13 C:/xampp/htdocs/samaRemorque/senegal-towing/vendor/symfony/console/Application.php(1117): Illuminate/Console/Command->run(Object(Symfony/Component/Console/Input/ArgvInput), Object(Symfony/Component/Console/Output/ConsoleOutput))
+#14 C:/xampp/htdocs/samaRemorque/senegal-towing/vendor/symfony/console/Application.php(356): Symfony/Component/Console/Application->doRunCommand(Object(Illuminate/Database/Console/TableCommand), Object(Symfony/Component/Console/Input/ArgvInput), Object(Symfony/Component/Console/Output/ConsoleOutput))
+#15 C:/xampp/htdocs/samaRemorque/senegal-towing/vendor/symfony/console/Application.php(195): Symfony/Component/Console/Application->doRun(Object(Symfony/Component/Console/Input/ArgvInput), Object(Symfony/Component/Console/Output/ConsoleOutput))
+#16 C:/xampp/htdocs/samaRemorque/senegal-towing/vendor/laravel/framework/src/Illuminate/Foundation/Console/Kernel.php(198): Symfony/Component/Console/Application->run(Object(Symfony/Component/Console/Input/ArgvInput), Object(Symfony/Component/Console/Output/ConsoleOutput))
+#17 C:/xampp/htdocs/samaRemorque/senegal-towing/artisan(11): Illuminate/Foundation/Console/Kernel->handle(Object(Symfony/Component/Console/Input/ArgvInput), Object(Symfony/Component/Console/Output/ConsoleOutput))
+#18 {main}
+"} 
+[2026-09-08 11:38:56] local.ERROR: The "intl" PHP extension is required to use the [format] method. {"exception":"[object] (RuntimeException(code: 0): The \"intl\" PHP extension is required to use the [format] method. at C:/xampp/htdocs/samaRemorque/senegal-towing/vendor/laravel/framework/src/Illuminate/Support/Number.php:385)
+[stacktrace]
+#0 C:/xampp/htdocs/samaRemorque/senegal-towing/vendor/laravel/framework/src/Illuminate/Support/Number.php(38): Illuminate/Support/Number::ensureIntlExtensionIsInstalled()
+#1 C:/xampp/htdocs/samaRemorque/senegal-towing/vendor/laravel/framework/src/Illuminate/Support/Number.php(173): Illuminate/Support/Number::format(48, 2, NULL)
+#2 C:/xampp/htdocs/samaRemorque/senegal-towing/vendor/laravel/framework/src/Illuminate/Database/Console/TableCommand.php(212): Illuminate/Support/Number::fileSize(48, 2)
+#3 C:/xampp/htdocs/samaRemorque/senegal-towing/vendor/laravel/framework/src/Illuminate/Database/Console/TableCommand.php(180): Illuminate/Database/Console/TableCommand->displayForCli(Array)
+#4 C:/xampp/htdocs/samaRemorque/senegal-towing/vendor/laravel/framework/src/Illuminate/Database/Console/TableCommand.php(81): Illuminate/Database/Console/TableCommand->display(Array)
+#5 C:/xampp/htdocs/samaRemorque/senegal-towing/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(36): Illuminate/Database/Console/TableCommand->handle(Object(Illuminate/Database/DatabaseManager))
+#6 C:/xampp/htdocs/samaRemorque/senegal-towing/vendor/laravel/framework/src/Illuminate/Container/Util.php(43): Illuminate/Container/BoundMethod::Illuminate/Container/{closure}()
+#7 C:/xampp/htdocs/samaRemorque/senegal-towing/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(95): Illuminate/Container/Util::unwrapIfClosure(Object(Closure))
+#8 C:/xampp/htdocs/samaRemorque/senegal-towing/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(35): Illuminate/Container/BoundMethod::callBoundMethod(Object(Illuminate/Foundation/Application), Array, Object(Closure))
+#9 C:/xampp/htdocs/samaRemorque/senegal-towing/vendor/laravel/framework/src/Illuminate/Container/Container.php(696): Illuminate/Container/BoundMethod::call(Object(Illuminate/Foundation/Application), Array, Array, NULL)
+#10 C:/xampp/htdocs/samaRemorque/senegal-towing/vendor/laravel/framework/src/Illuminate/Console/Command.php(213): Illuminate/Container/Container->call(Array)
+#11 C:/xampp/htdocs/samaRemorque/senegal-towing/vendor/symfony/console/Command/Command.php(341): Illuminate/Console/Command->execute(Object(Symfony/Component/Console/Input/ArgvInput), Object(Illuminate/Console/OutputStyle))
+#12 C:/xampp/htdocs/samaRemorque/senegal-towing/vendor/laravel/framework/src/Illuminate/Console/Command.php(182): Symfony/Component/Console/Command/Command->run(Object(Symfony/Component/Console/Input/ArgvInput), Object(Illuminate/Console/OutputStyle))
+#13 C:/xampp/htdocs/samaRemorque/senegal-towing/vendor/symfony/console/Application.php(1117): Illuminate/Console/Command->run(Object(Symfony/Component/Console/Input/ArgvInput), Object(Symfony/Component/Console/Output/ConsoleOutput))
+#14 C:/xampp/htdocs/samaRemorque/senegal-towing/vendor/symfony/console/Application.php(356): Symfony/Component/Console/Application->doRunCommand(Object(Illuminate/Database/Console/TableCommand), Object(Symfony/Component/Console/Input/ArgvInput), Object(Symfony/Component/Console/Output/ConsoleOutput))
+#15 C:/xampp/htdocs/samaRemorque/senegal-towing/vendor/symfony/console/Application.php(195): Symfony/Component/Console/Application->doRun(Object(Symfony/Component/Console/Input/ArgvInput), Object(Symfony/Component/Console/Output/ConsoleOutput))
+#16 C:/xampp/htdocs/samaRemorque/senegal-towing/vendor/laravel/framework/src/Illuminate/Foundation/Console/Kernel.php(198): Symfony/Component/Console/Application->run(Object(Symfony/Component/Console/Input/ArgvInput), Object(Symfony/Component/Console/Output/ConsoleOutput))
+#17 C:/xampp/htdocs/samaRemorque/senegal-towing/artisan(11): Illuminate/Foundation/Console/Kernel->handle(Object(Symfony/Component/Console/Input/ArgvInput), Object(Symfony/Component/Console/Output/ConsoleOutput))
+#18 {main}
+"} 
+[2026-09-08 11:38:56] local.ERROR: The "intl" PHP extension is required to use the [format] method. {"exception":"[object] (RuntimeException(code: 0): The \"intl\" PHP extension is required to use the [format] method. at C:/xampp/htdocs/samaRemorque/senegal-towing/vendor/laravel/framework/src/Illuminate/Support/Number.php:385)
+[stacktrace]
+#0 C:/xampp/htdocs/samaRemorque/senegal-towing/vendor/laravel/framework/src/Illuminate/Support/Number.php(38): Illuminate/Support/Number::ensureIntlExtensionIsInstalled()
+#1 C:/xampp/htdocs/samaRemorque/senegal-towing/vendor/laravel/framework/src/Illuminate/Support/Number.php(173): Illuminate/Support/Number::format(32, 2, NULL)
+#2 C:/xampp/htdocs/samaRemorque/senegal-towing/vendor/laravel/framework/src/Illuminate/Database/Console/TableCommand.php(212): Illuminate/Support/Number::fileSize(32, 2)
+#3 C:/xampp/htdocs/samaRemorque/senegal-towing/vendor/laravel/framework/src/Illuminate/Database/Console/TableCommand.php(180): Illuminate/Database/Console/TableCommand->displayForCli(Array)
+#4 C:/xampp/htdocs/samaRemorque/senegal-towing/vendor/laravel/framework/src/Illuminate/Database/Console/TableCommand.php(81): Illuminate/Database/Console/TableCommand->display(Array)
+#5 C:/xampp/htdocs/samaRemorque/senegal-towing/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(36): Illuminate/Database/Console/TableCommand->handle(Object(Illuminate/Database/DatabaseManager))
+#6 C:/xampp/htdocs/samaRemorque/senegal-towing/vendor/laravel/framework/src/Illuminate/Container/Util.php(43): Illuminate/Container/BoundMethod::Illuminate/Container/{closure}()
+#7 C:/xampp/htdocs/samaRemorque/senegal-towing/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(95): Illuminate/Container/Util::unwrapIfClosure(Object(Closure))
+#8 C:/xampp/htdocs/samaRemorque/senegal-towing/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(35): Illuminate/Container/BoundMethod::callBoundMethod(Object(Illuminate/Foundation/Application), Array, Object(Closure))
+#9 C:/xampp/htdocs/samaRemorque/senegal-towing/vendor/laravel/framework/src/Illuminate/Container/Container.php(696): Illuminate/Container/BoundMethod::call(Object(Illuminate/Foundation/Application), Array, Array, NULL)
+#10 C:/xampp/htdocs/samaRemorque/senegal-towing/vendor/laravel/framework/src/Illuminate/Console/Command.php(213): Illuminate/Container/Container->call(Array)
+#11 C:/xampp/htdocs/samaRemorque/senegal-towing/vendor/symfony/console/Command/Command.php(341): Illuminate/Console/Command->execute(Object(Symfony/Component/Console/Input/ArgvInput), Object(Illuminate/Console/OutputStyle))
+#12 C:/xampp/htdocs/samaRemorque/senegal-towing/vendor/laravel/framework/src/Illuminate/Console/Command.php(182): Symfony/Component/Console/Command/Command->run(Object(Symfony/Component/Console/Input/ArgvInput), Object(Illuminate/Console/OutputStyle))
+#13 C:/xampp/htdocs/samaRemorque/senegal-towing/vendor/symfony/console/Application.php(1117): Illuminate/Console/Command->run(Object(Symfony/Component/Console/Input/ArgvInput), Object(Symfony/Component/Console/Output/ConsoleOutput))
+#14 C:/xampp/htdocs/samaRemorque/senegal-towing/vendor/symfony/console/Application.php(356): Symfony/Component/Console/Application->doRunCommand(Object(Illuminate/Database/Console/TableCommand), Object(Symfony/Component/Console/Input/ArgvInput), Object(Symfony/Component/Console/Output/ConsoleOutput))
+#15 C:/xampp/htdocs/samaRemorque/senegal-towing/vendor/symfony/console/Application.php(195): Symfony/Component/Console/Application->doRun(Object(Symfony/Component/Console/Input/ArgvInput), Object(Symfony/Component/Console/Output/ConsoleOutput))
+#16 C:/xampp/htdocs/samaRemorque/senegal-towing/vendor/laravel/framework/src/Illuminate/Foundation/Console/Kernel.php(198): Symfony/Component/Console/Application->run(Object(Symfony/Component/Console/Input/ArgvInput), Object(Symfony/Component/Console/Output/ConsoleOutput))
+#17 C:/xampp/htdocs/samaRemorque/senegal-towing/artisan(11): Illuminate/Foundation/Console/Kernel->handle(Object(Symfony/Component/Console/Input/ArgvInput), Object(Symfony/Component/Console/Output/ConsoleOutput))
+#18 {main}
+"} 
