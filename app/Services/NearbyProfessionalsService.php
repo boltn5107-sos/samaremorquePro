@@ -47,7 +47,7 @@ class NearbyProfessionalsService
         $rows = $query
             ->join('remorqueurs', 'remorqueurs.user_id', '=', 'users.id', 'left')
             ->leftJoin('depanneurs', 'depanneurs.user_id', '=', 'users.id')
-            ->whereRaw('COALESCE(remorqueurs.is_available, depanneurs.is_available) = 1')
+            ->whereRaw('COALESCE(remorqueurs.is_available, depanneurs.is_available) IS TRUE')
             ->select([
                 'users.id',
                 'users.first_name',
