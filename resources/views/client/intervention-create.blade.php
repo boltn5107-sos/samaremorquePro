@@ -333,7 +333,7 @@
                     card.style.cursor = 'pointer';
 
                     const avatarHtml = pro.photo
-                        ? '<img src="' + pro.photo + '" alt="" class="pro-avatar">'
+                        ? '<img src="' + pro.photo + '" alt="Photo de ' + pro.full_name + '" class="pro-avatar">'
                         : '<div class="pro-avatar-placeholder bg-orange-100 text-orange-600">' + initials + '</div>';
 
                     const wa = (pro.phone || '').replace(/[^0-9]/g, '');

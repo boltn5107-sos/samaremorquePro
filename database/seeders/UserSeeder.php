@@ -18,7 +18,7 @@ class UserSeeder extends Seeder
             [
                 'first_name' => 'Client',
                 'last_name' => 'Test',
-                'phone' => '+221771234568',
+                'phone' => '+221708981888',
                 'password' => Hash::make('password'),
                 'role' => 'client',
                 'email_verified_at' => now(),
@@ -32,7 +32,7 @@ class UserSeeder extends Seeder
             [
                 'first_name' => 'Remorqueur',
                 'last_name' => 'Test',
-                'phone' => '+221771234569',
+                'phone' => '+221756675869',
                 'password' => Hash::make('password'),
                 'role' => 'remorqueur',
                 'zone_intervention' => 'Dakar, Senegal',
@@ -49,7 +49,7 @@ class UserSeeder extends Seeder
             [
                 'first_name' => 'Depanneur',
                 'last_name' => 'Test',
-                'phone' => '+221771234570',
+                'phone' => '+221774467596',
                 'password' => Hash::make('password'),
                 'role' => 'depanneur',
                 'zone_intervention' => 'Dakar, Senegal',

@@ -80,6 +80,9 @@ Route::post('/suivi/{trackingCode}/noter', [GuestInterventionController::class, 
 
 // Confidentialite
 Route::view('/confidentialite', 'pages.confidentialite')->name('privacy');
+Route::view('/a-propos', 'pages.a-propos')->name('about');
+Route::view('/contact', 'pages.contact')->name('contact');
+Route::view('/guide-depannage-dakar', 'pages.guide-depannage-dakar')->name('seo.guide-depannage-dakar');
 
 Route::middleware('guest')->group(function () {
     Route::get('login', [AuthenticatedSessionController::class, 'create'])->name('login');

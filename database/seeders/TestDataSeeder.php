@@ -41,7 +41,7 @@ class TestDataSeeder extends Seeder
             array_merge([
                 'first_name' => 'Test',
                 'last_name' => 'Test',
-                'phone' => '+221771234560',
+                'phone' => '+221708981888',
                 'password' => Hash::make('password'),
                 'email_verified_at' => now(),
             ], $attrs)
@@ -51,8 +51,8 @@ class TestDataSeeder extends Seeder
     protected function seedClients(): void
     {
         $clients = [
-            ['email' => 'awa@senegaltowing.sn', 'first_name' => 'Awa', 'last_name' => 'Diop', 'phone' => '+221771111111'],
-            ['email' => 'moussa@senegaltowing.sn', 'first_name' => 'Moussa', 'last_name' => 'Ndiaye', 'phone' => '+221772222222'],
+            ['email' => 'awa@senegaltowing.sn', 'first_name' => 'Awa', 'last_name' => 'Diop', 'phone' => '+221774467596'],
+            ['email' => 'moussa@senegaltowing.sn', 'first_name' => 'Moussa', 'last_name' => 'Ndiaye', 'phone' => '+221756675869'],
         ];
 
         $vehicles = [
@@ -78,19 +78,19 @@ class TestDataSeeder extends Seeder
         $remorqueurs = [
             [
                 'email' => 'karim@senegaltowing.sn', 'first_name' => 'Karim', 'last_name' => 'Ba',
-                'phone' => '+221773333333', 'zone_intervention' => 'Dakar, Senegal',
+                'phone' => '+221708981888', 'zone_intervention' => 'Dakar, Senegal',
                 'bio' => 'Remorqueur professionnel depuis 8 ans, materiel fiable.',
                 'license_number' => 'RM-2021-001', 'experience_years' => 8, 'hourly_rate' => 15000,
             ],
             [
                 'email' => 'ibrahima@senegaltowing.sn', 'first_name' => 'Ibrahima', 'last_name' => 'Gueye',
-                'phone' => '+221775555555', 'zone_intervention' => 'Dakar Plateau, Senegal',
+                'phone' => '+221756675869', 'zone_intervention' => 'Dakar Plateau, Senegal',
                 'bio' => 'Remorquage rapide et soigne, disponible 24h/24.',
                 'license_number' => 'RM-2020-014', 'experience_years' => 6, 'hourly_rate' => 14000,
             ],
             [
                 'email' => 'mamadou@senegaltowing.sn', 'first_name' => 'Mamadou', 'last_name' => 'Kane',
-                'phone' => '+221776666666', 'zone_intervention' => 'Thies, Senegal',
+                'phone' => '+221774467596', 'zone_intervention' => 'Thies, Senegal',
                 'bio' => 'Plateau 5 tonnes, specialiste des poids lourds et utilitaires.',
                 'license_number' => 'RM-2019-027', 'experience_years' => 10, 'hourly_rate' => 18000,
             ],
@@ -131,21 +131,21 @@ class TestDataSeeder extends Seeder
         $depanneurs = [
             [
                 'email' => 'fatou@senegaltowing.sn', 'first_name' => 'Fatou', 'last_name' => 'Sarr',
-                'phone' => '+221774444444', 'zone_intervention' => 'Dakar, Senegal',
+                'phone' => '+221708981888', 'zone_intervention' => 'Dakar, Senegal',
                 'bio' => 'Technicienne depannage toutes marques, disponible 24h/24.',
                 'license_number' => 'DP-2022-014', 'experience_years' => 5, 'hourly_rate' => 12000,
                 'services' => ['Depannage batterie', 'Depannage crevaison', 'Depannage demarrage'],
             ],
             [
                 'email' => 'amadou@senegaltowing.sn', 'first_name' => 'Amadou', 'last_name' => 'Cisse',
-                'phone' => '+221777777777', 'zone_intervention' => 'Pikine, Dakar',
+                'phone' => '+221756675869', 'zone_intervention' => 'Pikine, Dakar',
                 'bio' => 'Depanneur polyvalent, rapidite et efficacite garanties.',
                 'license_number' => 'DP-2021-031', 'experience_years' => 4, 'hourly_rate' => 11000,
                 'services' => ['Depannage batterie', 'Panne mecanique', 'Depannage crevaison'],
             ],
             [
                 'email' => 'nene@senegaltowing.sn', 'first_name' => 'Nene', 'last_name' => 'Diallo',
-                'phone' => '+221778888888', 'zone_intervention' => 'Rufisque, Dakar',
+                'phone' => '+221774467596', 'zone_intervention' => 'Rufisque, Dakar',
                 'bio' => 'Depannage batterie et demarrage a tout moment, materiel mobile.',
                 'license_number' => 'DP-2023-009', 'experience_years' => 3, 'hourly_rate' => 10000,
                 'services' => ['Depannage batterie', 'Depannage demarrage'],

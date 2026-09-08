@@ -25,7 +25,7 @@
         <div class="sm:mx-auto sm:w-full sm:max-w-md">
             <div class="flex justify-center mb-4">
                 <span class="inline-flex items-center justify-center w-20 h-20  rounded-lg bg-white shadow-lg ring-1 ring-slate-200 overflow-hidden">
-                    <img src="{{ asset('favicon.png') }}" alt="{{ config('app.name') }}" class="w-16 h-16 object-contain">
+                    <img src="{{ asset('favicon.jpg') }}" alt="{{ config('app.name') }}" class="w-16 h-16 object-contain">
                 </span>
             </div>
             <h1 class="text-center text-3xl font-bold text-slate-900">{{ config('app.name') }}</h1>

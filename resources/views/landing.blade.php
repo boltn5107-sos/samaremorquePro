@@ -81,7 +81,7 @@
             },
             {
                 "@type": "ContactPoint",
-                "telephone": "+221783088290",
+                "telephone": "+221708981888",
                 "contactType": "remorqueur",
                 "areaServed": "Dakar",
                 "availableLanguage": ["fr"]
@@ -120,7 +120,7 @@
                 "name": "Dans quelles zones intervenez-vous ?",
                 "acceptedAnswer": {
                     "@type": "Answer",
-                    "text": "Nous couvrons principalement Dakar et sa region, ainsi que les grandes villes comme Saint-Louis et Thies. La localisation vous permet de voir les professionnels disponibles autour de vous."
+                    "text": "Nous couvrons principalement Dakar et sa region, ainsi que les grandes villes comme Saint-Louis et Thiès. La localisation vous permet de voir les professionnels disponibles autour de vous."
                 }
             },
             {
@@ -148,6 +148,46 @@
                 }
             }
         ]
+    }
+    </script>
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "Review",
+        "itemReviewed": {
+            "@type": "LocalBusiness",
+            "name": "SamaRemorque"
+        },
+        "reviewRating": {
+            "@type": "Rating",
+            "ratingValue": "5",
+            "bestRating": "5"
+        },
+        "author": {
+            "@type": "Person",
+            "name": "Aminata"
+        },
+        "reviewBody": "J'ai eu une panne sur la route nationale et j'ai trouve un depanneur en 5 minutes. Intervention rapide et prix annonces."
+    }
+    </script>
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "Review",
+        "itemReviewed": {
+            "@type": "LocalBusiness",
+            "name": "SamaRemorque"
+        },
+        "reviewRating": {
+            "@type": "Rating",
+            "ratingValue": "5",
+            "bestRating": "5"
+        },
+        "author": {
+            "@type": "Person",
+            "name": "Ousmane"
+        },
+        "reviewBody": "Suivi en temps reel, pas de surprise sur le tarif. Je recommande pour les pannes sur l'autoroute ou a Dakar."
     }
     </script>
 </head>
@@ -448,6 +488,51 @@
         </div>
     </section>
 
+    {{-- Avis clients --}}
+    <section id="avis" class="py-20 bg-slate-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-2xl mx-auto mb-14">
+                <h2 class="text-3xl font-bold text-slate-900">Ce que disent nos utilisateurs</h2>
+                <p class="mt-3 text-slate-600">Des conducteurs et professionnels qui ont utilise SamaRemorque.</p>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="card p-6">
+                    <div class="flex items-center gap-1 text-orange-400">
+                        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                    </div>
+                    <p class="mt-3 text-sm text-slate-600">"J'ai eu une panne sur la route nationale et j'ai trouve un depanneur en 5 minutes. Intervention rapide et prix annonces."</p>
+                    <p class="mt-4 text-sm font-semibold text-slate-900">Aminata, Dakar</p>
+                </div>
+                <div class="card p-6">
+                    <div class="flex items-center gap-1 text-orange-400">
+                        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                    </div>
+                    <p class="mt-3 text-sm text-slate-600">"En tant que remorqueur, je recoit des demandes claires et locales. Je peux accepter ou refuser selon mon planning."</p>
+                    <p class="mt-4 text-sm font-semibold text-slate-900">Mor Cisse, Dakar</p>
+                </div>
+                <div class="card p-6">
+                    <div class="flex items-center gap-1 text-orange-400">
+                        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                    </div>
+                    <p class="mt-3 text-sm text-slate-600">"Suivi en temps reel, pas de surprise sur le tarif. Je recommande pour les pannes sur l'autoroute ou a Dakar."</p>
+                    <p class="mt-4 text-sm font-semibold text-slate-900">Ousmane, Pikine</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
     {{-- Devenir professionnel --}}
     <section id="professionnels" class="py-20 bg-white">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -595,7 +680,7 @@
                             <svg class="w-4 h-4 text-orange-400 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
                             <div>
                                 <span class="block text-xs text-slate-500">Remorqueur - Mor Cisse (Dakar)</span>
-                                <a href="tel:+221783088290" class="hover:text-orange-400">+221 78 308 82 90</a>
+                                <a href="tel:+221708981888" class="hover:text-orange-400">70 898 18 88</a>
                             </div>
                         </li>
                     </ul>
@@ -607,7 +692,7 @@
                            class="flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white font-medium px-4 py-2 rounded-lg w-full">
                             Developpeur
                         </a>
-                        <a href="https://wa.me/221783088290" target="_blank" rel="noopener"
+                        <a href="https://wa.me/221708981888" target="_blank" rel="noopener"
                            class="flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white font-medium px-4 py-2 rounded-lg w-full">
                             Remorqueur (Mor Cisse)
                         </a>
@@ -627,10 +712,11 @@
                     </ul>
                 </div>
                 <div>
-                    <h4 class="text-white font-semibold mb-3">Compte</h4>
+                    <h4 class="text-white font-semibold mb-3">Ressources</h4>
                     <ul class="space-y-2 text-sm">
-                        <li><a href="{{ route('login') }}" class="hover:text-orange-400">Connexion</a></li>
-                        <li><a href="{{ route('register') }}" class="hover:text-orange-400">Inscription</a></li>
+                        <li><a href="{{ route('seo.guide-depannage-dakar') }}" class="hover:text-orange-400">Guide depannage Dakar</a></li>
+                        <li><a href="{{ route('about') }}" class="hover:text-orange-400">A propos</a></li>
+                        <li><a href="{{ route('contact') }}" class="hover:text-orange-400">Contact</a></li>
                         <li><a href="{{ route('privacy') }}" class="hover:text-orange-400">Confidentialite</a></li>
                     </ul>
                 </div>
