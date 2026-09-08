@@ -10,6 +10,7 @@ use App\Services\InterventionMatchingService;
 use App\Services\NearbyProfessionalsService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 class GuestInterventionController extends Controller
 {
@@ -36,13 +37,33 @@ class GuestInterventionController extends Controller
             'radius' => ['nullable', 'integer', 'min:1', 'max:200'],
         ]);
 
-        return response()->json($this->nearby->search(
-            (float) $request->lat,
-            (float) $request->lng,
-            (float) ($request->radius ?? 50),
-            (int) ($request->freshness ?? 720),
-            $request->service_type
-        ));
+        try {
+            $result = $this->nearby->search(
+                (float) $request->lat,
+                (float) $request->lng,
+                (float) ($request->radius ?? 50),
+                (int) ($request->freshness ?? 720),
+                $request->service_type
+            );
+        } catch (\Throwable $e) {
+            Log::error('Nearby professionals search failed', [
+                'lat' => $request->lat,
+                'lng' => $request->lng,
+                'radius' => $request->radius,
+                'freshness' => $request->freshness,
+                'service_type' => $request->service_type,
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+
+            return response()->json([
+                'professionals' => [],
+                'suggested_destinations' => [],
+                'error' => 'search_failed',
+            ], 500);
+        }
+
+        return response()->json($result);
     }
 
     public function store(Request $request)

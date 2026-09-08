@@ -1,12 +1,8 @@
-const CACHE_NAME = 'senegal-towing-v3';
+const CACHE_NAME = 'senegal-towing-v4';
 const STATIC_ASSETS = [
   '/manifest.json',
-  '/favicon.svg',
-  '/icon-192.png',
-  '/icon-512.png',
-  '/icon-192-maskable.png',
-  '/icon-512-maskable.png',
-  '/apple-touch-icon.png',
+  '/favicon.jpg',
+  '/favicon.png',
   '/offline.html',
 ];
 
@@ -87,21 +83,21 @@ self.addEventListener('fetch', (event) => {
 });
 
 self.addEventListener('push', (event) => {
-  const data = event.data?.json() ?? {};
-  const title = data.title ?? 'SenegalTowing';
-  const options = {
-    body: data.body ?? 'Vous avez une nouvelle notification',
-    icon: '/icon-192.png',
-    badge: '/icon-96.png',
-    data: data.url ?? '/',
-    actions: [
-      { action: 'open', title: 'Ouvrir' },
-      { action: 'close', title: 'Fermer' },
-    ],
-  };
+    const data = event.data?.json() ?? {};
+    const title = data.title ?? 'SamaRemorque';
+    const options = {
+      body: data.body ?? 'Vous avez une nouvelle notification',
+      icon: '/favicon.jpg',
+      badge: '/favicon.jpg',
+      data: data.url ?? '/',
+      actions: [
+        { action: 'open', title: 'Ouvrir' },
+        { action: 'close', title: 'Fermer' },
+      ],
+    };
 
-  event.waitUntil(self.registration.showNotification(title, options));
-});
+    event.waitUntil(self.registration.showNotification(title, options));
+  });
 
 self.addEventListener('notificationclick', (event) => {
   event.notification.close();
