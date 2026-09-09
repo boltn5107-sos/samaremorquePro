@@ -64,7 +64,7 @@
                 <div id="map" style="height: 100%; width: 100%;"></div>
             </div>
             <div id="manual-zone" class="mt-4 hidden">
-                <label class="label mb-1">Position manuelle (GPS indisponible)</label>
+                <label for="manual-address" class="label mb-1">Position manuelle (GPS indisponible)</label>
                 <div class="flex gap-2">
                     <input type="text" id="manual-address" class="input flex-1" placeholder="Adresse ou lieu (ex : Route de Rufisque, Dakar)">
                     <button type="button" id="manual-apply" class="btn-secondary whitespace-nowrap">
@@ -108,9 +108,10 @@
                 @endif
 
                 <div>
-                    <label for="vehicle_type" class="label">Type de vehicule *</label>
                     @php $expectedVehicleType = old('vehicle_type'); @endphp
-                    <div class="mt-1.5 grid grid-cols-3 gap-2" id="vehicle-type-grid">
+                    <fieldset class="m-0 p-0 border-0 min-w-0">
+                        <legend class="label mb-1.5">Type de vehicule *</legend>
+                        <div class="grid grid-cols-3 gap-2" id="vehicle-type-grid">
                         @foreach(['voiture' => 'Voiture', 'moto' => 'Moto', 'camion' => 'Camion', 'bus' => 'Bus', 'autre' => 'Autre'] as $value => $label)
                             <button type="button" data-value="{{ $value }}"
                                 class="vehicle-type-btn px-3 py-2.5 rounded-lg border text-sm font-medium {{ ($expectedVehicleType ?? '') === $value ? 'border-orange-500 bg-orange-50 text-orange-700' : 'border-slate-300 bg-white text-slate-700 hover:border-orange-400' }}">
@@ -118,15 +119,17 @@
                             </button>
                         @endforeach
                     </div>
-                    <input type="hidden" name="vehicle_type" id="vehicle_type" value="{{ old('vehicle_type') }}">
+                        <input type="hidden" name="vehicle_type" id="vehicle_type" value="{{ old('vehicle_type') }}">
+                    </fieldset>
                     @error('vehicle_type')
                         <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
                     @enderror
                 </div>
 
                 <div>
-                    <label for="service_type" class="label">Type d'assistance *</label>
-                    <div class="mt-1.5 grid grid-cols-2 gap-2">
+                    <fieldset class="m-0 p-0 border-0 min-w-0">
+                        <legend class="label mb-1.5">Type d'assistance *</legend>
+                        <div class="grid grid-cols-2 gap-2">
                         <button type="button" data-service="remorquage" id="svc-remorquage"
                             class="service-btn px-3 py-3 rounded-lg border text-sm font-semibold {{ old('service_type') === 'remorquage' ? 'border-orange-500 bg-orange-50 text-orange-700' : 'border-slate-300 bg-white text-slate-700 hover:border-orange-400' }}">
                             <span class="block text-base">Remorquage</span>
@@ -138,7 +141,8 @@
                             <span class="block text-xs text-slate-400 font-normal mt-0.5">Reparation directe (batterie, crevaison...)</span>
                         </button>
                     </div>
-                    <input type="hidden" name="service_type" id="service_type" value="{{ old('service_type') }}">
+                        <input type="hidden" name="service_type" id="service_type" value="{{ old('service_type') }}">
+                    </fieldset>
                     @error('service_type')
                         <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
                     @enderror
@@ -175,7 +179,7 @@
                 </div>
 
                 <div>
-                    <label class="label mb-1">Photo de la panne (optionnel)</label>
+                    <label for="photo" class="label mb-1">Photo de la panne (optionnel)</label>
                     <input type="file" id="photo" name="photo" accept="image/*" capture="environment"
                         class="mt-1 block w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-orange-50 file:text-orange-700 hover:file:bg-orange-100">
                     <p class="mt-1 text-xs text-slate-500">La camera s'ouvrira directement sur certains appareils.</p>
@@ -252,6 +256,7 @@
             }
 
             function formatDistance(km) {
+                if (km === null || km === undefined || isNaN(km)) return 'N/A';
                 return km < 1 ? Math.round(km * 1000) + ' m' : km.toFixed(1) + ' km';
             }
 
@@ -337,7 +342,7 @@
             function sortAndRender(pros) {
                 const prosList = document.getElementById('pros-list');
                 const prosEmpty = document.getElementById('pros-empty');
-                const sorted = pros.slice().sort((a, b) => a.distance_km - b.distance_km);
+                const sorted = pros.slice().sort((a, b) => (a.distance_km ?? 9999) - (b.distance_km ?? 9999));
                 prosList.innerHTML = '';
                 if (!sorted.length) {
                     prosEmpty.classList.remove('hidden');
@@ -457,14 +462,17 @@
 
                 proMarkers.clearLayers();
                 window.prosData.forEach(p => {
-                    const marker = L.marker([p.lat, p.lng], {
-                        icon: p.id === pro.id ? proSelectedIcon : proIcon
-                    }).addTo(proMarkers);
-                    marker.bindPopup('<strong>' + p.full_name + '</strong><br><span class="text-xs">' + formatDistance(p.distance_km) + '</span>');
-                    marker.on('click', function () { selectPro(p, true); });
+                    if (p.lat !== null && p.lng !== null) {
+                        const marker = L.marker([p.lat, p.lng], {
+                            icon: p.id === pro.id ? proSelectedIcon : proIcon
+                        }).addTo(proMarkers);
+                        marker.bindPopup('<strong>' + p.full_name + '</strong><br><span class="text-xs">' + formatDistance(p.distance_km) + '</span>');
+                        marker.on('click', function () { selectPro(p, true); });
+                    }
                 });
 
-                if (window.clientPosition) {
+                if (window.clientPosition && pro.lat !== null && pro.lng !== null) {
+                    if (polyline) { map.removeLayer(polyline); polyline = null; }
                     polyline = L.polyline([[window.clientPosition.lat, window.clientPosition.lng], [pro.lat, pro.lng]], {
                         color: '#f97316', dashArray: '5,5', weight: 2, opacity: 0.7
                     }).addTo(map);
@@ -472,7 +480,7 @@
                 if (pro.suggested_destination) {
                     document.getElementById('destination').value = pro.suggested_destination;
                 }
-                if (!fromMap) {
+                if (pro.lat !== null && pro.lng !== null && !fromMap) {
                     map.flyTo([pro.lat, pro.lng], Math.max(map.getZoom(), 13));
                 }
             }

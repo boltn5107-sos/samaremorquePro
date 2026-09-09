@@ -6,6 +6,12 @@
     <form method="POST" action="{{ route('login') }}" class="space-y-6">
         @csrf
 
+        @if(session('status'))
+            <div class="bg-emerald-50 border border-emerald-200 text-emerald-800 px-4 py-3 rounded text-sm">
+                {{ session('status') }}
+            </div>
+        @endif
+
         <div>
             <label for="email" class="block text-sm font-medium text-slate-700">Email</label>
             <div class="mt-1">

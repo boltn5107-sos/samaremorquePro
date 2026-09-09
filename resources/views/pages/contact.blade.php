@@ -95,16 +95,16 @@
                         <h2 class="text-2xl font-bold text-slate-900">Envoyez-nous un message</h2>
                         <form class="mt-6 space-y-4" onsubmit="event.preventDefault(); alert('Message non envoye : cette page est statique. Contactez-nous par telephone ou WhatsApp.');">
                             <div>
-                                <label class="label">Nom</label>
-                                <input type="text" class="input" placeholder="Votre nom">
+                                <label for="contact_name" class="label">Nom</label>
+                                <input type="text" id="contact_name" class="input" placeholder="Votre nom">
                             </div>
                             <div>
-                                <label class="label">Email</label>
-                                <input type="email" class="input" placeholder="votre@email.com">
+                                <label for="contact_email" class="label">Email</label>
+                                <input type="email" id="contact_email" class="input" placeholder="votre@email.com">
                             </div>
                             <div>
-                                <label class="label">Message</label>
-                                <textarea rows="4" class="input" placeholder="Votre message"></textarea>
+                                <label for="contact_message" class="label">Message</label>
+                                <textarea id="contact_message" rows="4" class="input" placeholder="Votre message"></textarea>
                             </div>
                             <button type="submit" class="btn-primary w-full">Envoyer le message</button>
                         </form>

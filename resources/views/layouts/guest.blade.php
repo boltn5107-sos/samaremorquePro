@@ -15,7 +15,9 @@
     <meta property="og:locale" content="fr_SN">
 
     <meta name="theme-color" content="#0f172a">
+    <link rel="manifest" href="/manifest.json">
     <link rel="icon" type="image/png" href="{{ asset('favicon.jpg') }}">
+    <link rel="apple-touch-icon" href="{{ asset('favicon.jpg') }}">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     @vite(['resources/css/app.css', 'resources/js/app.js'])

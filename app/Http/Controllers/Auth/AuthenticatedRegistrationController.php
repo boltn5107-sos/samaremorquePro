@@ -10,7 +10,6 @@ use App\Models\Remorqueur;
 use App\Models\User;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules\Password;
 
@@ -18,7 +17,9 @@ class AuthenticatedRegistrationController extends Controller
 {
     public function create()
     {
-        return view('auth.register');
+        return response()->view('auth.register')
+            ->header('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0')
+            ->header('Pragma', 'no-cache');
     }
 
     public function store(Request $request)
@@ -50,14 +51,7 @@ class AuthenticatedRegistrationController extends Controller
 
         event(new Registered($user));
 
-        Auth::login($user);
-
-        return match ($user->role) {
-            'client' => redirect()->route('client.dashboard'),
-            'remorqueur' => redirect()->route('remorqueur.dashboard'),
-            'depanneur' => redirect()->route('depanneur.dashboard'),
-            default => redirect()->route('home'),
-        };
+        return redirect()->route('login')->with('status', 'Votre compte a ete cree avec succes. Veuillez vous connecter.');
     }
 
     protected function createProfile(User $user, string $role): void
