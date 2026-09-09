@@ -27,6 +27,12 @@ class NearbyProfessionalsService
             )
         )";
 
+        $distanceCondition = "CASE
+            WHEN {$distanceSql} IS NULL THEN FALSE
+            WHEN {$distanceSql} < 0 THEN FALSE
+            ELSE {$distanceSql} <= {$radiusKm}
+        END";
+
         $baseQuery = DB::table('locations')
             ->join('users', 'users.id', '=', 'locations.user_id')
             ->whereIn('users.role', ['remorqueur', 'depanneur'])
@@ -59,12 +65,12 @@ class NearbyProfessionalsService
 
         $strictQuery = clone $baseQuery;
         $strictQuery->where('locations.recorded_at', '>=', now()->subMinutes($freshnessMinutes));
-        $strictQuery->whereRaw($distanceSql . ' <= ' . $radiusKm);
+        $strictQuery->whereRaw($distanceCondition);
 
         $strictRows = $strictQuery
             ->join('remorqueurs', 'remorqueurs.user_id', '=', 'users.id', 'left')
             ->leftJoin('depanneurs', 'depanneurs.user_id', '=', 'users.id')
-            ->whereRaw('COALESCE(remorqueurs.is_available, depanneurs.is_available) = 1')
+            ->whereRaw('(remorqueurs.is_available IS TRUE OR depanneurs.is_available IS TRUE)')
             ->select([
                 'users.id',
                 'users.first_name',
@@ -92,7 +98,7 @@ class NearbyProfessionalsService
         }
 
         $proximityQuery = clone $baseQuery;
-        $proximityQuery->whereRaw($distanceSql . ' <= ' . $radiusKm);
+        $proximityQuery->whereRaw($distanceCondition);
 
         $proximityRows = $proximityQuery
             ->join('remorqueurs', 'remorqueurs.user_id', '=', 'users.id', 'left')
@@ -205,13 +211,18 @@ class NearbyProfessionalsService
                 sin(radians(locations.lat))
             )
         )";
+        $distanceCondition = "CASE
+            WHEN {$distanceSql} IS NULL THEN FALSE
+            WHEN {$distanceSql} < 0 THEN FALSE
+            ELSE {$distanceSql} <= {$radiusKm}
+        END";
 
         $destinations = DB::table('locations')
             ->join('users', 'users.id', '=', 'locations.user_id')
             ->where('users.role', 'depanneur')
             ->where('users.is_validated', true)
             ->where('users.is_active', true)
-            ->whereRaw($distanceSql . ' <= ' . $radiusKm)
+            ->whereRaw($distanceCondition)
             ->whereRaw($distanceSql . ' > 0')
             ->select([
                 'locations.address',
