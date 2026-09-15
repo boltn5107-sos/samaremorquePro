@@ -30,7 +30,7 @@ class InterventionMatchingService
             return;
         }
 
-        $radiusKm = 50;
+        $radiusKm = $this->radiusFor($intervention);
 
         $distanceSql = "(
             6371 * acos(
@@ -42,7 +42,7 @@ class InterventionMatchingService
             )
         )";
 
-        $candidates = User::whereIn('role', ['remorqueur', 'depanneur'])
+        $candidates = User::whereIn('role', $this->rolesFor($intervention))
             ->where('is_validated', true)
             ->where('is_active', true)
             ->join('locations', 'locations.user_id', '=', 'users.id')
@@ -58,6 +58,26 @@ class InterventionMatchingService
         }
 
         broadcast(new InterventionCreated($intervention));
+    }
+
+    protected function radiusFor(Intervention $intervention): int
+    {
+        $vehicleType = strtolower($intervention->vehicle_type ?? '');
+
+        return match ($vehicleType) {
+            'conteneur' => 250,
+            'camion', 'bus' => 200,
+            default => 50,
+        };
+    }
+
+    protected function rolesFor(Intervention $intervention): array
+    {
+        return match (strtolower($intervention->service_type ?? '')) {
+            'remorquage' => ['remorqueur'],
+            'depannage' => ['depanneur'],
+            default => ['remorqueur', 'depanneur'],
+        };
     }
 
     protected function notifyCandidate(User $candidate, Intervention $intervention): void

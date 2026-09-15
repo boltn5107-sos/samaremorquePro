@@ -84,7 +84,7 @@
                     <fieldset class="m-0 p-0 border-0 min-w-0">
                         <legend class="label mb-1.5">Type de vehicule *</legend>
                         <div class="grid grid-cols-3 gap-2" id="vehicle-type-grid">
-                        @foreach(['voiture' => 'Voiture', 'moto' => 'Moto', 'camion' => 'Camion', 'bus' => 'Bus', 'autre' => 'Autre'] as $value => $label)
+                        @foreach(['voiture' => 'Voiture', 'moto' => 'Moto', 'camion' => 'Camion', 'bus' => 'Bus', 'conteneur' => 'Conteneur', 'autre' => 'Autre'] as $value => $label)
                             <button type="button" data-value="{{ $value }}"
                                 class="vehicle-type-btn px-3 py-2.5 rounded-lg border text-sm font-medium {{ ($expectedVehicleType ?? '') === $value ? 'border-orange-500 bg-orange-50 text-orange-700' : 'border-slate-300 bg-white text-slate-700 hover:border-orange-400' }}">
                                 {{ $label }}
@@ -238,6 +238,14 @@
                     return document.getElementById('service_type').value.trim();
                 }
 
+                function currentRadius() {
+                    const vt = (document.getElementById('vehicle_type').value || '').trim();
+                    const st = getServiceType();
+                    if (vt === 'conteneur') return 250;
+                    if (vt === 'camion') return 200;
+                    return st === 'depannage' ? 50 : 100;
+                }
+
                 function setPosition(lat, lng, options) {
                     options = options || {};
                     window.clientPosition = { lat: lat, lng: lng };
@@ -290,7 +298,7 @@
                     const params = new URLSearchParams({
                         lat: window.clientPosition.lat,
                         lng: window.clientPosition.lng,
-                        radius: 100,
+                        radius: currentRadius(),
                         freshness: 720,
                     });
                     const st = getServiceType();
@@ -512,6 +520,7 @@
                         });
                         btn.className = 'vehicle-type-btn px-3 py-2.5 rounded-lg border text-sm font-medium border-orange-500 bg-orange-50 text-orange-700';
                         document.getElementById('vehicle_type').value = btn.dataset.value;
+                        if (window.clientPosition) fetchNearby();
                     });
                 });
 

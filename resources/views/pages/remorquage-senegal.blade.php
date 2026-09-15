@@ -52,7 +52,7 @@
             "addressCountry": "SN"
         },
         "openingHours": "Mo-Su 00:00-23:59",
-        "areaServed": ["Dakar", "Pikine", "Rufisque", "Saint-Louis", "Thiès"]
+        "areaServed": ["Dakar", "Diourbel", "Fatick", "Kaffrine", "Kaolack", "Kedougou", "Kolda", "Louga", "Matam", "Saint-Louis", "Sedhiou", "Tambacounda", "Thiès", "Ziguinchor"]
     }
     </script>
     <script type="application/ld+json">
@@ -65,7 +65,7 @@
                 "name": "Proposez-vous du remorquage dans tout le Senegal ?",
                 "acceptedAnswer": {
                     "@type": "Answer",
-                    "text": "SamaRemorque couvre principalement Dakar, Pikine, Rufisque, Saint-Louis et Thiès. La localisation vous permet de voir les remorqueurs disponibles autour de vous."
+                    "text": "Oui, SamaRemorque couvre les 14 regions du Senegal (Dakar, Diourbel, Fatick, Kaffrine, Kaolack, Kedougou, Kolda, Louga, Matam, Saint-Louis, Sedhiou, Tambacounda, Thies et Ziguinchor). La localisation GPS vous permet de voir les remorqueurs disponibles autour de vous."
                 }
             },
             {
@@ -93,7 +93,7 @@
                 <div class="max-w-2xl">
                     <span class="inline-flex items-center gap-1.5 bg-orange-500/20 text-orange-300 text-xs font-semibold px-3 py-1 rounded-full">Remorquage Senegal</span>
                     <h1 class="mt-4 text-4xl sm:text-5xl font-extrabold tracking-tight leading-tight">Remorquage au Senegal : transport securise vers votre garage</h1>
-                    <p class="mt-4 text-lg text-slate-300">Trouvez un remorqueur verifie a Dakar, Saint-Louis, Thiès et partout au Senegal. Suivi en temps reel, tarifs transparents, intervention 24/7.</p>
+                    <p class="mt-4 text-lg text-slate-300">Trouvez un remorqueur verifie partout au Senegal (14 regions). Vehicules en panne, remorquage de conteneurs : suivi en temps reel, tarifs transparents, intervention 24/7.</p>
                     <div class="mt-8 flex flex-col sm:flex-row gap-3">
                         <a href="{{ route('guest.create') }}" class="btn-primary text-base px-6 py-3.5">Demander un remorquage</a>
                         <a href="#zones" class="btn-secondary bg-white/10 text-white border-white/20 hover:bg-white/20 text-base px-6 py-3.5">Voir les zones</a>
@@ -105,13 +105,26 @@
         <section id="zones" class="py-16 bg-slate-50">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <h2 class="text-2xl font-bold text-slate-900">Zones de remorquage au Senegal</h2>
-                <p class="mt-2 text-sm text-slate-600">SamaRemorque est disponible dans les principales villes du Senegal.</p>
-                <div class="mt-8 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4">
-                    <a href="{{ route('guest.create') }}" class="card p-4 text-center hover:border-orange-300"><p class="font-semibold text-slate-900">Dakar</p><p class="text-xs text-slate-500">Remorquage & depannage</p></a>
-                    <a href="{{ route('guest.create') }}" class="card p-4 text-center hover:border-orange-300"><p class="font-semibold text-slate-900">Pikine</p><p class="text-xs text-slate-500">Remorquage & depannage</p></a>
-                    <a href="{{ route('guest.create') }}" class="card p-4 text-center hover:border-orange-300"><p class="font-semibold text-slate-900">Rufisque</p><p class="text-xs text-slate-500">Remorquage & depannage</p></a>
-                    <a href="{{ route('guest.create') }}" class="card p-4 text-center hover:border-orange-300"><p class="font-semibold text-slate-900">Saint-Louis</p><p class="text-xs text-slate-500">Remorquage & depannage</p></a>
-                    <a href="{{ route('guest.create') }}" class="card p-4 text-center hover:border-orange-300"><p class="font-semibold text-slate-900">Thiès</p><p class="text-xs text-slate-500">Remorquage & depannage</p></a>
+                <p class="mt-2 text-sm text-slate-600">SamaRemorque est disponible dans les 14 regions du Senegal.</p>
+                <div class="mt-8 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+                    @foreach([
+                        ['name' => 'Dakar'],
+                        ['name' => 'Diourbel'],
+                        ['name' => 'Fatick'],
+                        ['name' => 'Kaffrine'],
+                        ['name' => 'Kaolack'],
+                        ['name' => 'Kedougou'],
+                        ['name' => 'Kolda'],
+                        ['name' => 'Louga'],
+                        ['name' => 'Matam'],
+                        ['name' => 'Saint-Louis'],
+                        ['name' => 'Sedhiou'],
+                        ['name' => 'Tambacounda'],
+                        ['name' => 'Thiès'],
+                        ['name' => 'Ziguinchor'],
+                    ] as $zone)
+                        <a href="{{ route('guest.create') }}" class="card p-4 text-center hover:border-orange-300"><p class="font-semibold text-slate-900">{{ $zone['name'] }}</p><p class="text-xs text-slate-500">Remorquage & depannage</p></a>
+                    @endforeach
                 </div>
             </div>
         </section>

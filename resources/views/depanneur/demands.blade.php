@@ -9,6 +9,14 @@
             Demandes de depannage
         </h1>
 
+        @php $busy = Auth::user()->hasActiveIntervention(); @endphp
+
+        @if($busy)
+            <div class="bg-amber-50 border border-amber-200 rounded-lg p-4 mb-6 text-sm text-amber-800">
+                <strong>Intervention en cours :</strong> terminez votre intervention actuelle avant d'en accepter une nouvelle.
+            </div>
+        @endif
+
         @if($interventions->isEmpty())
             <div class="card p-12 text-center text-slate-500">
                 <x-icon name="bell" class="w-12 h-12 mx-auto mb-3 text-slate-300" />
@@ -81,7 +89,7 @@
                             <div class="flex gap-2 sm:flex-col">
                                 <form method="POST" action="{{ route('depanneur.intervention.accept', $intervention) }}" class="flex-1" onsubmit="var b=this.querySelector('button'); b.disabled = true; b.classList.add('opacity-50');">
                                     @csrf
-                                    <button type="submit" class="btn-primary w-full py-2 text-sm">
+                                    <button type="submit" class="btn-primary w-full py-2 text-sm" {{ $busy ? 'disabled title="Terminez l\'intervention en cours"' : '' }}>
                                         <x-icon name="check" class="w-4 h-4" />
                                         Accepter
                                     </button>

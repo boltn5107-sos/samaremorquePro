@@ -127,11 +127,32 @@ class GuestInterventionController extends Controller
             ->with('status', 'intervention-created');
     }
 
+    public function search(Request $request)
+    {
+        $validated = $request->validate([
+            'tracking_code' => ['required', 'string', 'max:20'],
+        ]);
+
+        $code = strtoupper(trim($validated['tracking_code']));
+
+        $intervention = Intervention::findByTrackingCode($code);
+
+        if ($intervention === null) {
+            return redirect()->route('home')
+                ->with('error', 'Code de suivi introuvable. Verifiez le code saisi (format : SR-AB12CD).');
+        }
+
+        return redirect()->route('guest.track', $code);
+    }
+
     public function track(string $trackingCode)
     {
         $intervention = Intervention::findByTrackingCode($trackingCode);
 
-        abort_if($intervention === null, 404, 'Demande introuvable.');
+        if ($intervention === null) {
+            return redirect()->route('home')
+                ->with('error', 'Code de suivi introuvable. Verifiez le code saisi (format : SR-AB12CD).');
+        }
 
         return view('guest.track', compact('intervention'));
     }

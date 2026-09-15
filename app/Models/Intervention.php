@@ -42,6 +42,15 @@ class Intervention extends Model
         return self::STATUS_LABELS[$status] ?? ucfirst(str_replace('_', ' ', $status));
     }
 
+    public const OFFER_LIFETIME_MINUTES = 20;
+
+    protected static function booted(): void
+    {
+        static::creating(function (Intervention $intervention) {
+            $intervention->offers_expire_at ??= now()->addMinutes(self::OFFER_LIFETIME_MINUTES);
+        });
+    }
+
     public function getStatusColorAttribute(): string
     {
         return match ($this->status) {
@@ -66,6 +75,7 @@ class Intervention extends Model
         'description',
         'photo',
         'status',
+        'offers_expire_at',
         'client_lat',
         'client_lng',
         'client_address',
@@ -81,6 +91,7 @@ class Intervention extends Model
     ];
 
     protected $casts = [
+        'offers_expire_at' => 'datetime',
         'client_lat' => 'decimal:7',
         'client_lng' => 'decimal:7',
         'destination_lat' => 'decimal:7',
@@ -126,6 +137,27 @@ class Intervention extends Model
         } while (self::query()->where('tracking_code', $code)->exists());
 
         return $code;
+    }
+
+    public function isOfferExpired(): bool
+    {
+        $expiresAt = $this->offers_expire_at
+            ?? optional($this->created_at)->addMinutes(self::OFFER_LIFETIME_MINUTES);
+
+        return $expiresAt !== null && $expiresAt->isPast();
+    }
+
+    public function scopeStaleOffers($query)
+    {
+        return $query->where('status', self::STATUS_AWAITING_PROFESSIONAL)
+            ->where(function ($q) {
+                $q->whereNotNull('offers_expire_at')
+                    ->where('offers_expire_at', '<', now())
+                    ->orWhere(function ($q2) {
+                        $q2->whereNull('offers_expire_at')
+                            ->where('created_at', '<', now()->subMinutes(self::OFFER_LIFETIME_MINUTES));
+                    });
+            });
     }
 
     public function getVehicleTypeAttribute(?string $value): ?string

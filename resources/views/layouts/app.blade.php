@@ -131,5 +131,54 @@
         </script>
     @endauth
     @stack('scripts')
+
+    <script>
+    (function () {
+        if (!navigator.geolocation) return;
+        if (sessionStorage.getItem('sr-gps-prompted')) return;
+
+        navigator.geolocation.getCurrentPosition(
+            function () { sessionStorage.setItem('sr-gps-asked', '1'); },
+            function () {
+                if (sessionStorage.getItem('sr-gps-asked')) return;
+                if (document.getElementById('sr-gps-banner')) return;
+
+                var banner = document.createElement('div');
+                banner.id = 'sr-gps-banner';
+                banner.className = 'fixed top-16 inset-x-0 z-50 p-3 sm:p-4';
+                banner.style.paddingTop = 'env(safe-area-inset-top)';
+                banner.innerHTML =
+                    '<div class="max-w-lg mx-auto bg-orange-600 text-white rounded-2xl shadow-2xl p-4 flex items-center gap-3">' +
+                        '<svg class="w-8 h-8 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/><line x1="12" y1="2" x2="12" y2="4"/><line x1="12" y1="20" x2="12" y2="22"/><line x1="2" y1="12" x2="4" y2="12"/><line x1="20" y1="12" x2="22" y2="12"/></svg>' +
+                        '<div class="flex-1">' +
+                            '<p class="font-semibold text-sm">Activez votre GPS</p>' +
+                            '<p class="text-xs text-orange-100 mt-0.5">La localisation est necessaire pour trouver les professionnels pres de vous.</p>' +
+                        '</div>' +
+                        '<button id="sr-gps-activate" class="bg-white text-orange-700 text-xs font-bold px-3 py-2 rounded-lg whitespace-nowrap hover:bg-orange-50">Activer</button>' +
+                        '<button id="sr-gps-dismiss" class="text-orange-200 hover:text-white p-1" aria-label="Fermer">' +
+                            '<svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 6L6 18M6 6l12 12"/></svg>' +
+                        '</button>' +
+                    '</div>';
+
+                document.body.appendChild(banner);
+
+                document.getElementById('sr-gps-activate').addEventListener('click', function () {
+                    navigator.geolocation.getCurrentPosition(
+                        function () { banner.remove(); sessionStorage.setItem('sr-gps-asked', '1'); },
+                        function () { banner.remove(); sessionStorage.setItem('sr-gps-prompted', '1'); }
+                    );
+                });
+
+                document.getElementById('sr-gps-dismiss').addEventListener('click', function () {
+                    banner.remove();
+                    sessionStorage.setItem('sr-gps-prompted', '1');
+                });
+
+                sessionStorage.setItem('sr-gps-prompted', '1');
+            },
+            { enableHighAccuracy: false, timeout: 5000, maximumAge: 60000 }
+        );
+    })();
+    </script>
 </body>
 </html>

@@ -19,7 +19,7 @@
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
                         <label for="type" class="label">Type</label>
-                        <input type="text" id="type" name="type" required class="input" placeholder="Voiture, moto...">
+                        <input type="text" id="type" name="type" required class="input" placeholder="Voiture, camion, conteneur...">
                     </div>
                     <div>
                         <label for="brand" class="label">Marque</label>

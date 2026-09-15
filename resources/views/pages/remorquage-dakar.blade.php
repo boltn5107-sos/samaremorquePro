@@ -65,7 +65,7 @@
                 "name": "Quels types de remorquage proposez-vous ?",
                 "acceptedAnswer": {
                     "@type": "Answer",
-                    "text": "Remorquage de voitures, motos et petits utilitaires vers le garage de votre choix a Dakar et sa region. Transport securise par des remorqueurs verifies."
+                    "text": "Remorquage de voitures, motos, camions, petits utilitaires et conteneurs vers le garage de votre choix. Transport securise par des remorqueurs verifies."
                 }
             },
             {

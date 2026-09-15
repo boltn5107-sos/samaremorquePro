@@ -41,6 +41,7 @@
                         <a href="{{ route('admin.dashboard') }}" class="flex items-center gap-1.5 hover:text-orange-400"><x-icon name="dashboard" class="w-4 h-4" /> Admin</a>
                         <a href="{{ route('admin.intervention.index') }}" class="flex items-center gap-1.5 hover:text-orange-400"><x-icon name="car" class="w-4 h-4" /> Interventions</a>
                         <a href="{{ route('admin.professionnels.index') }}" class="flex items-center gap-1.5 hover:text-orange-400"><x-icon name="user" class="w-4 h-4" /> Remorqueurs/Depanneurs</a>
+                        <a href="{{ route('admin.integration') }}" class="flex items-center gap-1.5 hover:text-orange-400"><x-icon name="zap" class="w-4 h-4" /> Integration</a>
                     @endif
 
                     <a href="{{ route('profile.edit') }}" class="flex items-center gap-1.5 hover:text-orange-400">
@@ -97,6 +98,7 @@
                     <a href="{{ route('admin.dashboard') }}" class="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-slate-800"><x-icon name="dashboard" class="w-4 h-4" /> Admin</a>
                     <a href="{{ route('admin.intervention.index') }}" class="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-slate-800"><x-icon name="car" class="w-4 h-4" /> Interventions</a>
                     <a href="{{ route('admin.professionnels.index') }}" class="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-slate-800"><x-icon name="user" class="w-4 h-4" /> Remorqueurs/Depanneurs</a>
+                    <a href="{{ route('admin.integration') }}" class="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-slate-800"><x-icon name="zap" class="w-4 h-4" /> Integration</a>
                 @endif
 
                 <a href="{{ route('profile.edit') }}" class="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-slate-800">

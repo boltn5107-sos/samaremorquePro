@@ -7,8 +7,8 @@
     <title>SamaRemorque - Remorquage &amp; Depannage au Senegal | Assistance 24/7 a Dakar</title>
 
     {{-- SEO --}}
-    <meta name="description" content="SamaRemorque : trouvez en quelques clics un remorqueur ou depanneur routier disponible pres de chez vous au Senegal. Assistance 24/7 a Dakar, Pikine, Rufisque, Saint-Louis et Thiès. Localisation en temps reel, suivi GPS, tarifs transparents.">
-    <meta name="keywords" content="remorquage Dakar, depannage routier Senegal, remorqueur Dakar, depanneur Senegal, assistance routiere 24/7, remorque voiture, depannage voiture, remorquage pas cher, depannage urgent, Dakar, Pikine, Rufisque, Saint-Louis, Thiès, depannage batterie, crevaison, remorquage apres panne">
+    <meta name="description" content="SamaRemorque : trouvez en quelques clics un remorqueur ou depanneur routier disponible pres de chez vous partout au Senegal (14 regions). Assistance 24/7 pour vehicules et conteneurs. Localisation en temps reel, suivi GPS, tarifs transparents.">
+    <meta name="keywords" content="remorquage Dakar, depannage routier Senegal, remorqueur Senegal, depanneur Senegal, assistance routiere 24/7, remorque voiture, remorquage conteneur, depannage voiture, remorquage pas cher, depannage urgent, Dakar, Diourbel, Fatick, Kaffrine, Kaolack, Kedougou, Kolda, Louga, Matam, Saint-Louis, Sedhiou, Tambacounda, Thies, Ziguinchor, depannage batterie, crevaison, remorquage apres panne">
     <meta name="author" content="SamaRemorque">
     <meta name="robots" content="index, follow, max-image-preview:large">
     <link rel="canonical" href="{{ url('/') }}">
@@ -120,7 +120,7 @@
                 "name": "Dans quelles zones intervenez-vous ?",
                 "acceptedAnswer": {
                     "@type": "Answer",
-                    "text": "Nous couvrons principalement Dakar et sa region, ainsi que les grandes villes comme Saint-Louis et Thiès. La localisation vous permet de voir les professionnels disponibles autour de vous."
+                    "text": "Nous couvrons l'ensemble du territoire senegalais : les 14 regions (Dakar, Diourbel, Fatick, Kaffrine, Kaolack, Kedougou, Kolda, Louga, Matam, Saint-Louis, Sedhiou, Tambacounda, Thies et Ziguinchor). La localisation GPS vous permet de voir les professionnels disponibles autour de vous."
                 }
             },
             {
@@ -136,7 +136,7 @@
                 "name": "Quels types de pannes sont pris en charge ?",
                 "acceptedAnswer": {
                     "@type": "Answer",
-                    "text": "Remorquage, depannage sur place, crevaison, batterie a plat, panne moteur et immobilisation generale. Choisissez le service adapte a votre situation."
+                    "text": "Remorquage, depannage sur place, crevaison, batterie a plat, panne moteur et immobilisation generale, remorquage de conteneurs et transport de vehicules lourds. Choisissez le service adapte a votre situation."
                 }
             },
             {
@@ -242,13 +242,13 @@
         <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 lg:py-32">
             <div class="max-w-2xl">
                 <span class="inline-flex items-center gap-1.5 bg-orange-500/20 text-orange-300 text-xs font-semibold px-3 py-1 rounded-full">
-                    Remorquage &amp; Depannage 24/7 - Dakar et region
+                    Remorquage &amp; Depannage 24/7 - Partout au Senegal
                 </span>
                 <h1 class="mt-4 text-4xl sm:text-5xl font-extrabold tracking-tight leading-tight">
                     Remorquage et depannage au Senegal : un professionnel pres de vous en quelques clics.
                 </h1>
                 <p class="mt-4 text-lg text-slate-300">
-                    SamaRemorque connecte les conducteurs en panne aux remorqueurs et depanneurs disponibles a Dakar, Pikine, Rufisque, Saint-Louis et Thiès. Localisation GPS, tarifs transparents, suivi en temps reel : demandez votre assistance maintenant.
+                    SamaRemorque connecte les conducteurs en panne, les vehicules et conteneurs aux remorqueurs et depanneurs disponibles partout au Senegal. Localisation GPS, tarifs transparents, suivi en temps reel : demandez votre assistance maintenant.
                 </p>
                 <div class="mt-8 flex flex-col sm:flex-row gap-3">
                     <a href="{{ route('guest.create') }}" class="btn-primary text-base px-6 py-3.5">
@@ -257,6 +257,10 @@
                     <a href="#suivi" class="btn-secondary bg-white/10 text-white border-white/20 hover:bg-white/20 text-base px-6 py-3.5">
                         Suivre ma demande
                     </a>
+                    <button id="landing-install-btn" class="hidden sm:inline-flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white text-base px-6 py-3.5 rounded-lg font-semibold transition-colors">
+                        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                        Installer l'appli
+                    </button>
                 </div>
                 <div class="mt-10 grid grid-cols-3 gap-6 max-w-md">
                     <div>
@@ -281,29 +285,30 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-center max-w-2xl mx-auto mb-10">
                 <h2 class="text-2xl font-bold text-slate-900">Zones couvertes</h2>
-                <p class="mt-2 text-sm text-slate-600">SamaRemorque est disponible dans les principales villes du Senegal. Verifiez la presence de remorqueurs et depanneurs pres de vous.</p>
+                <p class="mt-2 text-sm text-slate-600">SamaRemorque est disponible dans les 14 regions du Senegal. Verifiez la presence de remorqueurs et depanneurs pres de vous.</p>
             </div>
-            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4">
-                <a href="{{ route('guest.create') }}" class="card p-4 text-center hover:border-orange-300">
-                    <p class="font-semibold text-slate-900">Dakar</p>
-                    <p class="text-xs text-slate-500">Remorquage &amp; depannage</p>
-                </a>
-                <a href="{{ route('guest.create') }}" class="card p-4 text-center hover:border-orange-300">
-                    <p class="font-semibold text-slate-900">Pikine</p>
-                    <p class="text-xs text-slate-500">Remorquage &amp; depannage</p>
-                </a>
-                <a href="{{ route('guest.create') }}" class="card p-4 text-center hover:border-orange-300">
-                    <p class="font-semibold text-slate-900">Rufisque</p>
-                    <p class="text-xs text-slate-500">Remorquage &amp; depannage</p>
-                </a>
-                <a href="{{ route('guest.create') }}" class="card p-4 text-center hover:border-orange-300">
-                    <p class="font-semibold text-slate-900">Saint-Louis</p>
-                    <p class="text-xs text-slate-500">Remorquage &amp; depannage</p>
-                </a>
-                <a href="{{ route('guest.create') }}" class="card p-4 text-center hover:border-orange-300">
-                    <p class="font-semibold text-slate-900">Thiès</p>
-                    <p class="text-xs text-slate-500">Remorquage &amp; depannage</p>
-                </a>
+            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+                @foreach([
+                    ['name' => 'Dakar', 'desc' => 'Remorquage, depannage & conteneurs'],
+                    ['name' => 'Diourbel', 'desc' => 'Remorquage & depannage'],
+                    ['name' => 'Fatick', 'desc' => 'Remorquage & depannage'],
+                    ['name' => 'Kaffrine', 'desc' => 'Remorquage & depannage'],
+                    ['name' => 'Kaolack', 'desc' => 'Remorquage & depannage'],
+                    ['name' => 'Kedougou', 'desc' => 'Remorquage & depannage'],
+                    ['name' => 'Kolda', 'desc' => 'Remorquage & depannage'],
+                    ['name' => 'Louga', 'desc' => 'Remorquage & depannage'],
+                    ['name' => 'Matam', 'desc' => 'Remorquage & depannage'],
+                    ['name' => 'Saint-Louis', 'desc' => 'Remorquage & depannage'],
+                    ['name' => 'Sedhiou', 'desc' => 'Remorquage & depannage'],
+                    ['name' => 'Tambacounda', 'desc' => 'Remorquage & depannage'],
+                    ['name' => 'Thiès', 'desc' => 'Remorquage & depannage'],
+                    ['name' => 'Ziguinchor', 'desc' => 'Remorquage & depannage'],
+                ] as $zone)
+                    <a href="{{ route('guest.create') }}" class="card p-4 text-center hover:border-orange-300">
+                        <p class="font-semibold text-slate-900">{{ $zone['name'] }}</p>
+                        <p class="text-xs text-slate-500">{{ $zone['desc'] }}</p>
+                    </a>
+                @endforeach
             </div>
             <p class="text-center text-xs text-slate-500 mt-4">D'autres zones sont ajoutees regulierement selon la disponibilite des professionnels.</p>
         </div>
@@ -314,8 +319,16 @@
         <div class="max-w-3xl mx-auto px-4 sm:px-6 text-center">
             <h2 class="text-2xl font-bold">Avez-vous deja une demande en cours ?</h2>
             <p class="mt-2 text-sm text-slate-300">Saisissez votre code de suivi pour voir l'etat de votre intervention et la position du professionnel en temps reel.</p>
-            <form action="#" onsubmit="event.preventDefault(); var c = document.getElementById('tracking-input').value.trim(); if (c) location.href = '/suivi/' + encodeURIComponent(c);" class="mt-6 flex flex-col sm:flex-row gap-3 justify-center">
-                <input type="text" id="tracking-input" placeholder="Ex : SR-AB12CD"
+
+            @if(session('error'))
+                <div class="mt-4 text-sm bg-red-500/10 border border-red-500/40 text-red-300 rounded-lg p-3">
+                    {{ session('error') }}
+                </div>
+            @endif
+
+            <form method="POST" action="{{ route('guest.search') }}" class="mt-6 flex flex-col sm:flex-row gap-3 justify-center">
+                @csrf
+                <input type="text" name="tracking_code" id="tracking-input" placeholder="Ex : SR-AB12CD" required maxlength="20"
                        class="input text-center sm:text-left sm:flex-1 max-w-sm mx-auto sm:mx-0 uppercase tracking-widest"
                        style="color: #0f172a;" autocomplete="off">
                 <button type="submit" class="btn-primary whitespace-nowrap">
@@ -330,9 +343,9 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-center max-w-2xl mx-auto mb-14">
                 <h2 class="text-3xl font-bold text-slate-900">Nos services de remorquage et depannage</h2>
-                <p class="mt-3 text-slate-600">Des interventions rapides pour tous les types de pannes et d'immobilisations au Senegal.</p>
+                <p class="mt-3 text-slate-600">Des interventions rapides pour tous les types de pannes, vehicules et conteneurs au Senegal.</p>
             </div>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
                 <div class="card p-8 text-center">
                     <div class="w-14 h-14 mx-auto rounded-2xl bg-orange-100 text-orange-600 flex items-center justify-center text-2xl font-bold">1</div>
                     <h3 class="mt-5 text-lg font-semibold text-slate-900">Depannage sur place</h3>
@@ -345,6 +358,11 @@
                 </div>
                 <div class="card p-8 text-center">
                     <div class="w-14 h-14 mx-auto rounded-2xl bg-orange-100 text-orange-600 flex items-center justify-center text-2xl font-bold">3</div>
+                    <h3 class="mt-5 text-lg font-semibold text-slate-900">Remorquage conteneur</h3>
+                    <p class="mt-2 text-sm text-slate-600">Transport de conteneurs sur tout le territoire. Solution adaptee aux besoins logistiques et industriels au Senegal.</p>
+                </div>
+                <div class="card p-8 text-center">
+                    <div class="w-14 h-14 mx-auto rounded-2xl bg-orange-100 text-orange-600 flex items-center justify-center text-2xl font-bold">4</div>
                     <h3 class="mt-5 text-lg font-semibold text-slate-900">Suivi en temps reel</h3>
                     <p class="mt-2 text-sm text-slate-600">Suivez l'arrivee du professionnel sur la carte et recevez les mises a jour par etat jusqu'a la fin de l'intervention.</p>
                 </div>
@@ -428,7 +446,7 @@
                 <div class="order-2 lg:order-1">
                     <h2 class="text-3xl font-bold">Des professionnels a votre service au Senegal</h2>
                     <p class="mt-4 text-slate-300">
-                        Nos remorqueurs et depanneurs sont validates par l'equipe SamaRemorque, suivis en temps reel et disponibles a Dakar, Pikine, Rufisque, Saint-Louis et Thiès. Choisissez un professionnel proche, consultez son tarif et son evaluation, puis demandez une intervention en quelques clics.
+                        Nos remorqueurs et depanneurs sont validates par l'equipe SamaRemorque, suivis en temps reel et disponibles partout au Senegal (14 regions). Nous gerons les vehicules en panne et les conteneurs. Choisissez un professionnel proche, consultez son tarif et son evaluation, puis demandez une intervention en quelques clics.
                     </p>
                     <div class="mt-8 grid grid-cols-2 gap-4">
                         <div class="bg-white/5 rounded-xl p-5 border border-white/10">
@@ -590,7 +608,7 @@
                 </div>
                 <div class="card p-5">
                     <h3 class="text-lg font-semibold text-slate-900">Dans quelles zones intervenez-vous ?</h3>
-                    <p class="mt-2 text-sm text-slate-600">Nous couvrons principalement Dakar et sa region, ainsi que les grandes villes comme Saint-Louis et Thiès. La localisation vous permet de voir les professionnels disponibles autour de vous.</p>
+                    <p class="mt-2 text-sm text-slate-600">SamaRemorque couvre l'ensemble du territoire senegalais : les 14 regions (Dakar, Diourbel, Fatick, Kaffrine, Kaolack, Kedougou, Kolda, Louga, Matam, Saint-Louis, Sedhiou, Tambacounda, Thies et Ziguinchor). La localisation GPS vous permet de voir les professionnels disponibles autour de vous.</p>
                 </div>
                 <div class="card p-5">
                     <h3 class="text-lg font-semibold text-slate-900">Faut-il creer un compte pour demander une assistance ?</h3>
@@ -598,7 +616,7 @@
                 </div>
                 <div class="card p-5">
                     <h3 class="text-lg font-semibold text-slate-900">Quels types de pannes sont pris en charge ?</h3>
-                    <p class="mt-2 text-sm text-slate-600">Remorquage, depannage sur place, crevaison, batterie a plat, panne moteur et immobilisation generale. Choisissez le service adapte a votre situation.</p>
+                    <p class="mt-2 text-sm text-slate-600">Remorquage, depannage sur place, crevaison, batterie a plat, panne moteur, immobilisation generale, remorquage de conteneurs et transport de vehicules lourds. Choisissez le service adapte a votre situation.</p>
                 </div>
                 <div class="card p-5">
                     <h3 class="text-lg font-semibold text-slate-900">Comment sont selectionnes les professionnels ?</h3>
@@ -666,7 +684,7 @@
                         </span>
                         <h3 class="text-white font-bold text-lg">SamaRemorque</h3>
                     </div>
-                    <p class="mt-3 text-sm">Plateforme de remorquage et depannage routier au Senegal.</p>
+                    <p class="mt-3 text-sm">Plateforme de remorquage et depannage routier au Senegal, pour vehicules et conteneurs.</p>
                     <h4 class="text-white font-semibold mt-5 mb-2">Contact</h4>
                     <ul class="space-y-2 text-sm">
                         <li class="flex items-center gap-2">
@@ -735,6 +753,32 @@
                 toggle.addEventListener('click', function () {
                     menu.classList.toggle('hidden');
                 });
+            }
+
+            var deferredPrompt = null;
+            var installBtn = document.getElementById('landing-install-btn');
+
+            window.addEventListener('beforeinstallprompt', function (e) {
+                e.preventDefault();
+                deferredPrompt = e;
+                if (installBtn) installBtn.classList.remove('hidden');
+            });
+
+            if (installBtn) {
+                installBtn.addEventListener('click', function () {
+                    if (!deferredPrompt) {
+                        alert('Ajoutez SamaRemorque a l\'ecran d\'accueil depuis le menu de votre navigateur (\'Ajouter a l\'ecran d\'accueil\').');
+                        return;
+                    }
+                    deferredPrompt.prompt();
+                    deferredPrompt.userChoice.then(function () {
+                        deferredPrompt = null;
+                    });
+                });
+            }
+
+            if (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches && installBtn) {
+                installBtn.classList.add('hidden');
             }
         });
     </script>

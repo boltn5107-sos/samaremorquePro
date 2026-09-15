@@ -54,7 +54,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (deferredPrompt && shouldShowTeaser()) {
                 renderTeaser();
             }
-        }, 20000);
+        }, 5000);
     }
 
     function removeTeaser() {

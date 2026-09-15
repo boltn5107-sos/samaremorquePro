@@ -57,12 +57,22 @@ class DepanneurInterventionController extends Controller
 
     public function accept(Request $request, Intervention $intervention)
     {
+        if (Auth::user()->hasActiveIntervention()) {
+            return back()->with('error', 'Vous avez deja une intervention en cours. Terminez-la avant d\'en accepter une autre.');
+        }
+
         if ($intervention->status !== Intervention::STATUS_AWAITING_PROFESSIONAL) {
             return back()->with('error', 'Cette demande a deja ete traitee.');
         }
 
         $updated = Intervention::where('id', $intervention->id)
             ->where('status', Intervention::STATUS_AWAITING_PROFESSIONAL)
+            ->whereRaw('NOT EXISTS (
+                SELECT 1 FROM interventions AS active
+                WHERE active.professional_id = ?
+                  AND active.id <> interventions.id
+                  AND active.status NOT IN (?, ?)
+            )', [Auth::id(), Intervention::STATUS_COMPLETED, Intervention::STATUS_CANCELLED])
             ->update([
                 'professional_id' => Auth::id(),
                 'status' => 'depanneur_en_route',
@@ -71,6 +81,10 @@ class DepanneurInterventionController extends Controller
         if (! $updated) {
             return back()->with('error', 'Cette demande a deja ete acceptee par un autre professionnel.');
         }
+
+        Intervention::where('status', Intervention::STATUS_AWAITING_PROFESSIONAL)
+            ->where('target_professional_id', Auth::id())
+            ->update(['target_professional_id' => null]);
 
         InterventionStatus::create([
             'intervention_id' => $intervention->id,
@@ -98,6 +112,10 @@ class DepanneurInterventionController extends Controller
             ],
             ['reason' => $request->input('reason')]
         );
+
+        if ((int) $intervention->target_professional_id === Auth::id()) {
+            $intervention->update(['target_professional_id' => null]);
+        }
 
         $this->notifyClient(
             $intervention,

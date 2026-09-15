@@ -98,6 +98,10 @@ class InterventionApiController extends Controller
 
     public function accept(Request $request, Intervention $intervention)
     {
+        if ($request->user()->hasActiveIntervention()) {
+            return response()->json(['message' => 'Vous avez deja une intervention en cours. Terminez-la avant d\'en accepter une autre.'], 409);
+        }
+
         if ($intervention->status !== Intervention::STATUS_AWAITING_PROFESSIONAL) {
             return response()->json(['message' => 'Cette intervention a deja ete acceptee.'], 422);
         }
@@ -106,6 +110,12 @@ class InterventionApiController extends Controller
 
         $updated = Intervention::where('id', $intervention->id)
             ->where('status', Intervention::STATUS_AWAITING_PROFESSIONAL)
+            ->whereRaw('NOT EXISTS (
+                SELECT 1 FROM interventions AS active
+                WHERE active.professional_id = ?
+                  AND active.id <> interventions.id
+                  AND active.status NOT IN (?, ?)
+            )', [Auth::id(), Intervention::STATUS_COMPLETED, Intervention::STATUS_CANCELLED])
             ->update([
                 'professional_id' => Auth::id(),
                 'status' => $roleStatus,
@@ -114,6 +124,10 @@ class InterventionApiController extends Controller
         if (! $updated) {
             return response()->json(['message' => 'Cette intervention a deja ete acceptee.'], 409);
         }
+
+        Intervention::where('status', Intervention::STATUS_AWAITING_PROFESSIONAL)
+            ->where('target_professional_id', Auth::id())
+            ->update(['target_professional_id' => null]);
 
         InterventionStatus::create([
             'intervention_id' => $intervention->id,
@@ -157,6 +171,10 @@ class InterventionApiController extends Controller
             ],
             ['reason' => $request->input('reason')]
         );
+
+        if ((int) $intervention->target_professional_id === $request->user()->id) {
+            $intervention->update(['target_professional_id' => null]);
+        }
 
         if ($intervention->client_id !== null) {
             Notification::create([
