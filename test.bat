@@ -1,0 +1,13 @@
+@echo off
+echo Starting server...
+start "" php artisan serve --port=8000 --host=127.0.0.1
+timeout /t 3 /nobreak > nul
+echo Testing CSS...
+curl -s -o nul -w "%%{http_code}" http://127.0.0.1:8000/build/assets/app-CQcrnDP3.css
+echo ""
+echo Testing page...
+curl -s -o nul -w "%%{http_code}" http://127.0.0.1:8000/
+echo ""
+echo Killing server...
+taskkill /F /IM php.exe 2>nul
+echo Done.

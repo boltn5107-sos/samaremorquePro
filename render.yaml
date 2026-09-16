@@ -1,0 +1,39 @@
+services:
+  - type: pserv
+    name: sama-remorque-db
+    env: postgresql
+    plan: free
+    databaseName: sama_remorque
+    user: sama_remorque_user
+
+  - type: web
+    name: sama-remorque
+    env: docker
+    dockerfilePath: ./Dockerfile
+    plan: free
+    region: frankfurt
+    envVars:
+      - key: APP_NAME
+        value: SamaRemorque
+      - key: APP_ENV
+        value: production
+      - key: APP_DEBUG
+        value: false
+      - key: APP_KEY
+        generateValue: true
+      - key: APP_URL
+        value: https://sama-remorque.onrender.com
+      - key: DB_CONNECTION
+        value: pgsql
+      - key: DATABASE_URL
+        fromDatabase:
+          name: sama-remorque-db
+          property: connectionString
+      - key: SESSION_DRIVER
+        value: database
+      - key: CACHE_DRIVER
+        value: file
+      - key: QUEUE_CONNECTION
+        value: database
+      - key: FORCE_MIGRATE
+        value: "1"

@@ -1,0 +1,654 @@
+Cahier des charges — Plateforme de remorquage et dépannage routier au Sénégal
+
+## 1. Présentation
+
+Développement d'une plateforme web permettant de mettre en relation les **conducteurs en panne**, les **chauffeurs de remorque** et les **dépanneurs professionnels**.
+
+L'application sera développée avec **Laravel** et conçue en priorité pour une utilisation mobile.
+
+Elle devra permettre au client de localiser son véhicule, demander une intervention, trouver un professionnel disponible à proximité et suivre l'intervention jusqu'à sa clôture.
+
+La plateforme sera développée comme une **PWA**, afin de pouvoir être installée sur smartphone sans application native.
+
+---
+
+# 2. Objectifs
+
+* Trouver rapidement un remorqueur ou dépanneur.
+* Utiliser la géolocalisation pour localiser le client.
+* Rechercher les professionnels disponibles à proximité.
+* Permettre l'acceptation d'une intervention.
+* Suivre le professionnel sur la carte.
+* Gérer les différents statuts d'une intervention.
+* Centraliser les informations des professionnels.
+* Conserver l'historique.
+* Permettre à un administrateur de superviser la plateforme.
+* Fournir une application réellement utilisable sur smartphone.
+
+---
+
+# 3. Les utilisateurs
+
+La plateforme possède quatre rôles :
+
+### Client
+
+Conducteur dont le véhicule est en panne.
+
+### Remorqueur
+
+Professionnel chargé de transporter le véhicule.
+
+### Dépanneur
+
+Professionnel pouvant intervenir directement sur une panne.
+
+### Administrateur
+
+Gestion et supervision de la plateforme.
+
+---
+
+# 4. Interface Client
+
+### Compte
+
+* Inscription
+* Connexion
+* Déconnexion
+* Modification du profil
+* Téléphone
+
+### Demande d'intervention
+
+Le client renseigne :
+
+* Type de véhicule
+* Position GPS
+* Position manuelle si GPS indisponible
+* Destination
+* Type de service
+* Description de la panne
+* Photo facultative
+
+```text
+Type de véhicule
+[ Voiture ▼ ]
+
+Ma position
+[ 📍 Utiliser ma position ]
+
+Destination
+[........................]
+
+Service
+[ Remorquage ▼ ]
+
+Description
+[........................]
+
+[ DEMANDER UNE INTERVENTION ]
+```
+
+### Suivi
+
+Le client peut voir :
+
+* professionnel affecté ;
+* téléphone ;
+* position ;
+* distance ;
+* trajet ;
+* statut de l'intervention.
+
+---
+
+# 5. Interface Chauffeur de remorque
+
+## Profil
+
+* Nom/prénom
+* Téléphone
+* Photo
+* Zone d'intervention
+* Informations professionnelles
+* Statut de validation
+
+## Remorque
+
+* Type
+* Capacité
+* Immatriculation
+* Photos
+* Informations complémentaires
+
+## Disponibilité
+
+```text
+● DISPONIBLE
+```
+
+ou
+
+```text
+○ INDISPONIBLE
+```
+
+Lorsqu'il est disponible, sa position GPS peut être utilisée pour rechercher les demandes proches.
+
+## Demandes
+
+Le remorqueur reçoit :
+
+* distance du client ;
+* position ;
+* type de véhicule ;
+* destination ;
+* description ;
+* estimation du trajet.
+
+Actions :
+
+**ACCEPTER / REFUSER**
+
+---
+
+# 6. Interface Dépanneur
+
+## Profil
+
+* Nom/prénom ou entreprise
+* Téléphone
+* Photo
+* Zone d'intervention
+* Informations professionnelles
+* Statut de validation
+
+## Services
+
+Le dépanneur sélectionne ses spécialités :
+
+* Batterie
+* Crevaison
+* Démarrage
+* Panne mécanique
+* Remorquage
+* Autres
+
+## Disponibilité
+
+```text
+● DISPONIBLE
+```
+
+Sa position GPS permet de rechercher les dépanneurs disponibles à proximité.
+
+---
+
+# 7. Géolocalisation
+
+La géolocalisation est une fonctionnalité centrale.
+
+### Client
+
+Le navigateur récupère :
+
+* latitude ;
+* longitude.
+
+En cas d'échec, le client peut renseigner manuellement sa position.
+
+### Professionnel
+
+Lorsque le professionnel est disponible, sa position peut être mise à jour afin de permettre :
+
+* recherche par proximité ;
+* calcul de distance ;
+* suivi du déplacement.
+
+---
+
+# 8. Recherche du professionnel
+
+Lorsqu'une demande est créée :
+
+```text
+CLIENT
+   ↓
+GPS
+   ↓
+Recherche des professionnels
+   ↓
+Filtrage : disponible + service
+   ↓
+Classement par distance
+   ↓
+Notification
+   ↓
+Acceptation
+```
+
+Le système doit empêcher plusieurs professionnels d'accepter simultanément la même intervention.
+
+---
+
+# 9. Carte et trajet
+
+Après acceptation :
+
+```text
+CLIENT 📍 ───────── 🚚 PROFESSIONNEL
+                         ↓
+                    DESTINATION
+```
+
+La carte affiche :
+
+* position du client ;
+* position du professionnel ;
+* trajet ;
+* distance ;
+* temps estimé.
+
+Un bouton permet d'ouvrir la navigation externe si nécessaire.
+
+---
+
+# 10. Statuts des interventions
+
+Workflow unique :
+
+```text
+🟢 DEMANDE REÇUE
+        ↓
+🟡 REMORQUEUR EN ROUTE
+        ↓
+🔵 ARRIVÉE SUR PLACE
+        ↓
+🟣 VÉHICULE PRIS EN CHARGE
+        ↓
+✅ INTERVENTION TERMINÉE
+```
+
+Pour une intervention de dépannage, le terme **« professionnel »** pourra être utilisé afin que le workflow fonctionne pour les deux profils.
+
+Chaque changement de statut est :
+
+* enregistré ;
+* horodaté ;
+* associé à l'intervention.
+
+---
+
+# 11. Notifications
+
+Notifications lors de :
+
+* nouvelle demande ;
+* acceptation ;
+* départ du professionnel ;
+* arrivée ;
+* prise en charge ;
+* fin d'intervention.
+
+### V1
+
+* Notifications Web Push
+* SMS pour les notifications importantes
+
+WhatsApp pourra être intégré ultérieurement.
+
+---
+
+# 12. Historique
+
+### Client
+
+* interventions précédentes ;
+* date ;
+* professionnel ;
+* service ;
+* destination ;
+* statut.
+
+### Professionnel
+
+* demandes reçues ;
+* interventions acceptées ;
+* interventions terminées ;
+* historique des services.
+
+---
+
+# 13. Administration
+
+Dashboard administrateur :
+
+```text
+INTERVENTIONS AUJOURD'HUI       24
+
+EN COURS                         07
+
+TERMINÉES                        17
+
+PROFESSIONNELS DISPONIBLES      12
+```
+
+### Gestion
+
+L'administrateur peut :
+
+* gérer les clients ;
+* gérer les remorqueurs ;
+* gérer les dépanneurs ;
+* valider les professionnels ;
+* suspendre un compte ;
+* réactiver un compte ;
+* consulter les interventions ;
+* consulter les positions ;
+* visualiser les interventions sur une carte ;
+* consulter les statistiques.
+
+---
+
+# 14. Design
+
+Le design doit être :
+
+* sobre ;
+* professionnel ;
+* moderne ;
+* responsive ;
+* mobile-first ;
+* rapide ;
+* simple à utiliser.
+
+### Identité
+
+**Couleur principale :** bleu nuit
+**Actions :** orange
+**Succès :** vert
+**Erreur/urgence :** rouge
+**Fond :** blanc / gris clair
+**Police :** Inter
+
+Les interfaces doivent privilégier :
+
+**Carte + informations essentielles + gros boutons d'action.**
+
+---
+
+# 15. PWA
+
+L'application sera installable depuis le navigateur.
+
+### Fonctionnalités
+
+* Manifest
+* Service Worker
+* Installation sur smartphone
+* Cache des ressources essentielles
+* Fonctionnement dégradé avec réseau faible
+* Notifications Web Push
+* Mise à jour automatique
+
+Le mode hors ligne ne devra pas permettre les fonctions nécessitant une connexion temps réel, notamment :
+
+* suivi GPS ;
+* nouvelles demandes ;
+* WebSocket ;
+* attribution des interventions.
+
+---
+
+# 16. Sécurité
+
+La plateforme doit intégrer :
+
+* HTTPS ;
+* authentification Laravel ;
+* mots de passe hashés ;
+* gestion des rôles ;
+* autorisations par utilisateur ;
+* validation des formulaires ;
+* protection CSRF ;
+* protection XSS ;
+* limitation des requêtes sensibles ;
+* validation des fichiers/photos ;
+* protection des API ;
+* journalisation des actions importantes.
+
+---
+
+# 17. Stack technique
+
+| Couche              | Technologie                           |
+| ------------------- | ------------------------------------- |
+| Backend             | **Laravel / PHP**                     |
+| Frontend            | **Blade + Tailwind CSS + JavaScript** |
+| Base de données     | **MySQL**                             |
+| Environnement local | **XAMPP**                             |
+| Cartographie        | **Leaflet + OpenStreetMap**           |
+| API                 | **Laravel REST API**                  |
+| Temps réel          | **Laravel Reverb / WebSockets**       |
+| Authentification    | **Laravel Breeze / Sanctum**          |
+| PWA                 | **Service Worker + Manifest**         |
+| Notifications       | **Web Push + SMS**                    |
+| Serveur             | **VPS / Cloud**                       |
+| Serveur Web         | **Apache / Nginx**                    |
+| Versionnement       | **Git / GitHub**                      |
+
+### Base de données
+
+XAMPP sera utilisé **pour le développement local**, avec **MySQL/MariaDB**.
+
+En production, la même base pourra être déployée sur un serveur MySQL/MariaDB.
+
+---
+
+# 18. Principales tables
+
+La base de données devra notamment contenir :
+
+```text
+users
+    │
+    ├── clients
+    ├── remorqueurs
+    ├── depanneurs
+    │
+    └── admins
+
+vehicles
+remorques
+services
+interventions
+intervention_statuses
+locations
+notifications
+```
+
+Relations principales :
+
+```text
+USER
+ │
+ └── INTERVENTION
+        │
+        ├── CLIENT
+        ├── PROFESSIONNEL
+        ├── LOCALISATION
+        ├── STATUTS
+        └── HISTORIQUE
+```
+
+---
+
+# 19. Architecture Laravel
+
+```text
+                    UTILISATEUR
+                         │
+                  PWA / Navigateur
+                         │
+              ┌──────────┴──────────┐
+              │                     │
+           Blade                API Laravel
+              │                     │
+              └──────────┬──────────┘
+                         │
+                    CONTROLLERS
+                         │
+                      SERVICES
+                         │
+                    ELOQUENT ORM
+                         │
+                       MYSQL
+```
+
+Laravel sera responsable de la logique métier, de l'authentification, des interventions, des utilisateurs, des notifications et des API.
+
+---
+
+# 20. Déploiement
+
+En développement :
+
+```text
+Windows
+   ↓
+XAMPP
+   ├── Apache
+   └── MySQL
+         ↓
+      Laravel
+```
+
+En production :
+
+```text
+Internet
+   ↓
+HTTPS
+   ↓
+Serveur VPS
+   ↓
+Apache / Nginx
+   ↓
+Laravel
+   ↓
+MySQL
+```
+
+L'application devra être accessible depuis :
+
+* Android ;
+* iPhone ;
+* ordinateur.
+
+Aucune installation obligatoire ne sera nécessaire pour utiliser le service.
+
+---
+
+# 21. MVP — Version réellement utilisable
+
+La première version doit permettre le parcours complet :
+
+```text
+CONDUCTEUR EN PANNE
+        ↓
+Ouvre la plateforme
+        ↓
+Autorise le GPS
+        ↓
+Crée une demande
+        ↓
+Professionnels proches recherchés
+        ↓
+Demande reçue
+        ↓
+Professionnel accepte
+        ↓
+Trajet affiché
+        ↓
+Professionnel en route
+        ↓
+Arrivée sur place
+        ↓
+Véhicule pris en charge
+        ↓
+Intervention terminée
+        ↓
+Historique
+```
+
+### Fonctionnalités V1
+
+1. Authentification
+2. Trois interfaces
+3. Profils professionnels
+4. Gestion des remorques
+5. Services de dépannage
+6. Géolocalisation
+7. Recherche par proximité
+8. Demande d'intervention
+9. Acceptation/refus
+10. Carte et trajet
+11. Suivi en temps réel
+12. Statuts
+13. Notifications
+14. Historique
+15. Administration
+16. PWA
+17. Sécurité
+18. Déploiement
+
+---
+
+# 22. Évolutions après lancement
+
+Une fois la plateforme utilisée par de vrais chauffeurs :
+
+* Paiement Wave / Orange Money
+* Notation des professionnels
+* Chat client/professionnel
+* WhatsApp
+* Tarification automatique
+* Facturation
+* Statistiques avancées
+* Gestion de flotte
+* Application mobile native
+
+---
+
+## 23. Principe du produit
+
+> **Localiser → trouver → accepter → se déplacer → prendre en charge → terminer.**
+
+La priorité est de construire une plateforme **fiable, rapide et réellement utilisable sur le terrain**, avec une interface particulièrement adaptée aux smartphones et aux conditions de réseau du Sénégal.
+
+
+
+
+
+Voici une description concise du design et du système de couleurs pour votre PWA **SamaRemorque** :
+
+### **Palette de Couleurs**
+
+* **Bleu Nuit / Bleu Profond (Confiance & Sécurité)** : Utilisé pour les barres de navigation, les fonds principaux (mode sombre ou contrastes), et le texte de base ("Sama"). Il inspire la fiabilité et le sérieux technique.
+* **Orange Vif / Ambre (Action & Urgence)** : Réservé aux éléments d'appel à l'action (boutons de validation, alertes de dépannage, curseur de recherche, "Remorque"). Il dynamise l'interface et attire immédiatement l'œil.
+* **Blanc / Gris Clair (Lisibilité)** : Fonds d'écran épurés pour garantir un confort de lecture optimal en extérieur (en plein soleil sur la route).
+* **Statuts (Vert / Orange / Rouge)** :
+* *Vert* : Professionnel disponible / Intervention terminée.
+* *Orange* : En route / Intervention en cours.
+* *Rouge* : Indisponible / Annulé ou alerte critique.
+
+
+
+---
+
+### **Principes du Design (UI/UX)**
+
+* **Approche Mobile-First (PWA)** : Interface pensée pour être manipulée d'une seule main, en situation d'urgence au bord de la route. Gros boutons tactiles, typographie lisible et contrastée.
+* **Cartographie Centrale** : La carte (type Google Maps / OpenStreetMap) occupe une place majeure sur les écrans clients et pros pour visualiser instantanément la géolocalisation PostGIS et le suivi en temps réel.
+* **Minimalisme & Rapidité** : Parcours utilisateur ultra-court (de la panne à la validation de la course en quelques clics) pour réduire le stress du client et maximiser l'efficacité du dépanneur.
