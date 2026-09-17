@@ -112,24 +112,9 @@ class User extends Authenticatable
         return $this->notifications()->whereNull('read_at')->count();
     }
 
-    public function hasActiveIntervention(): bool
-    {
-        return $this->interventionsAsProfessional()
-            ->whereNotIn('status', [Intervention::STATUS_COMPLETED, Intervention::STATUS_CANCELLED])
-            ->exists();
-    }
-
     public function getFullNameAttribute(): string
     {
         return "{$this->first_name} {$this->last_name}";
-    }
-
-    public function getHourlyRateAttribute(): ?float
-    {
-        $rate = optional($this->remorqueurProfile)->hourly_rate
-            ?? optional($this->depanneurProfile)->hourly_rate;
-
-        return $rate !== null ? (float) $rate : null;
     }
 
     public function isClient(): bool

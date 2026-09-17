@@ -1,21 +1,6 @@
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Suivi intervention {{ $intervention->tracking_code }} - SamaRemorque</title>
-    <meta name="description" content="Suivez sans compte votre demande d'assistance routiere au Senegal avec votre code de suivi : position du remorqueur ou depanneur en temps reel et etapes de l'intervention.">
-    <meta name="robots" content="index, follow">
-    <meta name="theme-color" content="#0f172a">
-    <link rel="manifest" href="/manifest.json">
-    <link rel="icon" type="image/png" href="/favicon.jpg">
-    <link rel="apple-touch-icon" href="/favicon.jpg">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" rel="stylesheet">
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
-</head>
-<body class="font-sans antialiased bg-slate-100 text-slate-900">
-
+@extends('layouts.app')
+@section('title', 'Suivi intervention {{ $intervention->tracking_code }} - SamaRemorque')
+@section('content')
     @php
         $isFinished = in_array($intervention->status, ['intervention_terminee', 'annulee']);
         $pro = $intervention->professional;
@@ -25,53 +10,78 @@
     @endphp
 
     {{-- Barre superieure --}}
-    <header class="sticky top-0 z-40 bg-slate-900 text-white shadow">
+    <section class="relative overflow-hidden sticky top-0 z-40 bg-night text-white border-b border-white/10 no-print">
         <div class="max-w-3xl mx-auto px-4 py-3 flex items-center justify-between">
-            <a href="{{ url('/') }}" class="flex items-center gap-2 text-lg font-bold tracking-tight">
-                <span class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-white overflow-hidden">
+            <a href="{{ url('/') }}" class="flex items-center gap-2.5 text-lg font-bold tracking-tight group">
+                <span class="inline-flex items-center justify-center w-9 h-9 rounded-xl bg-white/10 backdrop-blur-sm overflow-hidden ring-1 ring-white/10 transition-transform duration-300 group-hover:scale-105">
                     <img src="{{ asset('favicon.jpg') }}" alt="SamaRemorque" class="w-6 h-6 object-contain">
                 </span>
-                <span>SamaRemorque</span>
+                <span class="font-display">SamaRemorque</span>
             </a>
-            <span class="inline-flex items-center gap-1.5 text-xs font-semibold bg-emerald-500/20 text-emerald-300 px-3 py-1.5 rounded-full">
+            <span class="inline-flex items-center gap-1.5 text-xs font-semibold bg-emerald-500/15 text-emerald-300 px-3 py-1.5 rounded-full ring-1 ring-emerald-500/20">
                 <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
                 Suivi sans compte
             </span>
         </div>
-    </header>
+    </section>
 
-    <div class="max-w-3xl mx-auto py-6 px-4 sm:px-6 pb-20">
+    <div class="max-w-3xl mx-auto py-8 px-4 sm:px-6 pb-24 relative">
+        <div class="absolute inset-0 hero-gradient pointer-events-none" aria-hidden="true"></div>
 
         @if($flash === 'intervention-created')
-            <div class="bg-emerald-50 border border-emerald-200 text-emerald-800 rounded-lg p-4 mb-5">
-                <p class="font-semibold">Demande envoyee !</p>
-                <p class="text-sm mt-1">Conservez votre <strong>code de suivi</strong> ci-dessous pour retrouver votre intervention sans compte.</p>
+            <div class="card p-5 mb-6 bg-gradient-to-r from-emerald-50 to-emerald-50/50 border border-emerald-200/80 text-emerald-800 animate-scale-in ring-1 ring-emerald-100">
+                <div class="flex items-start gap-3">
+                    <div class="flex-shrink-0 w-8 h-8 rounded-lg bg-emerald-100 flex items-center justify-center">
+                        <svg class="w-5 h-5 text-emerald-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                    </div>
+                    <div>
+                        <p class="font-semibold">Demande envoyee !</p>
+                        <p class="text-sm mt-1 text-emerald-700">Conservez votre <strong>code de suivi</strong> ci-dessous pour retrouver votre intervention sans compte.</p>
+                    </div>
+                </div>
             </div>
         @elseif($flash === 'intervention-cancelled')
-            <div class="bg-red-50 border border-red-200 text-red-700 rounded-lg p-4 mb-5">
-                <p class="font-semibold">Intervention annulee.</p>
-                <p class="text-sm mt-1">Votre demande a bien ete annulee. Vous pouvez en faire une nouvelle a tout moment.</p>
+            <div class="card p-5 mb-6 bg-gradient-to-r from-red-50 to-red-50/50 border border-red-200/80 text-red-700 animate-scale-in ring-1 ring-red-100">
+                <div class="flex items-start gap-3">
+                    <div class="flex-shrink-0 w-8 h-8 rounded-lg bg-red-100 flex items-center justify-center">
+                        <svg class="w-5 h-5 text-red-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+                    </div>
+                    <div>
+                        <p class="font-semibold">Intervention annulee.</p>
+                        <p class="text-sm mt-1 text-red-600">Votre demande a bien ete annulee. Vous pouvez en faire une nouvelle a tout moment.</p>
+                    </div>
+                </div>
             </div>
         @elseif($flash === 'intervention-rated')
-            <div class="bg-emerald-50 border border-emerald-200 text-emerald-800 rounded-lg p-4 mb-5">
-                <p class="font-semibold">Merci pour votre note !</p>
-                <p class="text-sm mt-1">Votre avis aidera les autres conducteurs.</p>
+            <div class="card p-5 mb-6 bg-gradient-to-r from-emerald-50 to-emerald-50/50 border border-emerald-200/80 text-emerald-800 animate-scale-in ring-1 ring-emerald-100">
+                <div class="flex items-start gap-3">
+                    <div class="flex-shrink-0 w-8 h-8 rounded-lg bg-emerald-100 flex items-center justify-center">
+                        <svg class="w-5 h-5 text-emerald-600" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                    </div>
+                    <div>
+                        <p class="font-semibold">Merci pour votre note !</p>
+                        <p class="text-sm mt-1 text-emerald-700">Votre avis aidera les autres conducteurs.</p>
+                    </div>
+                </div>
             </div>
         @endif
 
         {{-- Code de suivi --}}
-        <div class="card p-5 mb-5 text-center">
-            <p class="text-xs font-semibold text-slate-500 uppercase tracking-wide">Code de suivi</p>
-            <p id="tracking-code" class="mt-1 text-3xl font-extrabold text-slate-900 tracking-wider">{{ $intervention->tracking_code }}</p>
-            <button type="button" id="copy-code" class="mt-3 inline-flex items-center gap-1.5 text-xs font-semibold text-orange-600 hover:text-orange-700">
-                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
-                Copier le code
-            </button>
-            <p class="mt-2 text-xs text-slate-400">Utilisez ce code a tout moment pour retrouver cette page.</p>
-        </div>
+        <section class="card p-6 mb-6 text-center relative overflow-hidden">
+            <div class="absolute inset-0 bg-gradient-to-br from-slate-50 via-white to-orange-50/30 pointer-events-none"></div>
+            <div class="relative">
+                <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Code de suivi</p>
+                <p id="tracking-code" class="mt-2 font-display text-3xl md:text-4xl font-extrabold text-slate-900 tracking-wider">{{ $intervention->tracking_code }}</p>
+                <button type="button" id="copy-code" class="mt-3 inline-flex items-center gap-1.5 text-xs font-semibold text-orange-600 hover:text-orange-700 transition-colors px-3 py-1.5 rounded-lg hover:bg-orange-50">
+                    <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                    Copier le code
+                </button>
+                <p class="mt-2 text-xs text-slate-400">Utilisez ce code a tout moment pour retrouver cette page.</p>
+            </div>
+        </section>
 
         {{-- Statut actuel --}}
-        <div class="card p-5 mb-5">
+        <section class="card p-5 mb-6">
             <div class="flex items-center justify-between">
                 <h2 class="font-semibold text-slate-900">Statut de l'intervention</h2>
                 <span class="badge {{ $intervention->status_color }}">
@@ -80,186 +90,207 @@
                 </span>
             </div>
             @if(!$isFinished)
-                <p class="mt-2 text-xs text-slate-500 flex items-center gap-1.5">
-                    <span class="w-2 h-2 rounded-full bg-orange-500 animate-pulse"></span>
-                    Suivi en direct : la page se met a jour automatiquement.
-                </p>
+                <div class="mt-3 flex items-center gap-2 p-3 rounded-xl bg-orange-50/60 border border-orange-100">
+                    <span class="relative flex h-2.5 w-2.5">
+                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-orange-400 opacity-75"></span>
+                        <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-orange-500"></span>
+                    </span>
+                    <p class="text-xs text-orange-700 font-medium">Suivi en direct : la page se met a jour automatiquement.</p>
+                </div>
             @endif
-        </div>
+        </section>
 
         {{-- Carte en temps reel --}}
-        <div class="card p-4 mb-5">
-            <h2 class="font-semibold text-slate-900 flex items-center gap-2 mb-3">
-                <svg class="w-5 h-5 text-orange-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        <section class="card p-5 mb-6">
+            <h2 class="font-semibold text-slate-900 flex items-center gap-2.5 mb-3">
+                <span class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-orange-50 text-orange-600">
+                    <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                </span>
                 Carte en temps reel
             </h2>
             <div class="map-shell">
-                <div id="map" style="height: 320px; width: 100%;"></div>
+                <div id="map" style="height: 340px; width: 100%;"></div>
             </div>
-        </div>
+        </section>
 
         {{-- Professionnel assigne --}}
         @if($pro)
-            <div class="card p-5 mb-5">
-                <h2 class="font-semibold text-slate-900 flex items-center gap-2 mb-3">
-                    <svg class="w-5 h-5 text-orange-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="3" width="15" height="13" rx="1"/><path d="M16 8h4l3 3v5h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+            <section class="card p-6 mb-6">
+                <h2 class="font-semibold text-slate-900 flex items-center gap-2.5 mb-4">
+                    <span class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-orange-50 text-orange-600">
+                        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="3" width="15" height="13" rx="1"/><path d="M16 8h4l3 3v5h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+                    </span>
                     {{ $pro->isRemorqueur() ? 'Remorqueur' : 'Depanneur' }} assigne
                 </h2>
-                <div class="flex items-center gap-3">
+                <div class="flex items-center gap-4">
                     @if($pro->photo)
-                        <img src="{{ asset('storage/' . $pro->photo) }}" alt="" class="w-14 h-14 rounded-full object-cover bg-slate-100">
+                        <img src="{{ asset('storage/' . $pro->photo) }}" alt="" class="w-14 h-14 rounded-xl object-cover bg-slate-100 ring-2 ring-slate-100">
                     @else
-                        <div class="w-14 h-14 rounded-full flex items-center justify-center bg-orange-100 text-orange-600 font-semibold text-lg">{{ strtoupper(substr($pro->first_name, 0, 1)) }}{{ strtoupper(substr($pro->last_name, 0, 1)) }}</div>
+                        <div class="w-14 h-14 rounded-xl flex items-center justify-center bg-gradient-to-br from-orange-100 to-orange-200 text-orange-600 font-bold text-lg ring-2 ring-orange-100">{{ strtoupper(substr($pro->first_name, 0, 1)) }}{{ strtoupper(substr($pro->last_name, 0, 1)) }}</div>
                     @endif
                     <div class="min-w-0">
                         <p class="font-semibold text-slate-900">{{ $pro->full_name }}</p>
-                        <p class="text-sm text-slate-500 flex items-center gap-1">
-                            <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+                        <p class="text-sm text-slate-500 flex items-center gap-1.5 mt-0.5">
+                            <svg class="w-3.5 h-3.5 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
                             {{ $pro->phone }}
                         </p>
                     </div>
                 </div>
-                <div class="flex gap-2 mt-4">
+                <div class="flex gap-3 mt-5">
                     <a href="tel:{{ $pro->phone }}" class="btn-secondary flex-1 text-sm py-2.5">
-                        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+                        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.12.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.58 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
                         Appeler
                     </a>
-                    <a href="{{ $whatsapp }}" target="_blank" rel="noopener" class="px-4 py-2.5 text-sm font-semibold rounded-lg text-white bg-emerald-600 hover:bg-emerald-700 inline-flex items-center justify-center gap-2">
+                    <a href="{{ $whatsapp }}" target="_blank" rel="noopener" class="flex-1 inline-flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-semibold rounded-xl text-white bg-emerald-600 hover:bg-emerald-700 transition-all duration-300 hover:-translate-y-0.5 shadow-sm shadow-emerald-600/20">
                         <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M12.04 2c-5.46 0-9.91 4.45-9.91 9.91 0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91S17.5 2 12.04 2zm5.83 14.16c-.24.69-1.4 1.32-1.94 1.36-.52.04-1.18.19-3.97-.82-3.34-1.22-5.44-4.4-5.6-4.6-.16-.2-1.34-1.78-1.34-3.4 0-1.62.85-2.41 1.15-2.74.3-.33.66-.41.87-.41.22 0 .44 0 .63.01.2.01.47-.08.74.56.27.65 1.28 3.02 1.35 3.24.07.22.12.48-.07.75-.19.27-.29.44-.57.67-.29.24-.61.53-.87.72-.29.24-.59.5-.25.98.34.48 1.5 2.47 3.22 3.99 2.21 1.97 4.07 2.5 4.64 2.68.57.18.9.15 1.23-.09.33-.24.1.53.31-.53z"/></svg>
                         WhatsApp
                     </a>
                 </div>
-            </div>
+            </section>
         @elseif(!$isFinished)
-            <div class="card p-5 mb-5">
-                <div class="text-center py-4">
-                    <div class="w-12 h-12 mx-auto rounded-full bg-orange-100 flex items-center justify-center">
-                        <svg class="w-6 h-6 text-orange-500 animate-spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-6.22-8.56"/></svg>
+            <section class="card p-6 mb-6">
+                <div class="text-center py-6">
+                    <div class="w-16 h-16 mx-auto rounded-2xl bg-orange-100 flex items-center justify-center mb-4">
+                        <svg class="w-8 h-8 text-orange-500 animate-spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-6.22-8.56"/></svg>
                     </div>
-                    <p class="mt-3 font-semibold text-slate-900">En attente d'un remorqueur ou depanneur...</p>
-                    <p class="text-sm text-slate-500 mt-1">Dès qu'un professionnel accepte, il apparait ici. Vous pouvez egalement suivre son arrivee sur la carte.</p>
+                    <p class="font-semibold text-slate-900">En attente d'un remorqueur ou depanneur...</p>
+                    <p class="text-sm text-slate-500 mt-1.5 max-w-xs mx-auto">Des qu'un professionnel accepte, il apparait ici. Vous pouvez egalement suivre son arrivee sur la carte.</p>
                 </div>
-            </div>
+            </section>
         @endif
 
         {{-- Informations --}}
-        <div class="card p-5 mb-5">
-            <h2 class="font-semibold text-slate-900 flex items-center gap-2 mb-3">
-                <svg class="w-5 h-5 text-orange-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+        <section class="card p-6 mb-6">
+            <h2 class="font-semibold text-slate-900 flex items-center gap-2.5 mb-4">
+                <span class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-orange-50 text-orange-600">
+                    <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+                </span>
                 Informations de la demande
             </h2>
             <dl class="space-y-3 text-sm">
-                <div class="flex justify-between gap-3">
+                <div class="flex justify-between gap-3 py-2.5 border-b border-slate-100 last:border-0">
                     <dt class="text-slate-500">Service</dt>
                     <dd class="font-medium text-slate-900 text-right">{{ ucfirst($intervention->service_type) }}</dd>
                 </div>
-                <div class="flex justify-between gap-3">
+                <div class="flex justify-between gap-3 py-2.5 border-b border-slate-100 last:border-0">
                     <dt class="text-slate-500">Vehicule</dt>
                     <dd class="font-medium text-slate-900 text-right">{{ ucfirst($intervention->vehicle_type ?? 'Non renseigne') }}</dd>
                 </div>
                 @if($intervention->client_address)
-                    <div class="flex justify-between gap-3">
+                    <div class="flex justify-between gap-3 py-2.5 border-b border-slate-100 last:border-0">
                         <dt class="text-slate-500">Position du client</dt>
                         <dd class="font-medium text-slate-900 text-right">{{ $intervention->client_address }}</dd>
                     </div>
                 @endif
                 @if($intervention->destination)
-                    <div class="flex justify-between gap-3">
+                    <div class="flex justify-between gap-3 py-2.5 border-b border-slate-100 last:border-0">
                         <dt class="text-slate-500">Destination</dt>
                         <dd class="font-medium text-slate-900 text-right">{{ $intervention->destination }}</dd>
                     </div>
                 @endif
                 @if($intervention->description)
-                    <div class="flex justify-between gap-3">
+                    <div class="flex justify-between gap-3 py-2.5 border-b border-slate-100 last:border-0">
                         <dt class="text-slate-500 shrink-0">Description</dt>
                         <dd class="font-medium text-slate-700 text-right">{{ $intervention->description }}</dd>
                     </div>
                 @endif
                 @if($intervention->photo)
-                    <div>
+                    <div class="py-2.5">
                         <dt class="text-slate-500 mb-2">Photo de la panne</dt>
                         <a href="{{ asset('storage/' . $intervention->photo) }}" target="_blank" rel="noopener">
-                            <img src="{{ asset('storage/' . $intervention->photo) }}" alt="Photo de la panne" class="w-full max-w-xs rounded-lg border border-slate-200">
+                            <img src="{{ asset('storage/' . $intervention->photo) }}" alt="Photo de la panne" class="w-full max-w-xs rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow">
                         </a>
                     </div>
                 @endif
             </dl>
-        </div>
+        </section>
 
         {{-- Historique --}}
-        <div class="card p-5 mb-5">
-            <h2 class="font-semibold text-slate-900 flex items-center gap-2 mb-4">
-                <svg class="w-5 h-5 text-orange-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+        <section class="card p-6 mb-6">
+            <h2 class="font-semibold text-slate-900 flex items-center gap-2.5 mb-5">
+                <span class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-orange-50 text-orange-600">
+                    <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+                </span>
                 Historique de l'intervention
             </h2>
             @if($intervention->statuses->isNotEmpty())
-                <ol class="space-y-4">
+                <ol class="space-y-0">
                     @foreach($intervention->statuses as $status)
                         <li class="flex gap-3">
                             <div class="flex flex-col items-center">
-                                <div class="flex-shrink-0 h-8 w-8 rounded-full bg-orange-100 flex items-center justify-center">
-                                    <div class="h-2.5 w-2.5 rounded-full bg-orange-600"></div>
+                                <div class="flex-shrink-0 h-9 w-9 rounded-full {{ $loop->last ? 'bg-gradient-to-br from-orange-500 to-orange-600 shadow-sm shadow-orange-500/25' : 'bg-orange-100' }} flex items-center justify-center">
+                                    <div class="h-2.5 w-2.5 rounded-full {{ $loop->last ? 'bg-white' : 'bg-orange-500' }}"></div>
                                 </div>
                                 @if(!$loop->last)
-                                    <div class="w-px flex-1 bg-slate-200"></div>
+                                    <div class="w-px flex-1 bg-gradient-to-b from-orange-200 to-slate-200"></div>
                                 @endif
                             </div>
-                            <div class="pb-4">
+                            <div class="pb-6 pt-1">
                                 <p class="text-sm font-semibold text-slate-900">{{ $intervention->statusLabelFor($status->status) }}</p>
-                                <p class="text-xs text-slate-500">{{ $status->created_at->format('d/m/Y H:i') }}</p>
+                                <p class="text-xs text-slate-400 mt-0.5 flex items-center gap-1">
+                                    <svg class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                                    {{ $status->created_at->format('d/m/Y H:i') }}
+                                </p>
                                 @if($status->note)
-                                    <p class="text-sm text-slate-600 mt-1">{{ $status->note }}</p>
+                                    <p class="text-sm text-slate-600 mt-1.5 pl-0.5">{{ $status->note }}</p>
                                 @endif
                             </div>
                         </li>
                     @endforeach
                 </ol>
             @else
-                <p class="text-sm text-slate-500">Aucune mise a jour pour le moment.</p>
+                <div class="text-center py-8">
+                    <div class="w-12 h-12 mx-auto rounded-xl bg-slate-100 flex items-center justify-center mb-3">
+                        <svg class="w-6 h-6 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+                    </div>
+                    <p class="text-sm text-slate-500 font-medium">Aucune mise a jour pour le moment.</p>
+                </div>
             @endif
-        </div>
+        </section>
 
         {{-- Notation (intervention terminee) --}}
         @if(!$isFinished)
             <form method="POST" action="{{ route('guest.cancel', $intervention->tracking_code) }}"
                   onsubmit="return confirm('Annuler cette intervention ?')">
                 @csrf
-                <button type="submit" class="w-full inline-flex items-center justify-center gap-2 py-3 rounded-lg text-sm font-semibold text-red-600 bg-red-50 border border-red-200 hover:bg-red-100">
+                <button type="submit" class="w-full inline-flex items-center justify-center gap-2 py-3.5 rounded-xl text-sm font-semibold text-red-600 bg-red-50 border border-red-200/80 hover:bg-red-100 hover:border-red-300 transition-all duration-300">
                     <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
                     Annuler l'intervention
                 </button>
             </form>
         @elseif($intervention->status === 'intervention_terminee')
-            <div class="card p-5 mb-5">
-                <h2 class="font-semibold text-slate-900 flex items-center gap-2 mb-2">
-                    <svg class="w-5 h-5 text-orange-500" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            <section class="card p-6 mb-6">
+                <h2 class="font-semibold text-slate-900 flex items-center gap-2.5 mb-2">
+                    <span class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-orange-50 text-orange-600">
+                        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                    </span>
                     Noter le professionnel
                 </h2>
-                <p class="text-sm text-slate-600 mb-4">Merci de noter votre experience avec {{ $pro ? $pro->full_name : 'le professionnel' }}.</p>
+                <p class="text-sm text-slate-600 mb-5 ml-[42px]">Merci de noter votre experience avec {{ $pro ? $pro->full_name : 'le professionnel' }}.</p>
 
                 @if($intervention->hasBeenRated())
-                    <div class="text-center">
-                        <div class="flex justify-center gap-1 mb-3">
+                    <div class="text-center py-4">
+                        <div class="flex justify-center gap-1.5 mb-3">
                             @for($i = 1; $i <= 5; $i++)
                                 @if($i <= $intervention->rating)
-                                    <svg class="w-7 h-7 text-orange-400" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                                    <svg class="w-8 h-8 text-orange-400" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
                                 @else
-                                    <svg class="w-7 h-7 text-slate-300" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                                    <svg class="w-8 h-8 text-slate-200" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
                                 @endif
                             @endfor
                         </div>
                         @if($intervention->rating_comment)
-                            <p class="text-sm text-slate-600 italic">"{{ $intervention->rating_comment }}"</p>
+                            <p class="text-sm text-slate-600 italic max-w-sm mx-auto">"{{ $intervention->rating_comment }}"</p>
                         @endif
-                        <p class="text-xs text-slate-400 mt-2">Note envoyee le {{ $intervention->rated_at->format('d/m/Y H:i') }}</p>
+                        <p class="text-xs text-slate-400 mt-3">Note envoyee le {{ $intervention->rated_at->format('d/m/Y H:i') }}</p>
                     </div>
                 @else
                     <form method="POST" action="{{ route('guest.rate', $intervention->tracking_code) }}">
                         @csrf
-                        <div class="flex justify-center gap-2 mb-4" id="rating-stars">
+                        <div class="flex justify-center gap-2.5 mb-5" id="rating-stars">
                             @for($i = 1; $i <= 5; $i++)
-                                <button type="button" data-value="{{ $i }}" class="rating-star text-slate-300 hover:text-orange-400 transition-colors" aria-label="{{ $i }} etoiles">
-                                    <svg class="w-9 h-9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                                <button type="button" data-value="{{ $i }}" class="rating-star text-slate-200 hover:text-orange-400 transition-all duration-200 hover:scale-110" aria-label="{{ $i }} etoiles">
+                                    <svg class="w-10 h-10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
                                 </button>
                             @endfor
                         </div>
@@ -268,7 +299,7 @@
                             <label for="rating_comment" class="label">Commentaire (optionnel)</label>
                             <textarea id="rating_comment" name="rating_comment" rows="2" class="input"></textarea>
                         </div>
-                        <button type="submit" id="rating-submit" class="w-full mt-3 inline-flex items-center justify-center gap-2 py-3 rounded-lg text-sm font-semibold text-white bg-orange-600 hover:bg-orange-700 disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                        <button type="submit" id="rating-submit" class="w-full mt-4 inline-flex items-center justify-center gap-2 py-3.5 rounded-xl text-sm font-semibold text-white bg-gradient-to-r from-orange-600 to-orange-500 hover:from-orange-700 hover:to-orange-600 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-orange-600/20 transition-all duration-300 hover:shadow-xl disabled:hover:shadow-lg disabled:hover:translate-y-0 hover:-translate-y-0.5" disabled>
                             Envoyer la note
                         </button>
                         @error('rating')
@@ -276,33 +307,37 @@
                         @enderror
                     </form>
                 @endif
-            </div>
+            </section>
         @endif
 
-        {{-- Creer un compte pour conserver l'historique --}}
+        {{-- Creer un compte --}}
         @if($intervention->isGuest())
-            <div class="border border-orange-200 bg-orange-50 rounded-2xl p-5 mb-5">
-                <div class="flex items-start gap-3">
-                    <div class="flex-shrink-0 w-10 h-10 rounded-full bg-orange-100 text-orange-600 flex items-center justify-center">
+            <section class="relative overflow-hidden rounded-2xl border border-orange-200/80 bg-gradient-to-br from-orange-50 via-orange-50/50 to-white p-6 mb-6 ring-1 ring-orange-100">
+                <div class="flex items-start gap-4">
+                    <div class="flex-shrink-0 w-11 h-11 rounded-xl bg-gradient-to-br from-orange-500 to-orange-600 text-white flex items-center justify-center shadow-sm shadow-orange-500/25">
                         <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
                     </div>
                     <div>
                         <h3 class="font-semibold text-slate-900">Conservez l'historique de vos interventions</h3>
-                        <p class="text-sm text-slate-600 mt-1">Creez un compte gratuit : cette intervention sera liee a votre compte et vous la retrouverez dans votre espace, avec toutes les suivantes.</p>
+                        <p class="text-sm text-slate-600 mt-1 leading-relaxed">Creez un compte gratuit : cette intervention sera liee a votre compte et vous la retrouverez dans votre espace, avec toutes les suivantes.</p>
                         <a href="{{ route('register', ['tracking' => $intervention->tracking_code]) }}" class="inline-flex items-center gap-1.5 mt-4 btn-primary text-sm">
+                            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="22" y1="11" x2="16" y2="11"/></svg>
                             Creer mon compte (gratuit)
                         </a>
                         <p class="text-xs text-slate-500 mt-3">
                             Vos donnees sont protegees. Consultez notre
-                            <a href="{{ route('privacy') }}" class="underline hover:text-orange-600">politique de confidentialite</a>.
+                            <a href="{{ route('privacy') }}" class="underline hover:text-orange-600 transition-colors">politique de confidentialite</a>.
                         </p>
                     </div>
                 </div>
-            </div>
+            </section>
         @endif
 
         <p class="text-center text-xs text-slate-400 mb-8">
-            <a href="{{ url('/') }}" class="hover:text-orange-600">Retour a l'accueil</a>
+            <a href="{{ url('/') }}" class="hover:text-orange-600 transition-colors inline-flex items-center gap-1">
+                <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+                Retour a l'accueil
+            </a>
         </p>
     </div>
 
@@ -448,5 +483,4 @@
             }
         });
     </script>
-</body>
-</html>
+@endsection

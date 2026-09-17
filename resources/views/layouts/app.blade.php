@@ -5,77 +5,56 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@yield('title', config('app.name')) - {{ config('app.name') }}</title>
 
-    {{-- SEO --}}
     <meta name="description" content="@yield('meta_description', 'SamaRemorque - Plateforme de remorquage et depannage routier au Senegal. Trouvez rapidement un remorqueur ou un depanneur pres de vous a Dakar et partout au Senegal.')">
-    <meta name="keywords" content="@yield('meta_keywords', 'remorquage Dakar, depannage routier Senegal, remorqueur Dakar, depanneur Senegal, assistance routiere 24/7, remorque voiture, depannage voiture, remorquage pas cher, depannage urgent, Dakar, Pikine, Rufisque, Saint-Louis, Thiès')">
+    <meta name="keywords" content="@yield('meta_keywords', 'remorquage Dakar, depannage routier Senegal, remorqueur Dakar, depanneur Senegal, assistance routiere 24/7')">
     <meta name="author" content="SamaRemorque">
     <meta name="robots" content="@yield('robots', 'index, follow')">
     <meta name="geo.region" content="SN">
     <meta name="geo.placename" content="Dakar">
     <link rel="canonical" href="@yield('canonical', url()->current())">
 
-    {{-- Open Graph --}}
     <meta property="og:type" content="website">
     <meta property="og:site_name" content="{{ config('app.name') }}">
     <meta property="og:title" content="@yield('title', config('app.name'))">
-    <meta property="og:description" content="@yield('meta_description', 'Service de remorquage et depannage routier au Senegal. Trouvez un remorqueur ou depanneur proche de vous.')">
+    <meta property="og:description" content="@yield('meta_description', 'Service de remorquage et depannage routier au Senegal.')">
     <meta property="og:url" content="@yield('canonical', url()->current())">
     <meta property="og:image" content="@yield('og_image', asset('favicon.jpg'))">
     <meta property="og:locale" content="fr_SN">
 
-    {{-- Twitter Card --}}
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="@yield('title', config('app.name'))">
     <meta name="twitter:description" content="@yield('meta_description', 'Service de remorquage et depannage routier au Senegal.')">
     <meta name="twitter:image" content="@yield('og_image', asset('favicon.png'))">
 
-    {{-- Favicons --}}
-
-    {{-- Application --}}
-    <meta name="theme-color" content="#0f172a">
+    <meta name="theme-color" content="#0c1222">
     <link rel="manifest" href="/manifest.json">
     <link rel="icon" type="image/png" href="/favicon.png">
     <link rel="apple-touch-icon" href="/favicon.jpg">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
     <link href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" rel="stylesheet">
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    @php
+        $manifest = json_decode(file_get_contents(public_path('build/manifest.json')), true);
+        $cssFile = 'build/' . ($manifest['resources/css/app.css']['file'] ?? 'app.css');
+        $jsFile = 'build/' . ($manifest['resources/js/app.js']['file'] ?? 'app.js');
+    @endphp
+    <link rel="stylesheet" href="{{ asset($cssFile) }}">
+    <script defer src="{{ asset($jsFile) }}"></script>
     @livewireStyles
-
-    <script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "LocalBusiness",
-  "name": "SamaRemorque",
-  "description": "Plateforme de remorquage et depannage routier au Senegal",
-  "url": "https://samaremorquepro.onrender.com",
-  "telephone": "+221774467596",
-  "address": {
-    "@type": "PostalAddress",
-    "addressLocality": "Dakar",
-    "addressCountry": "SN"
-  },
-  "openingHours": "Mo-Su 00:00-23:59",
-  "areaServed": [
-    "Dakar",
-    "Pikine",
-    "Rufisque",
-    "Saint-Louis",
-    "Thiès"
-  ]
-}
-</script>
-<meta name="google-site-verification" content="5RZr_MjxvRBL_yoqOzX9gERC8ey1btQ61t2Og1WhVKY" />
 </head>
-<body class="font-sans antialiased bg-slate-50 text-slate-900">
-    <div id="app">
-        @include('layouts.partials.navbar')
+<body class="font-sans antialiased bg-night-50 text-slate-900">
+    <div id="app" class="min-h-screen flex flex-col">
+        @hasSection('hide_nav')
+        @else
+            @include('layouts.partials.navbar')
+        @endif
 
-        <main>
+        <main id="main-content" class="flex-1">
             @if(session('status'))
                 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">
-                    <div class="bg-emerald-50 border border-emerald-200 text-emerald-800 px-4 py-3 rounded">
+                    <div class="bg-emerald-50 border border-emerald-200 text-emerald-800 px-4 py-3 rounded-xl flex items-center gap-2">
+                        <svg class="w-5 h-5 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
                         {{ session('status') }}
                     </div>
                 </div>
@@ -83,7 +62,8 @@
 
             @if(session('error'))
                 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">
-                    <div class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded">
+                    <div class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl flex items-center gap-2">
+                        <svg class="w-5 h-5 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
                         {{ session('error') }}
                     </div>
                 </div>
@@ -92,7 +72,10 @@
             @yield('content')
         </main>
 
-        @include('layouts.partials.footer')
+        @hasSection('hide_footer')
+        @else
+            @include('layouts.partials.footer')
+        @endif
     </div>
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
@@ -131,54 +114,5 @@
         </script>
     @endauth
     @stack('scripts')
-
-    <script>
-    (function () {
-        if (!navigator.geolocation) return;
-        if (sessionStorage.getItem('sr-gps-prompted')) return;
-
-        navigator.geolocation.getCurrentPosition(
-            function () { sessionStorage.setItem('sr-gps-asked', '1'); },
-            function () {
-                if (sessionStorage.getItem('sr-gps-asked')) return;
-                if (document.getElementById('sr-gps-banner')) return;
-
-                var banner = document.createElement('div');
-                banner.id = 'sr-gps-banner';
-                banner.className = 'fixed top-16 inset-x-0 z-50 p-3 sm:p-4';
-                banner.style.paddingTop = 'env(safe-area-inset-top)';
-                banner.innerHTML =
-                    '<div class="max-w-lg mx-auto bg-orange-600 text-white rounded-2xl shadow-2xl p-4 flex items-center gap-3">' +
-                        '<svg class="w-8 h-8 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/><line x1="12" y1="2" x2="12" y2="4"/><line x1="12" y1="20" x2="12" y2="22"/><line x1="2" y1="12" x2="4" y2="12"/><line x1="20" y1="12" x2="22" y2="12"/></svg>' +
-                        '<div class="flex-1">' +
-                            '<p class="font-semibold text-sm">Activez votre GPS</p>' +
-                            '<p class="text-xs text-orange-100 mt-0.5">La localisation est necessaire pour trouver les professionnels pres de vous.</p>' +
-                        '</div>' +
-                        '<button id="sr-gps-activate" class="bg-white text-orange-700 text-xs font-bold px-3 py-2 rounded-lg whitespace-nowrap hover:bg-orange-50">Activer</button>' +
-                        '<button id="sr-gps-dismiss" class="text-orange-200 hover:text-white p-1" aria-label="Fermer">' +
-                            '<svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 6L6 18M6 6l12 12"/></svg>' +
-                        '</button>' +
-                    '</div>';
-
-                document.body.appendChild(banner);
-
-                document.getElementById('sr-gps-activate').addEventListener('click', function () {
-                    navigator.geolocation.getCurrentPosition(
-                        function () { banner.remove(); sessionStorage.setItem('sr-gps-asked', '1'); },
-                        function () { banner.remove(); sessionStorage.setItem('sr-gps-prompted', '1'); }
-                    );
-                });
-
-                document.getElementById('sr-gps-dismiss').addEventListener('click', function () {
-                    banner.remove();
-                    sessionStorage.setItem('sr-gps-prompted', '1');
-                });
-
-                sessionStorage.setItem('sr-gps-prompted', '1');
-            },
-            { enableHighAccuracy: false, timeout: 5000, maximumAge: 60000 }
-        );
-    })();
-    </script>
 </body>
 </html>

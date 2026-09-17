@@ -1,195 +1,195 @@
 @extends('layouts.app')
-
 @section('title', "Nouvelle demande d'intervention")
-
 @section('content')
-    <div class="max-w-3xl mx-auto py-6 px-4 sm:px-6 lg:px-8 mb-20">
-        <h1 class="text-2xl font-bold text-slate-900 mb-1">Nouvelle demande d'intervention</h1>
-        <p class="text-sm text-slate-500 mb-6">En cas d'urgence, remplissez rapidement : votre position, le vehicule, la panne, puis envoyez. Vous suivrez ensuite l'intervention depuis votre espace.</p>
+    <section class="relative overflow-hidden reveal">
+        <div class="max-w-3xl mx-auto py-6 px-4 sm:px-6 lg:px-8 mb-20">
+            <h1 class="text-2xl font-bold text-slate-900 mb-1">Nouvelle demande d'intervention</h1>
+            <p class="text-sm text-slate-500 mb-6">En cas d'urgence, remplissez rapidement : votre position, le vehicule, la panne, puis envoyez. Vous suivrez ensuite l'intervention depuis votre espace.</p>
 
-        @if($errors->any())
-            <div class="bg-red-50 border border-red-200 text-red-700 rounded-lg p-4 mb-6">
-                @foreach($errors->all() as $error)
-                    <p class="text-sm">{{ $error }}</p>
-                @endforeach
-            </div>
-        @endif
+            @if($errors->any())
+                <div class="card p-4 mb-5 bg-red-50 border border-red-200 text-red-700">
+                    @foreach($errors->all() as $error)
+                        <p class="text-sm">{{ $error }}</p>
+                    @endforeach
+                </div>
+            @endif
 
-        {{-- 1. Localisation --}}
-        <div class="card p-4 mb-5">
-            <div class="flex items-center justify-between mb-2">
-                <h2 class="font-semibold text-slate-900 flex items-center gap-2">
-                    <span class="inline-flex items-center justify-center w-6 h-6 rounded-full bg-orange-100 text-orange-600 text-xs font-bold">1</span>
-                    Ma position (GPS)
-                </h2>
-                <button type="button" id="locate-btn" class="btn-secondary text-xs px-3 py-2">
-                    <x-icon name="refresh" class="w-4 h-4" />
-                    Actualiser
-                </button>
-            </div>
-            <p id="loc-status" class="mb-3 text-sm text-slate-500 flex items-center gap-2">
-                <span class="w-2 h-2 rounded-full bg-slate-300"></span>
-                Recuperation de votre position GPS...
-            </p>
-            <div class="map-shell" style="height: 260px;">
-                <div id="map" style="height: 100%; width: 100%;"></div>
-            </div>
-            <div id="manual-zone" class="mt-4 hidden">
-                <label for="manual-address" class="label mb-1">Position manuelle (GPS indisponible)</label>
-                <div class="flex gap-2">
-                    <input type="text" id="manual-address" class="input flex-1" placeholder="Adresse ou lieu (ex : Route de Rufisque, Dakar)">
-                    <button type="button" id="manual-apply" class="btn-secondary whitespace-nowrap">
-                        <x-icon name="map-pin" class="w-4 h-4" />
-                        Appliquer
+            {{-- 1. Localisation --}}
+            <div class="card p-4 mb-5">
+                <div class="flex items-center justify-between mb-2">
+                    <h2 class="font-semibold text-slate-900 flex items-center gap-2">
+                        <span class="inline-flex items-center justify-center w-6 h-6 rounded-full bg-orange-100 text-orange-600 text-xs font-bold">1</span>
+                        Ma position (GPS)
+                    </h2>
+                    <button type="button" id="locate-btn" class="btn-secondary text-xs px-3 py-2">
+                        <x-icon name="refresh" class="w-4 h-4" />
+                        Actualiser
                     </button>
                 </div>
-                <p class="mt-2 text-xs text-slate-500">Ou deplacez directement le marqueur sur la carte.</p>
+                <p id="loc-status" class="mb-3 text-sm text-slate-500 flex items-center gap-2">
+                    <span class="w-2 h-2 rounded-full bg-slate-300"></span>
+                    Recuperation de votre position GPS...
+                </p>
+                <div class="map-shell" style="height: 260px;">
+                    <div id="map" style="height: 100%; width: 100%;"></div>
+                </div>
+                <div id="manual-zone" class="mt-4 hidden">
+                    <label for="manual-address" class="label mb-1">Position manuelle (GPS indisponible)</label>
+                    <div class="flex gap-2">
+                        <input type="text" id="manual-address" class="input flex-1" placeholder="Adresse ou lieu (ex : Route de Rufisque, Dakar)">
+                        <button type="button" id="manual-apply" class="btn-secondary whitespace-nowrap">
+                            <x-icon name="map-pin" class="w-4 h-4" />
+                            Appliquer
+                        </button>
+                    </div>
+                    <p class="mt-2 text-xs text-slate-500">Ou deplacez directement le marqueur sur la carte.</p>
+                </div>
+                <div id="used-position" class="mt-3 text-sm text-slate-600 hidden">
+                    Position utilisee : <span id="used-position-text" class="font-semibold text-slate-900"></span>
+                </div>
+                <div id="reverse-geocode" class="mt-1 text-xs text-slate-500"></div>
             </div>
-            <div id="used-position" class="mt-3 text-sm text-slate-600 hidden">
-                Position utilisee : <span id="used-position-text" class="font-semibold text-slate-900"></span>
-            </div>
-            <div id="reverse-geocode" class="mt-1 text-xs text-slate-500"></div>
-        </div>
 
-        {{-- 2. Vehicule, panne et contact --}}
-        <div class="card p-5 mb-5">
-            <h2 class="font-semibold text-slate-900 flex items-center gap-2 mb-4">
-                <span class="inline-flex items-center justify-center w-6 h-6 rounded-full bg-orange-100 text-orange-600 text-xs font-bold">2</span>
-                Vehicule, panne et contact
-            </h2>
+            {{-- 2. Vehicule, panne et contact --}}
+            <div class="card p-5 mb-5">
+                <h2 class="font-semibold text-slate-900 flex items-center gap-2 mb-4">
+                    <span class="inline-flex items-center justify-center w-6 h-6 rounded-full bg-orange-100 text-orange-600 text-xs font-bold">2</span>
+                    Vehicule, panne et contact
+                </h2>
 
-            <form method="POST" action="{{ route('client.intervention.store') }}" enctype="multipart/form-data" class="space-y-4" id="intervention-form">
-                @csrf
-                <input type="hidden" name="client_lat" id="client_lat">
-                <input type="hidden" name="client_lng" id="client_lng">
-                <input type="hidden" name="client_address" id="client_address">
-                <input type="hidden" name="manual_position" id="manual_position">
-                <input type="hidden" name="selected_professional_id" id="selected_professional_id">
+                <form method="POST" action="{{ route('client.intervention.store') }}" enctype="multipart/form-data" class="space-y-4" id="intervention-form">
+                    @csrf
+                    <input type="hidden" name="client_lat" id="client_lat">
+                    <input type="hidden" name="client_lng" id="client_lng">
+                    <input type="hidden" name="client_address" id="client_address">
+                    <input type="hidden" name="manual_position" id="manual_position">
+                    <input type="hidden" name="selected_professional_id" id="selected_professional_id">
 
-                @if($vehicles->isNotEmpty())
+                    @if($vehicles->isNotEmpty())
+                        <div>
+                            <label for="vehicle_id" class="label">Vehicule enregistre</label>
+                            <select id="vehicle_id" name="vehicle_id" class="input">
+                                <option value="">Selectionnez un vehicule</option>
+                                @foreach($vehicles as $vehicle)
+                                    <option value="{{ $vehicle->id }}">{{ $vehicle->brand ?? $vehicle->type }} {{ $vehicle->plate_number ?? '' }}</option>
+                                @endforeach
+                            </select>
+                            <input type="hidden" id="vehicle_type_hidden" name="vehicle_type_hidden" value="">
+                        </div>
+                    @endif
+
                     <div>
-                        <label for="vehicle_id" class="label">Vehicule enregistre</label>
-                        <select id="vehicle_id" name="vehicle_id" class="input">
-                            <option value="">Selectionnez un vehicule</option>
-                            @foreach($vehicles as $vehicle)
-                                <option value="{{ $vehicle->id }}">{{ $vehicle->brand ?? $vehicle->type }} {{ $vehicle->plate_number ?? '' }}</option>
+                        @php $expectedVehicleType = old('vehicle_type'); @endphp
+                        <fieldset class="m-0 p-0 border-0 min-w-0">
+                            <legend class="label mb-1.5">Type de vehicule *</legend>
+                            <div class="grid grid-cols-3 gap-2" id="vehicle-type-grid">
+                            @foreach(['voiture' => 'Voiture', 'moto' => 'Moto', 'camion' => 'Camion', 'bus' => 'Bus', 'autre' => 'Autre'] as $value => $label)
+                                <button type="button" data-value="{{ $value }}"
+                                    class="vehicle-type-btn px-3 py-2.5 rounded-lg border text-sm font-medium {{ ($expectedVehicleType ?? '') === $value ? 'border-orange-500 bg-orange-50 text-orange-700' : 'border-slate-300 bg-white text-slate-700 hover:border-orange-400' }}">
+                                    {{ $label }}
+                                </button>
                             @endforeach
-                        </select>
-                        <input type="hidden" id="vehicle_type_hidden" name="vehicle_type_hidden" value="">
+                        </div>
+                            <input type="hidden" name="vehicle_type" id="vehicle_type" value="{{ old('vehicle_type') }}">
+                        </fieldset>
+                        @error('vehicle_type')
+                            <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
+                        @enderror
                     </div>
-                @endif
 
-                <div>
-                    @php $expectedVehicleType = old('vehicle_type'); @endphp
-                    <fieldset class="m-0 p-0 border-0 min-w-0">
-                        <legend class="label mb-1.5">Type de vehicule *</legend>
-                        <div class="grid grid-cols-3 gap-2" id="vehicle-type-grid">
-                        @foreach(['voiture' => 'Voiture', 'moto' => 'Moto', 'camion' => 'Camion', 'bus' => 'Bus', 'conteneur' => 'Conteneur', 'autre' => 'Autre'] as $value => $label)
-                            <button type="button" data-value="{{ $value }}"
-                                class="vehicle-type-btn px-3 py-2.5 rounded-lg border text-sm font-medium {{ ($expectedVehicleType ?? '') === $value ? 'border-orange-500 bg-orange-50 text-orange-700' : 'border-slate-300 bg-white text-slate-700 hover:border-orange-400' }}">
-                                {{ $label }}
+                    <div>
+                        <fieldset class="m-0 p-0 border-0 min-w-0">
+                            <legend class="label mb-1.5">Type d'assistance *</legend>
+                            <div class="grid grid-cols-2 gap-2">
+                            <button type="button" data-service="remorquage" id="svc-remorquage"
+                                class="service-btn px-3 py-3 rounded-lg border text-sm font-semibold {{ old('service_type') === 'remorquage' ? 'border-orange-500 bg-orange-50 text-orange-700' : 'border-slate-300 bg-white text-slate-700 hover:border-orange-400' }}">
+                                <span class="block text-base">Remorquage</span>
+                                <span class="block text-xs text-slate-400 font-normal mt-0.5">Le vehicule est transporte a une destination</span>
                             </button>
-                        @endforeach
+                            <button type="button" data-service="depannage" id="svc-depannage"
+                                class="service-btn px-3 py-3 rounded-lg border text-sm font-semibold {{ old('service_type') === 'depannage' ? 'border-orange-500 bg-orange-50 text-orange-700' : 'border-slate-300 bg-white text-slate-700 hover:border-orange-400' }}">
+                                <span class="block text-base">Depannage sur place</span>
+                                <span class="block text-xs text-slate-400 font-normal mt-0.5">Reparation directe (batterie, crevaison...)</span>
+                            </button>
+                        </div>
+                            <input type="hidden" name="service_type" id="service_type" value="{{ old('service_type') }}">
+                        </fieldset>
+                        @error('service_type')
+                            <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
+                        @enderror
                     </div>
-                        <input type="hidden" name="vehicle_type" id="vehicle_type" value="{{ old('vehicle_type') }}">
-                    </fieldset>
-                    @error('vehicle_type')
-                        <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
-                    @enderror
-                </div>
 
-                <div>
-                    <fieldset class="m-0 p-0 border-0 min-w-0">
-                        <legend class="label mb-1.5">Type d'assistance *</legend>
-                        <div class="grid grid-cols-2 gap-2">
-                        <button type="button" data-service="remorquage" id="svc-remorquage"
-                            class="service-btn px-3 py-3 rounded-lg border text-sm font-semibold {{ old('service_type') === 'remorquage' ? 'border-orange-500 bg-orange-50 text-orange-700' : 'border-slate-300 bg-white text-slate-700 hover:border-orange-400' }}">
-                            <span class="block text-base">Remorquage</span>
-                            <span class="block text-xs text-slate-400 font-normal mt-0.5">Le vehicule est transporte a une destination</span>
-                        </button>
-                        <button type="button" data-service="depannage" id="svc-depannage"
-                            class="service-btn px-3 py-3 rounded-lg border text-sm font-semibold {{ old('service_type') === 'depannage' ? 'border-orange-500 bg-orange-50 text-orange-700' : 'border-slate-300 bg-white text-slate-700 hover:border-orange-400' }}">
-                            <span class="block text-base">Depannage sur place</span>
-                            <span class="block text-xs text-slate-400 font-normal mt-0.5">Reparation directe (batterie, crevaison...)</span>
-                        </button>
+                    {{-- 3. Professionnels proches --}}
+                    <div class="card p-4">
+                        <h2 class="font-semibold text-slate-900 flex items-center gap-2 mb-1">
+                            <span class="inline-flex items-center justify-center w-6 h-6 rounded-full bg-orange-100 text-orange-600 text-xs font-bold">3</span>
+                            Remorqueurs / Depanneurs proches
+                        </h2>
+                        <p class="text-xs text-slate-500 mb-3">Tries par distance. Touchez une carte pour la selectionner (optionnel).</p>
+
+                        <div id="pros-empty" class="hidden py-6 text-center text-slate-500">
+                            <p>Aucun remorqueur ou depanneur disponible pour le moment.</p>
+                            <p class="text-xs mt-1">Vous pouvez tout de meme envoyer votre demande.</p>
+                        </div>
+                        <div id="pros-loading" class="py-6 text-center text-sm text-slate-500">Recherche des professionnels a proximite...</div>
+                        <div id="pros-list" class="space-y-2"></div>
                     </div>
-                        <input type="hidden" name="service_type" id="service_type" value="{{ old('service_type') }}">
-                    </fieldset>
-                    @error('service_type')
-                        <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
-                    @enderror
-                </div>
 
-                {{-- 3. Professionnels proches --}}
-                <div class="card p-4">
-                    <h2 class="font-semibold text-slate-900 flex items-center gap-2 mb-1">
-                        <span class="inline-flex items-center justify-center w-6 h-6 rounded-full bg-orange-100 text-orange-600 text-xs font-bold">3</span>
-                        Remorqueurs / Depanneurs proches
-                    </h2>
-                    <p class="text-xs text-slate-500 mb-3">Tries par distance. Touchez une carte pour la selectionner (optionnel).</p>
-
-                    <div id="pros-empty" class="hidden py-6 text-center text-slate-500">
-                        <p>Aucun remorqueur ou depanneur disponible pour le moment.</p>
-                        <p class="text-xs mt-1">Vous pouvez tout de meme envoyer votre demande.</p>
-                    </div>
-                    <div id="pros-loading" class="py-6 text-center text-sm text-slate-500">Recherche des professionnels a proximite...</div>
-                    <div id="pros-list" class="space-y-2"></div>
-                </div>
-
-                <div>
-                    <label for="destination" class="label">Destination (si remorquage) *</label>
-                    <input type="text" id="destination" name="destination" value="{{ old('destination') }}" required class="input" placeholder="Ou doit etre transporte le vehicule ?">
-                    @error('destination')
-                        <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
-                    @enderror
-                    <div id="destinations-wrap" class="hidden mt-2">
-                        <p class="text-xs font-medium text-slate-500 mb-1.5">Suggestions</p>
-                        <div id="destinations-list" class="flex flex-wrap gap-2"></div>
-                    </div>
-                </div>
-
-                <div>
-                    <label for="description" class="label">Description de la panne</label>
-                    <textarea id="description" name="description" rows="3" class="input" placeholder="Decrivez brievement ce qui s'est passe">{{ old('description') }}</textarea>
-                </div>
-
-                <div>
-                    <label for="photo" class="label mb-1">Photo de la panne (optionnel)</label>
-                    <input type="file" id="photo" name="photo" accept="image/*" capture="environment"
-                        class="mt-1 block w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-orange-50 file:text-orange-700 hover:file:bg-orange-100">
-                    <p class="mt-1 text-xs text-slate-500">La camera s'ouvrira directement sur certains appareils.</p>
-                </div>
-                <div id="photo-preview" class="hidden">
-                    <img id="photo-preview-img" src="" alt="Apercu de la photo" class="w-40 h-40 object-cover rounded-lg border border-slate-200">
-                </div>
-
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-2">
                     <div>
-                        <label for="client_phone" class="label">Telephone du conducteur</label>
-                        <input type="tel" id="client_phone" name="client_phone" value="{{ old('client_phone') }}"
-                               class="input" placeholder="Ex : 77 123 45 67" inputmode="tel">
-                        <p class="text-xs text-slate-400 mt-1">Le professionnel vous appellera a ce numero.</p>
+                        <label for="destination" class="label">Destination (si remorquage) *</label>
+                        <input type="text" id="destination" name="destination" value="{{ old('destination') }}" required class="input" placeholder="Ou doit etre transporte le vehicule ?">
+                        @error('destination')
+                            <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
+                        @enderror
+                        <div id="destinations-wrap" class="hidden mt-2">
+                            <p class="text-xs font-medium text-slate-500 mb-1.5">Suggestions</p>
+                            <div id="destinations-list" class="flex flex-wrap gap-2"></div>
+                        </div>
                     </div>
+
                     <div>
-                        <label for="client_name" class="label">Votre prenom (optionnel)</label>
-                        <input type="text" id="client_name" name="client_name" value="{{ old('client_name') }}" class="input" placeholder="Ex : Awa">
+                        <label for="description" class="label">Description de la panne</label>
+                        <textarea id="description" name="description" rows="3" class="input" placeholder="Decrivez brievement ce qui s'est passe">{{ old('description') }}</textarea>
                     </div>
-                </div>
 
-                <div id="location-required-warning" class="hidden text-sm text-red-600 flex items-center gap-2">
-                    <x-icon name="alert-triangle" class="w-4 h-4 flex-shrink-0" />
-                    Veuillez definir votre position (GPS ou manuelle) avant d'envoyer votre demande.
-                </div>
+                    <div>
+                        <label for="photo" class="label mb-1">Photo de la panne (optionnel)</label>
+                        <input type="file" id="photo" name="photo" accept="image/*" capture="environment"
+                            class="mt-1 block w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-orange-50 file:text-orange-700 hover:file:bg-orange-100">
+                        <p class="mt-1 text-xs text-slate-500">La camera s'ouvrira directement sur certains appareils.</p>
+                    </div>
+                    <div id="photo-preview" class="hidden">
+                        <img id="photo-preview-img" src="" alt="Apercu de la photo" class="w-40 h-40 object-cover rounded-lg border border-slate-200">
+                    </div>
 
-                <button type="submit" id="submit-btn"
-                        class="w-full inline-flex items-center justify-center gap-2 py-4 rounded-xl text-base font-bold text-white bg-orange-600 hover:bg-orange-700 active:bg-orange-800 shadow-lg shadow-orange-600/20 transition-colors">
-                    <x-icon name="zap" class="w-6 h-6" />
-                    Envoyer la demande
-                </button>
-                <p class="text-center text-xs text-slate-400">Apres l'envoi, vous pourrez suivre l'intervention depuis votre espace.</p>
-            </form>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-2">
+                        <div>
+                            <label for="client_phone" class="label">Telephone du conducteur</label>
+                            <input type="tel" id="client_phone" name="client_phone" value="{{ old('client_phone') }}"
+                                   class="input" placeholder="Ex : 77 123 45 67" inputmode="tel">
+                            <p class="text-xs text-slate-400 mt-1">Le professionnel vous appellera a ce numero.</p>
+                        </div>
+                        <div>
+                            <label for="client_name" class="label">Votre prenom (optionnel)</label>
+                            <input type="text" id="client_name" name="client_name" value="{{ old('client_name') }}" class="input" placeholder="Ex : Awa">
+                        </div>
+                    </div>
+
+                    <div id="location-required-warning" class="hidden text-sm text-red-600 flex items-center gap-2">
+                        <x-icon name="alert-triangle" class="w-4 h-4 flex-shrink-0" />
+                        Veuillez definir votre position (GPS ou manuelle) avant d'envoyer votre demande.
+                    </div>
+
+                    <button type="submit" id="submit-btn"
+                            class="w-full inline-flex items-center justify-center gap-2 py-4 rounded-xl text-base font-bold text-white bg-orange-600 hover:bg-orange-700 active:bg-orange-800 shadow-lg shadow-orange-600/20 transition-colors">
+                        <x-icon name="zap" class="w-6 h-6" />
+                        Envoyer la demande
+                    </button>
+                    <p class="text-center text-xs text-slate-400">Apres l'envoi, vous pourrez suivre l'intervention depuis votre espace.</p>
+                </form>
+            </div>
         </div>
-    </div>
+    </section>
 
     @push('scripts')
         <script>
@@ -236,14 +236,6 @@
 
                 function getServiceType() {
                     return document.getElementById('service_type').value.trim();
-                }
-
-                function currentRadius() {
-                    const vt = (document.getElementById('vehicle_type').value || '').trim();
-                    const st = getServiceType();
-                    if (vt === 'conteneur') return 250;
-                    if (vt === 'camion') return 200;
-                    return st === 'depannage' ? 50 : 100;
                 }
 
                 function setPosition(lat, lng, options) {
@@ -298,7 +290,7 @@
                     const params = new URLSearchParams({
                         lat: window.clientPosition.lat,
                         lng: window.clientPosition.lng,
-                        radius: currentRadius(),
+                        radius: 100,
                         freshness: 720,
                     });
                     const st = getServiceType();
@@ -520,7 +512,6 @@
                         });
                         btn.className = 'vehicle-type-btn px-3 py-2.5 rounded-lg border text-sm font-medium border-orange-500 bg-orange-50 text-orange-700';
                         document.getElementById('vehicle_type').value = btn.dataset.value;
-                        if (window.clientPosition) fetchNearby();
                     });
                 });
 

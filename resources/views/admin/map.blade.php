@@ -1,24 +1,35 @@
 @extends('layouts.app')
-
 @section('title', 'Carte')
-
 @section('content')
-    <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-        <div class="flex items-center justify-between mb-6">
-            <h1 class="text-2xl font-bold text-slate-900">Carte en temps reel</h1>
-            <span class="inline-flex items-center gap-2 text-sm text-slate-600">
-                <span class="w-3 h-3 rounded-full bg-orange-500"></span>
-                Professionnels
-                <span class="ml-2 w-3 h-3 rounded-full bg-emerald-500"></span>
-                Interventions actives
-            </span>
-        </div>
+    <section class="relative overflow-hidden reveal">
+        <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+                <div class="flex items-center gap-3">
+                    <div class="flex-shrink-0 h-11 w-11 rounded-xl bg-orange-100 text-orange-600 flex items-center justify-center">
+                        <x-icon name="map-pin" class="w-6 h-6" />
+                    </div>
+                    <div>
+                        <h1 class="text-2xl font-bold text-slate-900">Carte en temps reel</h1>
+                        <p class="text-sm text-slate-500">Position des professionnels et interventions actives</p>
+                    </div>
+                </div>
+                <div class="flex flex-wrap items-center gap-2">
+                    <span class="badge bg-orange-100 text-orange-700">
+                        <span class="w-2.5 h-2.5 rounded-full bg-orange-500"></span>
+                        Professionnels
+                    </span>
+                    <span class="badge bg-emerald-100 text-emerald-700">
+                        <span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
+                        Interventions actives
+                    </span>
+                </div>
+            </div>
 
-        <div class="bg-white shadow rounded-xl overflow-hidden">
-            <div id="admin-map" style="height: 600px; width: 100%;" class="rounded-xl border border-slate-200"></div>
+            <div class="card overflow-hidden">
+                <div id="admin-map" style="height: 600px; width: 100%;" class="rounded-xl border border-slate-200"></div>
+            </div>
         </div>
-    </div>
-@endsection
+    </section>
 
     @push('scripts')
         @php
@@ -52,7 +63,6 @@
             }).addTo(map);
 
             const professionals = {!! $proData !!};
-
             const interventions = {!! $intData !!};
 
             const proIcon = L.divIcon({
@@ -81,6 +91,6 @@
                     .bindPopup('<strong>Intervention #' + i.id + '</strong><br>' + i.status.replace(/_/g, ' '));
             }
         });
-    </script>
+        </script>
     @endpush
-
+@endsection

@@ -7,10 +7,6 @@ use App\Http\Controllers\{
     SeoController,
     GuestInterventionController
 };
-use App\Http\Controllers\Payment\{
-    WaveCheckoutController,
-    WaveWebhookController
-};
 use App\Http\Controllers\Client\{
     ClientDashboardController,
     ClientInterventionController,
@@ -32,8 +28,7 @@ use App\Http\Controllers\Admin\{
     AdminDashboardController,
     AdminInterventionController,
     AdminProfessionalController,
-    AdminClientController,
-    AdminIntegrationController
+    AdminClientController
 };
 use App\Http\Controllers\{
     Auth\AuthenticatedSessionController,
@@ -78,7 +73,6 @@ Route::get('/demande', [GuestInterventionController::class, 'create'])->name('gu
 Route::post('/demande', [GuestInterventionController::class, 'store'])->name('guest.store');
 Route::get('/demande/professionnels', [GuestInterventionController::class, 'nearbyProfessionals'])->name('guest.nearby');
 Route::get('/suivi/{trackingCode}', [GuestInterventionController::class, 'track'])->name('guest.track');
-Route::post('/suivi/recherche', [GuestInterventionController::class, 'search'])->name('guest.search');
 Route::get('/suivi/{trackingCode}/pro-position', [GuestInterventionController::class, 'proPosition'])->name('guest.pro-position');
 Route::get('/suivi/{trackingCode}/statut', [GuestInterventionController::class, 'statusJson'])->name('guest.status');
 Route::post('/suivi/{trackingCode}/annuler', [GuestInterventionController::class, 'cancel'])->name('guest.cancel');
@@ -89,9 +83,6 @@ Route::view('/confidentialite', 'pages.confidentialite')->name('privacy');
 Route::view('/a-propos', 'pages.a-propos')->name('about');
 Route::view('/contact', 'pages.contact')->name('contact');
 Route::view('/guide-depannage-dakar', 'pages.guide-depannage-dakar')->name('seo.guide-depannage-dakar');
-
-// Webhook Wave (confirme les paiements). URL : /webhook/wave
-Route::post('/webhook/wave', [WaveWebhookController::class, 'handle'])->name('payment.wave.webhook');
 
 Route::middleware('guest')->group(function () {
     Route::get('login', [AuthenticatedSessionController::class, 'create'])->name('login');
@@ -120,10 +111,6 @@ Route::middleware('auth')->group(function () {
         Route::post('profile/remorque', [ProfileController::class, 'updateRemorque'])->name('profile.remorque');
         Route::post('profile/services', [ProfileController::class, 'updateServices'])->name('profile.services');
         Route::delete('profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-
-        // Paiement Wave
-        Route::get('intervention/{intervention}/payer', [WaveCheckoutController::class, 'show'])->name('payment.wave.show');
-        Route::post('intervention/{intervention}/payer', [WaveCheckoutController::class, 'store'])->name('payment.wave.store');
 
         Route::prefix('client')->middleware('role:client')->name('client.')->group(function () {
             Route::get('/', [ClientDashboardController::class, 'index'])->name('dashboard');
@@ -194,7 +181,6 @@ Route::middleware('auth')->group(function () {
             Route::post('/professionnel/{professional}/reactiver', [AdminProfessionalController::class, 'reactivate'])->name('professionnels.reactivate');
             Route::get('/carte', [AdminDashboardController::class, 'map'])->name('map');
             Route::get('/statistiques', [AdminDashboardController::class, 'stats'])->name('stats');
-            Route::get('/integration', [AdminIntegrationController::class, 'index'])->name('integration');
         });
 
         Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');

@@ -1,786 +1,570 @@
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+@extends('layouts.landing')
+@section('title', 'SamaRemorque')
+@section('content')
 
-    <title>SamaRemorque - Remorquage &amp; Depannage au Senegal | Assistance 24/7 a Dakar</title>
-
-    {{-- SEO --}}
-    <meta name="description" content="SamaRemorque : trouvez en quelques clics un remorqueur ou depanneur routier disponible pres de chez vous partout au Senegal (14 regions). Assistance 24/7 pour vehicules et conteneurs. Localisation en temps reel, suivi GPS, tarifs transparents.">
-    <meta name="keywords" content="remorquage Dakar, depannage routier Senegal, remorqueur Senegal, depanneur Senegal, assistance routiere 24/7, remorque voiture, remorquage conteneur, depannage voiture, remorquage pas cher, depannage urgent, Dakar, Diourbel, Fatick, Kaffrine, Kaolack, Kedougou, Kolda, Louga, Matam, Saint-Louis, Sedhiou, Tambacounda, Thies, Ziguinchor, depannage batterie, crevaison, remorquage apres panne">
-    <meta name="author" content="SamaRemorque">
-    <meta name="robots" content="index, follow, max-image-preview:large">
-    <link rel="canonical" href="{{ url('/') }}">
-    <link rel="alternate" hreflang="fr" href="{{ url('/') }}">
-    <link rel="alternate" hreflang="fr-SN" href="{{ url('/') }}">
-    <link rel="alternate" hreflang="x-default" href="{{ url('/') }}">
-
-    {{-- Open Graph --}}
-    <meta property="og:type" content="website">
-    <meta property="og:site_name" content="SamaRemorque">
-    <meta property="og:title" content="SamaRemorque - Remorquage &amp; Depannage au Senegal | Assistance 24/7 a Dakar">
-    <meta property="og:description" content="Trouvez rapidement un remorqueur ou depanneur pres de vous. Assistance 24/7 a Dakar, Pikine, Rufisque, Saint-Louis et Thiès. Localisation en temps reel, suivi GPS, tarifs transparents.">
-    <meta property="og:url" content="{{ url('/') }}">
-    <meta property="og:image" content="{{ asset('images/remorque_qui_transporte_un_vehicule.jpg') }}">
-    <meta property="og:image:width" content="1200">
-    <meta property="og:image:height" content="630">
-    <meta property="og:locale" content="fr_SN">
-
-    {{-- Twitter Card --}}
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="SamaRemorque - Remorquage &amp; Depannage au Senegal | Assistance 24/7 a Dakar">
-    <meta name="twitter:description" content="Trouvez rapidement un remorqueur ou depanneur pres de vous. Assistance 24/7 a Dakar, Pikine, Rufisque, Saint-Louis et Thiès.">
-    <meta name="twitter:image" content="{{ asset('images/remorque_qui_transporte_un_vehicule.jpg') }}">
-
-    {{-- Favicons application --}}
-    <meta name="theme-color" content="#0f172a">
-    <link rel="manifest" href="/manifest.json">
-    <link rel="icon" type="image/png" href="{{ asset('favicon.jpg') }}">
-    <link rel="apple-touch-icon" href="{{ asset('favicon.jpg') }}">
-
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
-
-    {{-- Donnees structurees (Schema.org) --}}
-    <script type="application/ld+json">
-    {
-        "@context": "https://schema.org",
-        "@type": "Organization",
-        "name": "SamaRemorque",
-        "description": "Plateforme de remorquage et depannage routier au Senegal",
-        "url": "{{ url('/') }}",
-        "logo": "{{ asset('favicon.jpg') }}",
-        "sameAs": []
-    }
-    </script>
-    <script type="application/ld+json">
-    {
-        "@context": "https://schema.org",
-        "@type": "LocalBusiness",
-        "name": "SamaRemorque",
-        "description": "Service de remorquage et depannage routier au Senegal, remorqueurs et depanneurs disponibles 24/7.",
-        "areaServed": "SN",
-        "url": "{{ url('/') }}",
-        "priceRange": "$$",
-        "telephone": "+221774467596",
-        "address": {
-            "@type": "PostalAddress",
-            "addressLocality": "Dakar",
-            "addressCountry": "SN"
-        },
-        "openingHours": "Mo-Su 00:00-23:59",
-        "contactPoint": [
-            {
-                "@type": "ContactPoint",
-                "telephone": "+221774467596",
-                "contactType": "developpeur",
-                "availableLanguage": ["fr"]
-            },
-            {
-                "@type": "ContactPoint",
-                "telephone": "+221708981888",
-                "contactType": "remorqueur",
-                "areaServed": "Dakar",
-                "availableLanguage": ["fr"]
-            }
-        ]
-    }
-    </script>
-    <script type="application/ld+json">
-    {
-        "@context": "https://schema.org",
-        "@type": "WebSite",
-        "name": "SamaRemorque",
-        "url": "{{ url('/') }}",
-        "inLanguage": "fr-SN",
-        "publisher": {
-            "@type": "Organization",
-            "name": "SamaRemorque"
-        }
-    }
-    </script>
-    <script type="application/ld+json">
-    {
-        "@context": "https://schema.org",
-        "@type": "FAQPage",
-        "mainEntity": [
-            {
-                "@type": "Question",
-                "name": "Comment fonctionne SamaRemorque ?",
-                "acceptedAnswer": {
-                    "@type": "Answer",
-                    "text": "Vous saisissez votre position, le type de panne et votre numero de telephone. SamaRemorque vous propose les remorqueurs et depanneurs disponibles pres de vous. Vous choisissez et vous etes mis en relation directement."
-                }
-            },
-            {
-                "@type": "Question",
-                "name": "Dans quelles zones intervenez-vous ?",
-                "acceptedAnswer": {
-                    "@type": "Answer",
-                    "text": "Nous couvrons l'ensemble du territoire senegalais : les 14 regions (Dakar, Diourbel, Fatick, Kaffrine, Kaolack, Kedougou, Kolda, Louga, Matam, Saint-Louis, Sedhiou, Tambacounda, Thies et Ziguinchor). La localisation GPS vous permet de voir les professionnels disponibles autour de vous."
-                }
-            },
-            {
-                "@type": "Question",
-                "name": "Faut-il creer un compte pour demander une assistance ?",
-                "acceptedAnswer": {
-                    "@type": "Answer",
-                    "text": "Non. Vous pouvez envoyer une demande sans compte et suivre l'intervention avec un code de suivi. La creation de compte est utile pour conserver votre historique."
-                }
-            },
-            {
-                "@type": "Question",
-                "name": "Quels types de pannes sont pris en charge ?",
-                "acceptedAnswer": {
-                    "@type": "Answer",
-                    "text": "Remorquage, depannage sur place, crevaison, batterie a plat, panne moteur et immobilisation generale, remorquage de conteneurs et transport de vehicules lourds. Choisissez le service adapte a votre situation."
-                }
-            },
-            {
-                "@type": "Question",
-                "name": "Comment sont selectionnes les professionnels ?",
-                "acceptedAnswer": {
-                    "@type": "Answer",
-                    "text": "Tous les remorqueurs et depanneurs sont valides par l'equipe SamaRemorque. Vous pouvez consulter leur profil, leur tarif horaire et leur evaluation avant de choisir."
-                }
-            }
-        ]
-    }
-    </script>
-    <script type="application/ld+json">
-    {
-        "@context": "https://schema.org",
-        "@type": "Review",
-        "itemReviewed": {
-            "@type": "LocalBusiness",
-            "name": "SamaRemorque"
-        },
-        "reviewRating": {
-            "@type": "Rating",
-            "ratingValue": "5",
-            "bestRating": "5"
-        },
-        "author": {
-            "@type": "Person",
-            "name": "Aminata"
-        },
-        "reviewBody": "J'ai eu une panne sur la route nationale et j'ai trouve un depanneur en 5 minutes. Intervention rapide et prix annonces."
-    }
-    </script>
-    <script type="application/ld+json">
-    {
-        "@context": "https://schema.org",
-        "@type": "Review",
-        "itemReviewed": {
-            "@type": "LocalBusiness",
-            "name": "SamaRemorque"
-        },
-        "reviewRating": {
-            "@type": "Rating",
-            "ratingValue": "5",
-            "bestRating": "5"
-        },
-        "author": {
-            "@type": "Person",
-            "name": "Ousmane"
-        },
-        "reviewBody": "Suivi en temps reel, pas de surprise sur le tarif. Je recommande pour les pannes sur l'autoroute ou a Dakar."
-    }
-    </script>
-</head>
-<body class="font-sans antialiased bg-white text-slate-900">
-
-    {{-- Navigation publique --}}
-    <nav class="bg-slate-900 text-white sticky top-0 z-40 shadow">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between h-16 items-center">
-                <a href="{{ url('/') }}" class="flex items-center gap-2 text-lg font-bold tracking-tight">
-                    <span class="inline-flex items-center justify-center w-9 h-9 rounded-lg bg-white overflow-hidden">
-                        <img src="{{ asset('favicon.jpg') }}" alt="SamaRemorque" class="w-7 h-7 object-contain">
-                    </span>
-                    <span>SamaRemorque</span>
-                </a>
-                <div class="hidden md:flex items-center gap-6 text-sm font-medium">
-                    <a href="#fonctionnement" class="hover:text-orange-400">Comment ca marche</a>
-                    <a href="#avantages" class="hover:text-orange-400">Avantages</a>
-                    <a href="#professionnels" class="hover:text-orange-400">Devenir remorqueur</a>
-                    <a href="#contact" class="hover:text-orange-400">Contact</a>
-                    <a href="{{ route('login') }}" class="hover:text-orange-400">Connexion</a>
-                    <a href="{{ route('register') }}" class="inline-flex items-center gap-1.5 bg-orange-500 hover:bg-orange-600 px-4 py-2 rounded-lg font-semibold">
-                        Inscription
-                    </a>
-                </div>
-                <button id="landing-menu-toggle" class="md:hidden inline-flex items-center justify-center p-2 rounded-md hover:bg-slate-800 focus:outline-none" aria-label="Menu">
-                    <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 12h18M3 6h18M3 18h18"/></svg>
-                </button>
-            </div>
-        </div>
-        <div id="landing-menu" class="hidden md:hidden border-t border-slate-700">
-            <div class="px-4 py-3 space-y-1 text-sm font-medium">
-                <a href="#fonctionnement" class="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-slate-800">Comment ca marche</a>
-                <a href="#avantages" class="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-slate-800">Avantages</a>
-                <a href="#professionnels" class="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-slate-800">Devenir remorqueur</a>
-                <a href="#contact" class="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-slate-800">Contact</a>
-                <a href="{{ route('login') }}" class="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-slate-800">Connexion</a>
-                <a href="{{ route('register') }}" class="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-slate-800 text-orange-400">Inscription</a>
-            </div>
-        </div>
-    </nav>
-
-    {{-- Hero --}}
-    <header class="relative bg-slate-900 text-white overflow-hidden">
-        <div class="absolute inset-0">
-            <img src="{{ asset('images/remorque_qui_transporte_un_vehicule.jpg') }}"
-                 alt="Remorque transportant un vehicule au Senegal"
-                 class="w-full h-full object-cover opacity-30">
-            <div class="absolute inset-0 bg-gradient-to-r from-slate-900 via-slate-900/80 to-transparent"></div>
-        </div>
-
-        <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 lg:py-32">
-            <div class="max-w-2xl">
-                <span class="inline-flex items-center gap-1.5 bg-orange-500/20 text-orange-300 text-xs font-semibold px-3 py-1 rounded-full">
-                    Remorquage &amp; Depannage 24/7 - Partout au Senegal
+<nav id="landing-nav" class="landing-nav fixed top-0 inset-x-0 z-50 text-white no-print">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between h-16 md:h-20 items-center">
+            <a href="{{ url('/') }}" class="flex items-center gap-2.5 group">
+                <span class="inline-flex items-center justify-center w-9 h-9 rounded-xl bg-white/15 overflow-hidden ring-1 ring-white/20 transition-transform duration-500 group-hover:scale-105">
+                    <img src="{{ asset('favicon.jpg') }}" alt="SamaRemorque" class="w-7 h-7 object-contain">
                 </span>
-                <h1 class="mt-4 text-4xl sm:text-5xl font-extrabold tracking-tight leading-tight">
-                    Remorquage et depannage au Senegal : un professionnel pres de vous en quelques clics.
-                </h1>
-                <p class="mt-4 text-lg text-slate-300">
-                    SamaRemorque connecte les conducteurs en panne, les vehicules et conteneurs aux remorqueurs et depanneurs disponibles partout au Senegal. Localisation GPS, tarifs transparents, suivi en temps reel : demandez votre assistance maintenant.
-                </p>
-                <div class="mt-8 flex flex-col sm:flex-row gap-3">
-                    <a href="{{ route('guest.create') }}" class="btn-primary text-base px-6 py-3.5">
-                        Demander une assistance
-                    </a>
-                    <a href="#suivi" class="btn-secondary bg-white/10 text-white border-white/20 hover:bg-white/20 text-base px-6 py-3.5">
-                        Suivre ma demande
-                    </a>
-                    <button id="landing-install-btn" class="hidden sm:inline-flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white text-base px-6 py-3.5 rounded-lg font-semibold transition-colors">
-                        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-                        Installer l'appli
-                    </button>
-                </div>
-                <div class="mt-10 grid grid-cols-3 gap-6 max-w-md">
-                    <div>
-                        <p class="text-3xl font-bold text-orange-400">24/7</p>
-                        <p class="text-xs text-slate-400 mt-1">Assistance continue</p>
-                    </div>
-                    <div>
-                        <p class="text-3xl font-bold text-orange-400">+100</p>
-                        <p class="text-xs text-slate-400 mt-1">Professionnels partenaires</p>
-                    </div>
-                    <div>
-                        <p class="text-3xl font-bold text-orange-400">-5min</p>
-                        <p class="text-xs text-slate-400 mt-1">Mise en relation moyenne</p>
-                    </div>
-                </div>
+                <span class="font-display text-lg font-bold tracking-tight">{{ config('app.name') }}</span>
+            </a>
+
+            <div class="hidden md:flex items-center gap-1 text-sm font-medium">
+                <a href="#fonctionnement" class="px-3 py-2 rounded-lg text-white/80 hover:text-white hover:bg-white/10 transition-all duration-300">Comment ça marche</a>
+                <a href="#services" class="px-3 py-2 rounded-lg text-white/80 hover:text-white hover:bg-white/10 transition-all duration-300">Services</a>
+                <a href="#professionnels" class="px-3 py-2 rounded-lg text-white/80 hover:text-white hover:bg-white/10 transition-all duration-300">Professionnels</a>
+                <a href="#contact" class="px-3 py-2 rounded-lg text-white/80 hover:text-white hover:bg-white/10 transition-all duration-300">Contact</a>
+                @auth
+                    <a href="{{ route('profile.edit') }}" class="ml-2 px-3 py-2 rounded-lg hover:bg-white/10 transition-all">Profil</a>
+                    <form method="POST" action="{{ route('logout') }}" class="inline">
+                        @csrf
+                        <button type="submit" class="px-3 py-2 rounded-lg text-red-300 hover:bg-white/10 transition-all">Déconnexion</button>
+                    </form>
+                @else
+                    <a href="{{ route('login') }}" class="ml-2 px-3 py-2 rounded-lg text-white/80 hover:text-white hover:bg-white/10 transition-all">Connexion</a>
+                    <a href="{{ route('register') }}" class="ml-1 inline-flex items-center bg-accent-500 hover:bg-accent-600 px-4 py-2 rounded-xl font-semibold transition-all duration-300 hover:shadow-lg hover:shadow-accent-500/30 active:scale-95">Inscription</a>
+                @endauth
             </div>
+
+            <button id="landing-menu-toggle" class="md:hidden inline-flex items-center justify-center p-2 rounded-lg hover:bg-white/10 transition-all" aria-label="Menu" aria-expanded="false">
+                <svg class="w-6 h-6" id="landing-icon-open" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 12h18M3 6h18M3 18h18"/></svg>
+                <svg class="w-6 h-6 hidden" id="landing-icon-close" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
+            </button>
         </div>
-    </header>
-
-    {{-- Zones couvertes --}}
-    <section id="zones" class="py-14 bg-slate-50 border-b border-slate-200">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center max-w-2xl mx-auto mb-10">
-                <h2 class="text-2xl font-bold text-slate-900">Zones couvertes</h2>
-                <p class="mt-2 text-sm text-slate-600">SamaRemorque est disponible dans les 14 regions du Senegal. Verifiez la presence de remorqueurs et depanneurs pres de vous.</p>
-            </div>
-            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-                @foreach([
-                    ['name' => 'Dakar', 'desc' => 'Remorquage, depannage & conteneurs'],
-                    ['name' => 'Diourbel', 'desc' => 'Remorquage & depannage'],
-                    ['name' => 'Fatick', 'desc' => 'Remorquage & depannage'],
-                    ['name' => 'Kaffrine', 'desc' => 'Remorquage & depannage'],
-                    ['name' => 'Kaolack', 'desc' => 'Remorquage & depannage'],
-                    ['name' => 'Kedougou', 'desc' => 'Remorquage & depannage'],
-                    ['name' => 'Kolda', 'desc' => 'Remorquage & depannage'],
-                    ['name' => 'Louga', 'desc' => 'Remorquage & depannage'],
-                    ['name' => 'Matam', 'desc' => 'Remorquage & depannage'],
-                    ['name' => 'Saint-Louis', 'desc' => 'Remorquage & depannage'],
-                    ['name' => 'Sedhiou', 'desc' => 'Remorquage & depannage'],
-                    ['name' => 'Tambacounda', 'desc' => 'Remorquage & depannage'],
-                    ['name' => 'Thiès', 'desc' => 'Remorquage & depannage'],
-                    ['name' => 'Ziguinchor', 'desc' => 'Remorquage & depannage'],
-                ] as $zone)
-                    <a href="{{ route('guest.create') }}" class="card p-4 text-center hover:border-orange-300">
-                        <p class="font-semibold text-slate-900">{{ $zone['name'] }}</p>
-                        <p class="text-xs text-slate-500">{{ $zone['desc'] }}</p>
-                    </a>
-                @endforeach
-            </div>
-            <p class="text-center text-xs text-slate-500 mt-4">D'autres zones sont ajoutees regulierement selon la disponibilite des professionnels.</p>
+    </div>
+    <div id="landing-menu" class="md:hidden max-h-0 overflow-hidden opacity-0 transition-all duration-400 border-t border-white/0 bg-night/95 backdrop-blur-xl">
+        <div class="px-4 py-3 space-y-1 text-sm font-medium">
+            <a href="#fonctionnement" class="block px-3 py-2.5 rounded-lg hover:bg-white/10 transition-all">Comment ça marche</a>
+            <a href="#services" class="block px-3 py-2.5 rounded-lg hover:bg-white/10 transition-all">Services</a>
+            <a href="#professionnels" class="block px-3 py-2.5 rounded-lg hover:bg-white/10 transition-all">Professionnels</a>
+            <a href="#contact" class="block px-3 py-2.5 rounded-lg hover:bg-white/10 transition-all">Contact</a>
+            @auth
+                <form method="POST" action="{{ route('logout') }}">@csrf<button type="submit" class="block w-full text-left px-3 py-2.5 rounded-lg hover:bg-white/10 text-red-300">Déconnexion</button></form>
+            @else
+                <a href="{{ route('login') }}" class="block px-3 py-2.5 rounded-lg hover:bg-white/10 transition-all">Connexion</a>
+                <a href="{{ route('register') }}" class="block px-3 py-2.5 rounded-lg hover:bg-white/10 text-accent-400 transition-all">Inscription</a>
+            @endauth
         </div>
-    </section>
+    </div>
+</nav>
 
-    {{-- Suivre ma demande --}}
-    <section id="suivi" class="py-14 bg-slate-900 text-white border-t border-slate-800">
-        <div class="max-w-3xl mx-auto px-4 sm:px-6 text-center">
-            <h2 class="text-2xl font-bold">Avez-vous deja une demande en cours ?</h2>
-            <p class="mt-2 text-sm text-slate-300">Saisissez votre code de suivi pour voir l'etat de votre intervention et la position du professionnel en temps reel.</p>
+{{-- Hero: brand + one line + CTA + full-bleed image --}}
+<header class="relative min-h-[100svh] flex items-end md:items-center overflow-hidden bg-night">
+    <div class="absolute inset-0">
+        <img
+            src="{{ asset('images/remorque_qui_transporte_un_vehicule.jpg') }}"
+            alt="Remorquage de véhicule au Sénégal"
+            class="landing-hero-media w-full h-full object-cover scale-105"
+        >
+        <div class="absolute inset-0 bg-gradient-to-t from-night via-night/70 to-night/30"></div>
+        <div class="absolute inset-0 bg-gradient-to-r from-night/90 via-night/50 to-transparent"></div>
+        <div class="absolute inset-0 landing-hero-grain" aria-hidden="true"></div>
+    </div>
 
-            @if(session('error'))
-                <div class="mt-4 text-sm bg-red-500/10 border border-red-500/40 text-red-300 rounded-lg p-3">
-                    {{ session('error') }}
-                </div>
-            @endif
-
-            <form method="POST" action="{{ route('guest.search') }}" class="mt-6 flex flex-col sm:flex-row gap-3 justify-center">
-                @csrf
-                <input type="text" name="tracking_code" id="tracking-input" placeholder="Ex : SR-AB12CD" required maxlength="20"
-                       class="input text-center sm:text-left sm:flex-1 max-w-sm mx-auto sm:mx-0 uppercase tracking-widest"
-                       style="color: #0f172a;" autocomplete="off">
-                <button type="submit" class="btn-primary whitespace-nowrap">
-                    Suivre ma demande
-                </button>
-            </form>
-        </div>
-    </section>
-
-    {{-- Services --}}
-    <section id="services" class="py-20 bg-white">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center max-w-2xl mx-auto mb-14">
-                <h2 class="text-3xl font-bold text-slate-900">Nos services de remorquage et depannage</h2>
-                <p class="mt-3 text-slate-600">Des interventions rapides pour tous les types de pannes, vehicules et conteneurs au Senegal.</p>
-            </div>
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
-                <div class="card p-8 text-center">
-                    <div class="w-14 h-14 mx-auto rounded-2xl bg-orange-100 text-orange-600 flex items-center justify-center text-2xl font-bold">1</div>
-                    <h3 class="mt-5 text-lg font-semibold text-slate-900">Depannage sur place</h3>
-                    <p class="mt-2 text-sm text-slate-600">Batterie a plat, crevaison, probleme mecanique leger : le professionnel intervient directement sur votre position pour vous remettre en route.</p>
-                </div>
-                <div class="card p-8 text-center">
-                    <div class="w-14 h-14 mx-auto rounded-2xl bg-orange-100 text-orange-600 flex items-center justify-center text-2xl font-bold">2</div>
-                    <h3 class="mt-5 text-lg font-semibold text-slate-900">Remorquage de vehicule</h3>
-                    <p class="mt-2 text-sm text-slate-600">Transport securise vers le garage de votre choix. Remorqueurs disponibles pour voitures, motos et petits utilitaires.</p>
-                </div>
-                <div class="card p-8 text-center">
-                    <div class="w-14 h-14 mx-auto rounded-2xl bg-orange-100 text-orange-600 flex items-center justify-center text-2xl font-bold">3</div>
-                    <h3 class="mt-5 text-lg font-semibold text-slate-900">Remorquage conteneur</h3>
-                    <p class="mt-2 text-sm text-slate-600">Transport de conteneurs sur tout le territoire. Solution adaptee aux besoins logistiques et industriels au Senegal.</p>
-                </div>
-                <div class="card p-8 text-center">
-                    <div class="w-14 h-14 mx-auto rounded-2xl bg-orange-100 text-orange-600 flex items-center justify-center text-2xl font-bold">4</div>
-                    <h3 class="mt-5 text-lg font-semibold text-slate-900">Suivi en temps reel</h3>
-                    <p class="mt-2 text-sm text-slate-600">Suivez l'arrivee du professionnel sur la carte et recevez les mises a jour par etat jusqu'a la fin de l'intervention.</p>
-                </div>
-            </div>
-            <div class="mt-10 text-center">
-                <a href="{{ route('guest.create') }}" class="btn-primary text-base px-8 py-3.5">Demander une assistance</a>
-            </div>
-        </div>
-    </section>
-
-    {{-- Fonctionnement --}}
-    <section id="fonctionnement" class="py-20 bg-slate-50">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center max-w-2xl mx-auto mb-14">
-                <h2 class="text-3xl font-bold text-slate-900">Comment ca marche ?</h2>
-                <p class="mt-3 text-slate-600">En 3 etapes simples, retrouvez la route en toute securite.</p>
-            </div>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                <div class="card p-8 text-center">
-                    <div class="w-14 h-14 mx-auto rounded-2xl bg-orange-100 text-orange-600 flex items-center justify-center text-2xl font-bold">1</div>
-                    <h3 class="mt-5 text-lg font-semibold text-slate-900">Signalez votre panne</h3>
-                    <p class="mt-2 text-sm text-slate-600">Indiquez votre position GPS ou manuelle, le type de panne et votre destination. Ajoutez une photo pour faciliter l'intervention.</p>
-                </div>
-                <div class="card p-8 text-center">
-                    <div class="w-14 h-14 mx-auto rounded-2xl bg-orange-100 text-orange-600 flex items-center justify-center text-2xl font-bold">2</div>
-                    <h3 class="mt-5 text-lg font-semibold text-slate-900">Choisissez votre professionnel</h3>
-                    <p class="mt-2 text-sm text-slate-600">Selectionnez le remorqueur ou depanneur le plus proche parmi ceux disponibles. Consultez ses tarifs et son profil.</p>
-                </div>
-                <div class="card p-8 text-center">
-                    <div class="w-14 h-14 mx-auto rounded-2xl bg-orange-100 text-orange-600 flex items-center justify-center text-2xl font-bold">3</div>
-                    <h3 class="mt-5 text-lg font-semibold text-slate-900">Suivez en temps reel</h3>
-                    <p class="mt-2 text-sm text-slate-600">Suivez l'arrivee de votre professionnel sur la carte et soyez informe a chaque etape de l'intervention.</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    {{-- Client utilisant l'application --}}
-    <section id="client" class="py-20 bg-white">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-                <div>
-                    <img src="{{ asset('images/Une_cliente_qui_utilise_l_application.jpg') }}"
-                         alt="Une cliente utilisant l'application SamaRemorque"
-                         class="rounded-2xl shadow-lg object-cover w-full">
-                </div>
-                <div>
-                    <h2 class="text-3xl font-bold text-slate-900">Une application simple et accessible</h2>
-                    <p class="mt-4 text-slate-600">
-                        SamaRemorque est concue pour les conducteurs au Senegal. Aucune installation compliquee : l'application fonctionne directement depuis votre navigateur, meme en PWA.
-                    </p>
-                    <ul class="mt-6 space-y-3">
-                        <li class="flex items-start gap-3">
-                            <span class="flex-shrink-0 w-6 h-6 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center">
-                                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
-                            </span>
-                            <span class="text-sm text-slate-700">Localisation GPS automatique pour trouver les professionnels les plus proches.</span>
-                        </li>
-                        <li class="flex items-start gap-3">
-                            <span class="flex-shrink-0 w-6 h-6 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center">
-                                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
-                            </span>
-                            <span class="text-sm text-slate-700">Suivi en temps reel du remorqueur ou du depanneur sur la carte.</span>
-                        </li>
-                        <li class="flex items-start gap-3">
-                            <span class="flex-shrink-0 w-6 h-6 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center">
-                                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
-                            </span>
-                            <span class="text-sm text-slate-700">Tarifs horaires affiches pour choisir en toute transparence.</span>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    {{-- Avantages --}}
-    <section id="avantages" class="py-20 bg-slate-900 text-white">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-                <div class="order-2 lg:order-1">
-                    <h2 class="text-3xl font-bold">Des professionnels a votre service au Senegal</h2>
-                    <p class="mt-4 text-slate-300">
-                        Nos remorqueurs et depanneurs sont validates par l'equipe SamaRemorque, suivis en temps reel et disponibles partout au Senegal (14 regions). Nous gerons les vehicules en panne et les conteneurs. Choisissez un professionnel proche, consultez son tarif et son evaluation, puis demandez une intervention en quelques clics.
-                    </p>
-                    <div class="mt-8 grid grid-cols-2 gap-4">
-                        <div class="bg-white/5 rounded-xl p-5 border border-white/10">
-                            <p class="text-3xl font-bold text-orange-400">100%</p>
-                            <p class="text-sm text-slate-300 mt-1">Professionnels valides</p>
-                        </div>
-                        <div class="bg-white/5 rounded-xl p-5 border border-white/10">
-                            <p class="text-3xl font-bold text-orange-400">Reel</p>
-                            <p class="text-sm text-slate-300 mt-1">Suivi GPS geolocalise</p>
-                        </div>
-                        <div class="bg-white/5 rounded-xl p-5 border border-white/10">
-                            <p class="text-3xl font-bold text-orange-400">Simple</p>
-                            <p class="text-sm text-slate-300 mt-1">Contact direct par appel ou WhatsApp</p>
-                        </div>
-                        <div class="bg-white/5 rounded-xl p-5 border border-white/10">
-                            <p class="text-3xl font-bold text-orange-400">Rapide</p>
-                            <p class="text-sm text-slate-300 mt-1">Mise en relation en quelques minutes</p>
-                        </div>
-                    </div>
-                    <div class="mt-8">
-                        <a href="{{ route('guest.create') }}" class="btn-primary">Demander une assistance</a>
-                    </div>
-                </div>
-                <div class="order-1 lg:order-2">
-                    <img src="{{ asset('images/depanneur_en_action.jpg') }}"
-                         alt="Depanneur au Senegal intervenant sur un vehicule en panne"
-                         class="rounded-2xl shadow-lg object-cover w-full">
-                </div>
-            </div>
-        </div>
-    </section>
-
-    {{-- Pourquoi nous choisir --}}
-    <section id="pourquoi" class="py-20 bg-white">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center max-w-2xl mx-auto mb-14">
-                <h2 class="text-3xl font-bold text-slate-900">Pourquoi choisir SamaRemorque ?</h2>
-                <p class="mt-3 text-slate-600">Une alternative simple, rapide et transparente au depannage classique au Senegal.</p>
-            </div>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                <div class="card p-8 text-center">
-                    <div class="w-14 h-14 mx-auto rounded-2xl bg-orange-100 text-orange-600 flex items-center justify-center text-2xl font-bold">1</div>
-                    <h3 class="mt-5 text-lg font-semibold text-slate-900">Professionnels verifies</h3>
-                    <p class="mt-2 text-sm text-slate-600">Tous les remorqueurs et depanneurs sont verifies par l'administrateur. Vous choisissez en toute confiance avec les evaluations des autres utilisateurs.</p>
-                </div>
-                <div class="card p-8 text-center">
-                    <div class="w-14 h-14 mx-auto rounded-2xl bg-orange-100 text-orange-600 flex items-center justify-center text-2xl font-bold">2</div>
-                    <h3 class="mt-5 text-lg font-semibold text-slate-900">Tarifs transparents</h3>
-                    <p class="mt-2 text-sm text-slate-600">Les tarifs horaires sont affiches sur les profils. Pas de surprise : vous savez combien coutera l'intervention avant de choisir.</p>
-                </div>
-                <div class="card p-8 text-center">
-                    <div class="w-14 h-14 mx-auto rounded-2xl bg-orange-100 text-orange-600 flex items-center justify-center text-2xl font-bold">3</div>
-                    <h3 class="mt-5 text-lg font-semibold text-slate-900">Suivi en temps reel</h3>
-                    <p class="mt-2 text-sm text-slate-600">Suivez l'arrivee du professionnel sur la carte et recevez les mises a jour par etat jusqu'a la fin de l'intervention.</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    {{-- Avis clients --}}
-    <section id="avis" class="py-20 bg-slate-50">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center max-w-2xl mx-auto mb-14">
-                <h2 class="text-3xl font-bold text-slate-900">Ce que disent nos utilisateurs</h2>
-                <p class="mt-3 text-slate-600">Des conducteurs et professionnels qui ont utilise SamaRemorque.</p>
-            </div>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                <div class="card p-6">
-                    <div class="flex items-center gap-1 text-orange-400">
-                        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-                        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-                        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-                        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-                        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-                    </div>
-                    <p class="mt-3 text-sm text-slate-600">"J'ai eu une panne sur la route nationale et j'ai trouve un depanneur en 5 minutes. Intervention rapide et prix annonces."</p>
-                    <p class="mt-4 text-sm font-semibold text-slate-900">Aminata, Dakar</p>
-                </div>
-                <div class="card p-6">
-                    <div class="flex items-center gap-1 text-orange-400">
-                        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-                        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-                        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-                        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-                        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-                    </div>
-                    <p class="mt-3 text-sm text-slate-600">"En tant que remorqueur, je recoit des demandes claires et locales. Je peux accepter ou refuser selon mon planning."</p>
-                    <p class="mt-4 text-sm font-semibold text-slate-900">Mor Cisse, Dakar</p>
-                </div>
-                <div class="card p-6">
-                    <div class="flex items-center gap-1 text-orange-400">
-                        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-                        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-                        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-                        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-                        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-                    </div>
-                    <p class="mt-3 text-sm text-slate-600">"Suivi en temps reel, pas de surprise sur le tarif. Je recommande pour les pannes sur l'autoroute ou a Dakar."</p>
-                    <p class="mt-4 text-sm font-semibold text-slate-900">Ousmane, Pikine</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    {{-- Devenir professionnel --}}
-    <section id="professionnels" class="py-20 bg-white">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-                <div>
-                    <img src="{{ asset('images/clients_qui_utilise_l_application3.jpg') }}"
-                         alt="Clients utilisant l'application SamaRemorque"
-                         class="rounded-2xl shadow-lg object-cover w-full">
-                </div>
-                <div>
-                    <span class="inline-flex bg-orange-100 text-orange-700 text-xs font-semibold px-3 py-1 rounded-full">Pour les professionnels</span>
-                    <h2 class="mt-4 text-3xl font-bold text-slate-900">Remorqueur ou depanneur ? Rejoignez SamaRemorque</h2>
-                    <p class="mt-4 text-slate-600">
-                        Developpez votre activite et recevez directement les demandes d'intervention des clients selectionnant votre service. Vous etaient remorqueurs et depanneurs, c'est vous qui vous deplacez vers le client.
-                    </p>
-                    <ul class="mt-6 space-y-3">
-                        <li class="flex items-start gap-3">
-                            <span class="flex-shrink-0 w-6 h-6 rounded-full bg-orange-100 text-orange-600 flex items-center justify-center">
-                                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
-                            </span>
-                            <span class="text-sm text-slate-700">Recevez les demandes ciblees des clients qui vous selectionnent.</span>
-                        </li>
-                        <li class="flex items-start gap-3">
-                            <span class="flex-shrink-0 w-6 h-6 rounded-full bg-orange-100 text-orange-600 flex items-center justify-center">
-                                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
-                            </span>
-                            <span class="text-sm text-slate-700">Accepter ou refuser les demandes en toute liberte.</span>
-                        </li>
-                        <li class="flex items-start gap-3">
-                            <span class="flex-shrink-0 w-6 h-6 rounded-full bg-orange-100 text-orange-600 flex items-center justify-center">
-                                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
-                            </span>
-                            <span class="text-sm text-slate-700">Affichage de votre profil et de vos tarifs pour attirer les clients.</span>
-                        </li>
-                    </ul>
-                    <a href="{{ route('register') }}" class="btn-primary mt-8">
-                        Devenir remorqueur / depanneur
-                    </a>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    {{-- FAQ --}}
-    <section id="faq" class="py-20 bg-white">
-        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center mb-14">
-                <h2 class="text-3xl font-bold text-slate-900">Questions frequentes</h2>
-                <p class="mt-3 text-slate-600">Tout ce qu'il faut savoir avant d'envoyer une demande d'assistance.</p>
-            </div>
-            <div class="space-y-4">
-                <div class="card p-5">
-                    <h3 class="text-lg font-semibold text-slate-900">Comment fonctionne SamaRemorque ?</h3>
-                    <p class="mt-2 text-sm text-slate-600">Vous saisissez votre position, le type de panne et votre numero de telephone. SamaRemorque vous propose les remorqueurs et depanneurs disponibles pres de vous. Vous choisissez et vous etes mis en relation directement.</p>
-                </div>
-                <div class="card p-5">
-                    <h3 class="text-lg font-semibold text-slate-900">Dans quelles zones intervenez-vous ?</h3>
-                    <p class="mt-2 text-sm text-slate-600">SamaRemorque couvre l'ensemble du territoire senegalais : les 14 regions (Dakar, Diourbel, Fatick, Kaffrine, Kaolack, Kedougou, Kolda, Louga, Matam, Saint-Louis, Sedhiou, Tambacounda, Thies et Ziguinchor). La localisation GPS vous permet de voir les professionnels disponibles autour de vous.</p>
-                </div>
-                <div class="card p-5">
-                    <h3 class="text-lg font-semibold text-slate-900">Faut-il creer un compte pour demander une assistance ?</h3>
-                    <p class="mt-2 text-sm text-slate-600">Non. Vous pouvez envoyer une demande sans compte et suivre l'intervention avec un code de suivi. La creation de compte est utile pour conserver votre historique.</p>
-                </div>
-                <div class="card p-5">
-                    <h3 class="text-lg font-semibold text-slate-900">Quels types de pannes sont pris en charge ?</h3>
-                    <p class="mt-2 text-sm text-slate-600">Remorquage, depannage sur place, crevaison, batterie a plat, panne moteur, immobilisation generale, remorquage de conteneurs et transport de vehicules lourds. Choisissez le service adapte a votre situation.</p>
-                </div>
-                <div class="card p-5">
-                    <h3 class="text-lg font-semibold text-slate-900">Comment sont selectionnes les professionnels ?</h3>
-                    <p class="mt-2 text-sm text-slate-600">Tous les remorqueurs et depanneurs sont valides par l'equipe SamaRemorque. Vous pouvez consulter leur profil, leur tarif horaire et leur evaluation avant de choisir.</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    {{-- Services par ville --}}
-    <section class="py-20 bg-slate-50">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center max-w-2xl mx-auto mb-14">
-                <h2 class="text-3xl font-bold text-slate-900">Nos services par ville</h2>
-                <p class="mt-3 text-slate-600">Retrouvez nos services de remorquage et depannage dans les principales villes du Senegal.</p>
-            </div>
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                <a href="{{ route('seo.depannage-dakar') }}" class="card p-6 hover:border-orange-300">
-                    <h3 class="text-lg font-semibold text-slate-900">Depannage Dakar</h3>
-                    <p class="mt-2 text-sm text-slate-600">Depannage et remorquage a Dakar, Pikine et Rufisque. Intervention rapide 24/7.</p>
-                </a>
-                <a href="{{ route('seo.remorquage-dakar') }}" class="card p-6 hover:border-orange-300">
-                    <h3 class="text-lg font-semibold text-slate-900">Remorquage Dakar</h3>
-                    <p class="mt-2 text-sm text-slate-600">Remorquage securise vers le garage de votre choix a Dakar et sa region.</p>
-                </a>
-                <a href="{{ route('seo.depannage-urgence-dakar') }}" class="card p-6 hover:border-orange-300">
-                    <h3 class="text-lg font-semibold text-slate-900">Depannage urgence Dakar</h3>
-                    <p class="mt-2 text-sm text-slate-600">Depannage en urgence 24/7 a Dakar, Pikine et Rufisque. Intervention rapide.</p>
-                </a>
-                <a href="{{ route('seo.depanneur-dakar') }}" class="card p-6 hover:border-orange-300">
-                    <h3 class="text-lg font-semibold text-slate-900">Depanneur Dakar</h3>
-                    <p class="mt-2 text-sm text-slate-600">Trouvez un depanneur verifie a Dakar. Tarifs transparents, suivi en temps reel.</p>
-                </a>
-                <a href="{{ route('seo.remorquage-senegal') }}" class="card p-6 hover:border-orange-300">
-                    <h3 class="text-lg font-semibold text-slate-900">Remorquage Senegal</h3>
-                    <p class="mt-2 text-sm text-slate-600">Remorquage au Senegal : Dakar, Saint-Louis, Thiès et autres villes.</p>
-                </a>
-                <a href="{{ route('guest.create') }}" class="card p-6 hover:border-orange-300">
-                    <h3 class="text-lg font-semibold text-slate-900">Demander une assistance</h3>
-                    <p class="mt-2 text-sm text-slate-600">Envoyez une demande sans compte et soyez mis en relation avec un professionnel.</p>
-                </a>
-            </div>
-        </div>
-    </section>
-
-    {{-- Appel a l'action final --}}
-    <section class="py-16 bg-orange-50">
-        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <h2 class="text-3xl font-bold text-slate-900">En panne maintenant ?</h2>
-            <p class="mt-3 text-slate-600 text-lg">Ne restez pas bloque sur la route. Trouvez un remorqueur ou depanneur des maintenant.</p>
-            <a href="{{ route('guest.create') }}" class="btn-primary mt-8 text-base px-8 py-3.5">
-                Demander une assistance maintenant
+    <div class="relative w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-16 pt-28 md:py-32">
+        <p class="font-display text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold tracking-tight text-white leading-[0.95] hero-anim hero-anim-1">
+            Sama<span class="text-accent-400">Remorque</span>
+        </p>
+        <h1 class="mt-5 max-w-xl text-lg sm:text-xl md:text-2xl font-medium text-white/90 leading-snug hero-anim hero-anim-2">
+            Un remorqueur ou dépanneur près de vous, en quelques clics.
+        </h1>
+        <p class="mt-4 max-w-md text-base text-white/65 leading-relaxed hero-anim hero-anim-3">
+            Assistance routière 24/7 à Dakar, Pikine, Rufisque, Saint-Louis et Thiès.
+        </p>
+        <div class="mt-8 flex flex-col sm:flex-row gap-3 hero-anim hero-anim-4">
+            <a href="{{ route('guest.create') }}" class="landing-cta-primary group">
+                Demander une assistance
+                <svg class="w-5 h-5 transition-transform duration-300 group-hover:translate-x-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+            </a>
+            <a href="#suivi" class="landing-cta-ghost">
+                Suivre ma demande
             </a>
         </div>
-    </section>
 
-    {{-- Pied de page --}}
-    <footer id="contact" class="bg-slate-900 text-slate-400 py-12">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-                <div>
-                    <div class="flex items-center gap-2">
-                        <span class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-white overflow-hidden">
-                            <img src="{{ asset('favicon.jpg') }}" alt="SamaRemorque" class="w-6 h-6 object-contain">
-                        </span>
-                        <h3 class="text-white font-bold text-lg">SamaRemorque</h3>
-                    </div>
-                    <p class="mt-3 text-sm">Plateforme de remorquage et depannage routier au Senegal, pour vehicules et conteneurs.</p>
-                    <h4 class="text-white font-semibold mt-5 mb-2">Contact</h4>
-                    <ul class="space-y-2 text-sm">
-                        <li class="flex items-center gap-2">
-                            <svg class="w-4 h-4 text-orange-400 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
-                            <div>
-                                <span class="block text-xs text-slate-500">Developpeur</span>
-                                <a href="tel:+221774467596" class="hover:text-orange-400">77 446 75 96</a>
-                            </div>
-                        </li>
-                        <li class="flex items-center gap-2">
-                            <svg class="w-4 h-4 text-orange-400 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
-                            <div>
-                                <span class="block text-xs text-slate-500">Remorqueur - Mor Cisse (Dakar)</span>
-                                <a href="tel:+221708981888" class="hover:text-orange-400">70 898 18 88</a>
-                            </div>
-                        </li>
-                    </ul>
-                </div>
-                <div>
-                    <h4 class="text-white font-semibold mb-3">Contact WhatsApp</h4>
-                    <div class="space-y-2 text-sm">
-                        <a href="https://wa.me/221774467596" target="_blank" rel="noopener"
-                           class="flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white font-medium px-4 py-2 rounded-lg w-full">
-                            Developpeur
-                        </a>
-                        <a href="https://wa.me/221708981888" target="_blank" rel="noopener"
-                           class="flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white font-medium px-4 py-2 rounded-lg w-full">
-                            Remorqueur (Mor Cisse)
-                        </a>
-                    </div>
-                </div>
-                <div>
-                    <h4 class="text-white font-semibold mb-3">Services</h4>
-                    <ul class="space-y-2 text-sm">
-                        <li><a href="{{ route('guest.create') }}" class="hover:text-orange-400">Demander une assistance</a></li>
-                        <li><a href="#suivi" class="hover:text-orange-400">Suivre une demande</a></li>
-                        <li><a href="{{ route('seo.depannage-dakar') }}" class="hover:text-orange-400">Depannage Dakar</a></li>
-                        <li><a href="{{ route('seo.remorquage-dakar') }}" class="hover:text-orange-400">Remorquage Dakar</a></li>
-                        <li><a href="{{ route('seo.depannage-urgence-dakar') }}" class="hover:text-orange-400">Depannage urgence Dakar</a></li>
-                        <li><a href="{{ route('seo.depanneur-dakar') }}" class="hover:text-orange-400">Depanneur Dakar</a></li>
-                        <li><a href="{{ route('seo.remorquage-senegal') }}" class="hover:text-orange-400">Remorquage Senegal</a></li>
-                        <li><a href="#zones" class="hover:text-orange-400">Zones couvertes</a></li>
-                    </ul>
-                </div>
-                <div>
-                    <h4 class="text-white font-semibold mb-3">Ressources</h4>
-                    <ul class="space-y-2 text-sm">
-                        <li><a href="{{ route('seo.guide-depannage-dakar') }}" class="hover:text-orange-400">Guide depannage Dakar</a></li>
-                        <li><a href="{{ route('about') }}" class="hover:text-orange-400">A propos</a></li>
-                        <li><a href="{{ route('contact') }}" class="hover:text-orange-400">Contact</a></li>
-                        <li><a href="{{ route('privacy') }}" class="hover:text-orange-400">Confidentialite</a></li>
-                    </ul>
+        <div class="mt-12 flex flex-wrap items-center gap-x-8 gap-y-3 hero-anim hero-anim-5">
+            <div class="flex items-center gap-2.5">
+                <span class="inline-flex w-9 h-9 rounded-xl bg-white/10 ring-1 ring-white/15 items-center justify-center">
+                    <svg class="w-4.5 h-4.5" viewBox="0 0 24 24" fill="none" stroke="#f97316" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                </span>
+                <div class="text-sm">
+                    <p class="font-semibold text-white leading-tight">Professionnels vérifiés</p>
+                    <p class="text-white/50 leading-tight">Profil et notes vérifiés</p>
                 </div>
             </div>
-            <div class="mt-10 pt-6 border-t border-slate-800 text-sm text-center">
-                &copy; {{ date('Y') }} SamaRemorque. Tous droits reserves.
+            <div class="flex items-center gap-2.5">
+                <span class="inline-flex w-9 h-9 rounded-xl bg-white/10 ring-1 ring-white/15 items-center justify-center">
+                    <svg class="w-4.5 h-4.5" viewBox="0 0 24 24" fill="none" stroke="#f97316" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                </span>
+                <div class="text-sm">
+                    <p class="font-semibold text-white leading-tight">Disponible 24/7</p>
+                    <p class="text-white/50 leading-tight">À Dakar et sa région</p>
+                </div>
+            </div>
+            <div class="flex items-center gap-2.5">
+                <span class="inline-flex w-9 h-9 rounded-xl bg-white/10 ring-1 ring-white/15 items-center justify-center">
+                    <svg class="w-4.5 h-4.5" viewBox="0 0 24 24" fill="none" stroke="#f97316" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+                </span>
+                <div class="text-sm">
+                    <p class="font-semibold text-white leading-tight">Suivi GPS en direct</p>
+                    <p class="text-white/50 leading-tight">Intervention tracée</p>
+                </div>
             </div>
         </div>
-    </footer>
+    </div>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const toggle = document.getElementById('landing-menu-toggle');
-            const menu = document.getElementById('landing-menu');
-            if (toggle && menu) {
-                toggle.addEventListener('click', function () {
-                    menu.classList.toggle('hidden');
-                });
-            }
+    <a href="#fonctionnement" class="absolute bottom-6 left-1/2 -translate-x-1/2 text-white/40 hover:text-white/70 transition-colors hero-anim hero-anim-5" aria-label="Défiler">
+        <span class="landing-scroll-cue flex flex-col items-center gap-2">
+            <span class="w-px h-8 bg-gradient-to-b from-transparent via-white/50 to-white/80"></span>
+            <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 9l6 6 6-6"/></svg>
+        </span>
+    </a>
+</header>
 
-            var deferredPrompt = null;
-            var installBtn = document.getElementById('landing-install-btn');
+{{-- Comment ça marche --}}
+<section id="fonctionnement" class="relative py-24 md:py-32 bg-night-50 overflow-hidden">
+    <div class="absolute inset-0 landing-asphalt opacity-40" aria-hidden="true"></div>
+    <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="max-w-2xl reveal">
+            <h2 class="font-display text-3xl md:text-5xl font-bold text-night tracking-tight">Comment ça marche</h2>
+            <p class="mt-4 text-lg text-slate-600">Trois étapes pour retrouver la route.</p>
+        </div>
 
-            window.addEventListener('beforeinstallprompt', function (e) {
-                e.preventDefault();
-                deferredPrompt = e;
-                if (installBtn) installBtn.classList.remove('hidden');
-            });
+        <ol class="mt-16 grid grid-cols-1 md:grid-cols-3 gap-10 md:gap-8">
+            @foreach([
+                ['title' => 'Signalez votre panne', 'desc' => 'Position GPS, type de panne et photo — en moins d\'une minute.'],
+                ['title' => 'Choisissez le pro', 'desc' => 'Remorqueur ou dépanneur proche, profil et tarifs affichés.'],
+                ['title' => 'Suivez en direct', 'desc' => 'Position sur la carte et mises à jour jusqu\'à l\'arrivée.']
+            ] as $index => $step)
+            <li class="reveal reveal-delay-{{ $index + 1 }} relative">
+                <span class="font-display text-6xl md:text-7xl font-bold text-accent-500/15 leading-none select-none">0{{ $index + 1 }}</span>
+                <h3 class="mt-2 font-display text-xl font-semibold text-night">{{ $step['title'] }}</h3>
+                <p class="mt-2 text-slate-600 leading-relaxed">{{ $step['desc'] }}</p>
+                @if($index < 2)
+                    <div class="hidden md:block absolute top-8 -right-4 w-8 h-px bg-gradient-to-r from-accent-400/60 to-transparent" aria-hidden="true"></div>
+                @endif
+            </li>
+            @endforeach
+        </ol>
+    </div>
+</section>
 
-            if (installBtn) {
-                installBtn.addEventListener('click', function () {
-                    if (!deferredPrompt) {
-                        alert('Ajoutez SamaRemorque a l\'ecran d\'accueil depuis le menu de votre navigateur (\'Ajouter a l\'ecran d\'accueil\').');
-                        return;
-                    }
-                    deferredPrompt.prompt();
-                    deferredPrompt.userChoice.then(function () {
-                        deferredPrompt = null;
-                    });
-                });
-            }
+{{-- Suivi (interaction) --}}
+<section id="suivi" class="relative py-20 md:py-28 bg-night text-white overflow-hidden">
+    <div class="absolute inset-0 landing-mesh opacity-60" aria-hidden="true"></div>
+    <div class="relative max-w-2xl mx-auto px-4 sm:px-6 text-center">
+        <h2 class="font-display text-3xl md:text-4xl font-bold reveal">Déjà une demande en cours ?</h2>
+        <p class="mt-4 text-white/60 text-lg reveal reveal-delay-1">Entrez votre code de suivi pour voir l'état et la position du professionnel.</p>
+        <form action="#" onsubmit="event.preventDefault(); var c = document.getElementById('tracking-input').value.trim(); if (c) location.href = '/suivi/' + encodeURIComponent(c);" class="mt-10 flex flex-col sm:flex-row gap-3 reveal reveal-delay-2">
+            <input type="text" id="tracking-input" placeholder="Ex : SR-AB12CD" autocomplete="off"
+                   class="flex-1 rounded-xl border border-white/15 bg-white/8 px-4 py-3.5 text-center sm:text-left uppercase tracking-widest text-white placeholder-white/35 focus:outline-none focus:ring-2 focus:ring-accent-500 focus:border-transparent transition-all duration-300">
+            <button type="submit" class="landing-cta-primary whitespace-nowrap !bg-white !text-night hover:!bg-night-100">
+                Suivre
+            </button>
+        </form>
+    </div>
+</section>
 
-            if (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches && installBtn) {
-                installBtn.classList.add('hidden');
+{{-- Services --}}
+<section id="services" class="relative py-24 md:py-32 bg-white overflow-hidden">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="max-w-2xl reveal">
+            <h2 class="font-display text-3xl md:text-5xl font-bold text-night tracking-tight">Nos interventions</h2>
+            <p class="mt-4 text-lg text-slate-600">Depannage sur place, remorquage sécurisé, suivi GPS.</p>
+        </div>
+
+        <div class="mt-14 divide-y divide-slate-200 border-y border-slate-200">
+            @foreach([
+                ['title' => 'Dépannage sur place', 'desc' => 'Batterie à plat, crevaison, panne légère : intervention directement sur votre position.'],
+                ['title' => 'Remorquage de véhicule', 'desc' => 'Transport vers le garage de votre choix. Voitures, motos et petits utilitaires.'],
+                ['title' => 'Suivi en temps réel', 'desc' => 'Carte live et notifications à chaque étape de l\'intervention.']
+            ] as $index => $service)
+            <div class="group py-8 md:py-10 flex flex-col md:flex-row md:items-baseline gap-3 md:gap-12 reveal reveal-delay-{{ $index + 1 }}">
+                <span class="font-display text-sm font-semibold text-accent-500 tracking-widest uppercase shrink-0 w-12">0{{ $index + 1 }}</span>
+                <h3 class="font-display text-2xl md:text-3xl font-semibold text-night group-hover:text-accent-600 transition-colors duration-300 md:w-80 shrink-0">{{ $service['title'] }}</h3>
+                <p class="text-slate-600 leading-relaxed max-w-xl">{{ $service['desc'] }}</p>
+            </div>
+            @endforeach
+        </div>
+
+        <div class="mt-12 reveal">
+            <a href="{{ route('guest.create') }}" class="landing-cta-primary !inline-flex">Demander une assistance</a>
+        </div>
+    </div>
+</section>
+
+{{-- Zones --}}
+<section id="zones" class="relative py-20 md:py-28 bg-night-50 overflow-hidden">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="max-w-2xl reveal">
+            <h2 class="font-display text-3xl md:text-5xl font-bold text-night tracking-tight">Zones couvertes</h2>
+            <p class="mt-4 text-lg text-slate-600">Disponible dans les principales villes du Sénégal.</p>
+        </div>
+        <div class="mt-12 flex flex-wrap gap-3 reveal reveal-delay-1">
+            @foreach(['Dakar', 'Pikine', 'Rufisque', 'Saint-Louis', 'Thiès'] as $ville)
+            <a href="{{ route('guest.create') }}" class="landing-zone-chip">{{ $ville }}</a>
+            @endforeach
+        </div>
+    </div>
+</section>
+
+{{-- Avantages + image --}}
+<section id="avantages" class="relative py-24 md:py-32 bg-night text-white overflow-hidden">
+    <div class="absolute inset-0 landing-mesh opacity-40" aria-hidden="true"></div>
+    <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
+            <div class="reveal order-2 lg:order-1">
+                <h2 class="font-display text-3xl md:text-5xl font-bold tracking-tight leading-tight">Des pros vérifiés, près de vous</h2>
+                <p class="mt-5 text-lg text-white/65 leading-relaxed">Remorqueurs et dépanneurs validés, tarifs affichés, suivi GPS — à Dakar et dans les grandes villes.</p>
+                <ul class="mt-10 space-y-5">
+                    @foreach([
+                        'Professionnels validés et notés',
+                        'Tarifs visibles avant de choisir',
+                        'Localisation et suivi en direct'
+                    ] as $item)
+                    <li class="flex items-start gap-3 text-white/85">
+                        <span class="mt-1 flex-shrink-0 w-5 h-5 rounded-full bg-accent-500/20 text-accent-400 flex items-center justify-center">
+                            <svg class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+                        </span>
+                        {{ $item }}
+                    </li>
+                    @endforeach
+                </ul>
+                <a href="{{ route('guest.create') }}" class="landing-cta-primary mt-10 !inline-flex">Demander une assistance</a>
+            </div>
+            <div class="reveal reveal-delay-2 order-1 lg:order-2">
+                <div class="landing-media-frame">
+                    <img src="{{ asset('images/depanneur_en_action.jpg') }}" alt="Dépanneur en intervention au Sénégal" class="w-full h-full object-cover">
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{{-- App --}}
+<section id="client" class="relative py-24 md:py-32 bg-white overflow-hidden">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
+            <div class="reveal">
+                <div class="landing-media-frame landing-media-frame--light">
+                    <img src="{{ asset('images/Une_cliente_qui_utilise_l_application.jpg') }}" alt="Client utilisant SamaRemorque" class="w-full h-full object-cover">
+                </div>
+            </div>
+            <div class="reveal reveal-delay-2">
+                <h2 class="font-display text-3xl md:text-5xl font-bold text-night tracking-tight leading-tight">Simple. Accessible. Immédiat.</h2>
+                <p class="mt-5 text-lg text-slate-600 leading-relaxed">Pas d'installation compliquée : SamaRemorque fonctionne dans votre navigateur, même hors ligne en PWA.</p>
+                <ul class="mt-8 space-y-4">
+                    @foreach([
+                        'GPS automatique pour trouver les pros proches',
+                        'Suivi live du remorqueur ou dépanneur',
+                        'Tarifs horaires affichés clairement'
+                    ] as $item)
+                    <li class="flex items-start gap-3 text-slate-700">
+                        <span class="mt-0.5 flex-shrink-0 w-5 h-5 rounded-full bg-accent-100 text-accent-600 flex items-center justify-center">
+                            <svg class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+                        </span>
+                        {{ $item }}
+                    </li>
+                    @endforeach
+                </ul>
+            </div>
+        </div>
+    </div>
+</section>
+
+{{-- Avis --}}
+<section id="avis" class="relative py-24 md:py-32 bg-night-50 overflow-hidden">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="max-w-2xl reveal">
+            <h2 class="font-display text-3xl md:text-5xl font-bold text-night tracking-tight">Ils nous font confiance</h2>
+            <p class="mt-4 text-lg text-slate-600">Conducteurs et professionnels au Sénégal.</p>
+        </div>
+        <div class="mt-14 grid grid-cols-1 md:grid-cols-3 gap-10 md:gap-12">
+            @foreach([
+                ['text' => 'Panne sur la nationale, dépanneur trouvé en 5 minutes. Intervention rapide et prix annoncés.', 'author' => 'Aminata', 'location' => 'Dakar'],
+                ['text' => 'En tant que remorqueur, je reçois des demandes claires et locales. J\'accepte selon mon planning.', 'author' => 'Mor Cissé', 'location' => 'Dakar'],
+                ['text' => 'Suivi en temps réel, pas de surprise sur le tarif. Je recommande pour Dakar et Pikine.', 'author' => 'Ousmane', 'location' => 'Pikine']
+            ] as $index => $review)
+            <blockquote class="reveal reveal-delay-{{ $index + 1 }}">
+                <p class="font-display text-xl md:text-2xl font-medium text-night leading-snug">« {{ $review['text'] }} »</p>
+                <footer class="mt-6 text-sm text-slate-500">
+                    <span class="font-semibold text-night">{{ $review['author'] }}</span> — {{ $review['location'] }}
+                </footer>
+            </blockquote>
+            @endforeach
+        </div>
+    </div>
+</section>
+
+{{-- Professionnels --}}
+<section id="professionnels" class="relative py-24 md:py-32 bg-white overflow-hidden">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
+            <div class="reveal">
+                <h2 class="font-display text-3xl md:text-5xl font-bold text-night tracking-tight leading-tight">Remorqueur ou dépanneur ?</h2>
+                <p class="mt-5 text-lg text-slate-600 leading-relaxed">Rejoignez SamaRemorque et recevez des demandes ciblées près de vous — vous décidez d'accepter ou non.</p>
+                <ul class="mt-8 space-y-4">
+                    @foreach([
+                        'Demandes ciblées selon votre zone',
+                        'Liberté d\'accepter ou de refuser',
+                        'Profil et tarifs visibles par les clients'
+                    ] as $item)
+                    <li class="flex items-start gap-3 text-slate-700">
+                        <span class="mt-0.5 flex-shrink-0 w-5 h-5 rounded-full bg-accent-100 text-accent-600 flex items-center justify-center">
+                            <svg class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+                        </span>
+                        {{ $item }}
+                    </li>
+                    @endforeach
+                </ul>
+                <a href="{{ route('register') }}" class="landing-cta-primary mt-10 !inline-flex">Devenir professionnel</a>
+            </div>
+            <div class="reveal reveal-delay-2">
+                <div class="landing-media-frame landing-media-frame--light">
+                    <img src="{{ asset('images/clients_qui_utilise_l_application3.jpg') }}" alt="Professionnels SamaRemorque" class="w-full h-full object-cover">
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{{-- FAQ accordion --}}
+<section id="faq" class="relative py-24 md:py-32 bg-night-50 overflow-hidden">
+    <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="reveal">
+            <h2 class="font-display text-3xl md:text-5xl font-bold text-night tracking-tight">Questions fréquentes</h2>
+            <p class="mt-4 text-lg text-slate-600">Avant d'envoyer une demande d'assistance.</p>
+        </div>
+        <div class="mt-12 space-y-2" id="faq-list">
+            @foreach([
+                ['q' => 'Comment fonctionne SamaRemorque ?', 'a' => 'Vous saisissez votre position, le type de panne et votre numéro. Nous vous proposons les remorqueurs et dépanneurs disponibles près de vous.'],
+                ['q' => 'Dans quelles zones intervenez-vous ?', 'a' => 'Principalement Dakar et sa région, ainsi que Saint-Louis et Thiès. D\'autres zones s\'ajoutent régulièrement.'],
+                ['q' => 'Faut-il créer un compte ?', 'a' => 'Non. Vous pouvez envoyer une demande sans compte et suivre l\'intervention avec un code de suivi.'],
+                ['q' => 'Quels types de pannes sont pris en charge ?', 'a' => 'Remorquage, dépannage sur place, crevaison, batterie à plat, panne moteur et immobilisation générale.'],
+                ['q' => 'Comment sont sélectionnés les professionnels ?', 'a' => 'Tous les remorqueurs et dépanneurs sont validés par l\'équipe SamaRemorque, avec profil et évaluations.']
+            ] as $index => $faq)
+            <div class="faq-item reveal reveal-delay-{{ ($index % 3) + 1 }}" data-faq>
+                <button type="button" class="faq-trigger w-full flex items-center justify-between gap-4 py-5 text-left group" aria-expanded="false">
+                    <span class="font-display text-lg md:text-xl font-semibold text-night group-hover:text-accent-600 transition-colors">{{ $faq['q'] }}</span>
+                    <span class="faq-icon flex-shrink-0 w-8 h-8 rounded-full bg-white border border-slate-200 flex items-center justify-center text-night transition-transform duration-400">
+                        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+                    </span>
+                </button>
+                <div class="faq-panel overflow-hidden max-h-0 opacity-0 transition-all duration-400 ease-out">
+                    <p class="pb-5 pr-12 text-slate-600 leading-relaxed">{{ $faq['a'] }}</p>
+                </div>
+            </div>
+            @endforeach
+        </div>
+    </div>
+</section>
+
+{{-- SEO villes (compact) --}}
+<section class="relative py-16 bg-white border-t border-slate-100">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <h2 class="font-display text-xl font-semibold text-night reveal">Services par ville</h2>
+        <div class="mt-6 flex flex-wrap gap-x-6 gap-y-3 text-sm reveal reveal-delay-1">
+            <a href="{{ route('seo.depannage-dakar') }}" class="text-slate-600 hover:text-accent-600 transition-colors">Dépannage Dakar</a>
+            <a href="{{ route('seo.remorquage-dakar') }}" class="text-slate-600 hover:text-accent-600 transition-colors">Remorquage Dakar</a>
+            <a href="{{ route('seo.depannage-urgence-dakar') }}" class="text-slate-600 hover:text-accent-600 transition-colors">Dépannage urgence</a>
+            <a href="{{ route('seo.depanneur-dakar') }}" class="text-slate-600 hover:text-accent-600 transition-colors">Dépanneur Dakar</a>
+            <a href="{{ route('seo.remorquage-senegal') }}" class="text-slate-600 hover:text-accent-600 transition-colors">Remorquage Sénégal</a>
+            <a href="{{ route('guest.create') }}" class="text-accent-600 font-semibold hover:text-accent-700 transition-colors">Demander assistance →</a>
+        </div>
+    </div>
+</section>
+
+{{-- CTA final --}}
+<section class="relative py-24 md:py-32 overflow-hidden landing-cta-band">
+    <div class="absolute inset-0 landing-cta-glow" aria-hidden="true"></div>
+    <div class="relative max-w-3xl mx-auto px-4 sm:px-6 text-center reveal">
+        <h2 class="font-display text-4xl md:text-5xl font-bold text-white tracking-tight">En panne maintenant ?</h2>
+        <p class="mt-4 text-lg text-white/80">Trouvez un remorqueur ou dépanneur en quelques clics.</p>
+        <a href="{{ route('guest.create') }}" class="mt-10 inline-flex items-center justify-center gap-2 bg-white text-night hover:bg-night-100 font-semibold px-8 py-4 rounded-xl text-lg transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] shadow-xl shadow-black/20">
+            Demander une assistance
+        </a>
+    </div>
+</section>
+
+{{-- Footer --}}
+<footer id="contact" class="relative bg-night text-slate-400 overflow-hidden no-print">
+    <div class="absolute inset-0 landing-asphalt opacity-20" aria-hidden="true"></div>
+    <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10">
+            <div>
+                <div class="flex items-center gap-2 mb-4">
+                    <span class="inline-flex items-center justify-center w-9 h-9 rounded-xl bg-white/10 overflow-hidden">
+                        <img src="{{ asset('favicon.jpg') }}" alt="SamaRemorque" class="w-6 h-6 object-contain">
+                    </span>
+                    <span class="font-display text-white font-bold text-lg">SamaRemorque</span>
+                </div>
+                <p class="text-sm leading-relaxed">Mise en relation entre conducteurs et remorqueurs/dépanneurs vérifiés. Assistance 24/7 au Sénégal.</p>
+            </div>
+            <div>
+                <h4 class="font-display text-white font-semibold mb-4">Contact</h4>
+                <ul class="space-y-3 text-sm">
+                    <li><a href="tel:+221774467596" class="hover:text-accent-400 transition-colors">77 446 75 96</a></li>
+                    <li><a href="tel:+221708981888" class="hover:text-accent-400 transition-colors">70 898 18 88</a></li>
+                    <li>
+                        <a href="https://wa.me/221774467596" target="_blank" rel="noopener" class="inline-flex items-center gap-2 bg-emerald-600 hover:bg-emerald-500 text-white font-medium px-4 py-2 rounded-lg transition-all text-sm">WhatsApp</a>
+                    </li>
+                </ul>
+            </div>
+            <div>
+                <h4 class="font-display text-white font-semibold mb-4">Services</h4>
+                <ul class="space-y-3 text-sm">
+                    <li><a href="{{ route('guest.create') }}" class="hover:text-accent-400 transition-colors">Demander une assistance</a></li>
+                    <li><a href="#suivi" class="hover:text-accent-400 transition-colors">Suivre une demande</a></li>
+                    <li><a href="{{ route('seo.depannage-dakar') }}" class="hover:text-accent-400 transition-colors">Dépannage Dakar</a></li>
+                    <li><a href="{{ route('seo.remorquage-dakar') }}" class="hover:text-accent-400 transition-colors">Remorquage Dakar</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4 class="font-display text-white font-semibold mb-4">Ressources</h4>
+                <ul class="space-y-3 text-sm">
+                    <li><a href="{{ route('about') }}" class="hover:text-accent-400 transition-colors">À propos</a></li>
+                    <li><a href="{{ route('contact') }}" class="hover:text-accent-400 transition-colors">Contact</a></li>
+                    <li><a href="{{ route('privacy') }}" class="hover:text-accent-400 transition-colors">Confidentialité</a></li>
+                    <li><a href="{{ route('seo.guide-depannage-dakar') }}" class="hover:text-accent-400 transition-colors">Guide dépannage</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="mt-12 pt-8 border-t border-white/10 text-center text-sm">
+            <p>&copy; {{ date('Y') }} <span class="text-accent-400 font-semibold">SamaRemorque</span>. Tous droits réservés.</p>
+        </div>
+    </div>
+</footer>
+
+@endsection
+
+@push('scripts')
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    document.documentElement.classList.add('js-anim');
+    const nav = document.getElementById('landing-nav');
+    const toggle = document.getElementById('landing-menu-toggle');
+    const menu = document.getElementById('landing-menu');
+    const iconOpen = document.getElementById('landing-icon-open');
+    const iconClose = document.getElementById('landing-icon-close');
+    const progress = document.getElementById('scroll-progress');
+
+    // Mobile menu
+    if (toggle && menu) {
+        toggle.addEventListener('click', function () {
+            const open = menu.classList.contains('is-open');
+            if (open) {
+                menu.classList.remove('is-open');
+                menu.style.maxHeight = '0';
+                menu.style.opacity = '0';
+                menu.style.borderColor = 'transparent';
+                iconOpen.classList.remove('hidden');
+                iconClose.classList.add('hidden');
+                toggle.setAttribute('aria-expanded', 'false');
+            } else {
+                menu.classList.add('is-open');
+                menu.style.maxHeight = menu.scrollHeight + 'px';
+                menu.style.opacity = '1';
+                menu.style.borderColor = 'rgba(255,255,255,0.1)';
+                iconOpen.classList.add('hidden');
+                iconClose.classList.remove('hidden');
+                toggle.setAttribute('aria-expanded', 'true');
             }
         });
-    </script>
-</body>
-</html>
+        menu.querySelectorAll('a').forEach(function (link) {
+            link.addEventListener('click', function () {
+                menu.classList.remove('is-open');
+                menu.style.maxHeight = '0px';
+                menu.style.opacity = '0';
+                iconOpen.classList.remove('hidden');
+                iconClose.classList.add('hidden');
+            });
+        });
+    }
+
+    // Nav + scroll progress
+    function onScroll() {
+        if (nav) nav.classList.toggle('is-scrolled', window.scrollY > 40);
+        if (progress) {
+            const doc = document.documentElement;
+            const max = doc.scrollHeight - doc.clientHeight;
+            progress.style.width = max > 0 ? ((doc.scrollTop / max) * 100) + '%' : '0%';
+        }
+    }
+    window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
+
+    // Smooth anchors
+    document.querySelectorAll('a[href^="#"]').forEach(function (anchor) {
+        anchor.addEventListener('click', function (e) {
+            const id = this.getAttribute('href');
+            if (!id || id === '#') return;
+            const target = document.querySelector(id);
+            if (target) {
+                e.preventDefault();
+                target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        });
+    });
+
+    // Scroll reveal
+    const revealEls = document.querySelectorAll('.reveal');
+    if ('IntersectionObserver' in window) {
+        const io = new IntersectionObserver(function (entries) {
+            entries.forEach(function (entry) {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                    io.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+        revealEls.forEach(function (el) { io.observe(el); });
+    } else {
+        revealEls.forEach(function (el) { el.classList.add('visible'); });
+    }
+
+    // FAQ accordion
+    document.querySelectorAll('[data-faq]').forEach(function (item) {
+        const btn = item.querySelector('.faq-trigger');
+        const panel = item.querySelector('.faq-panel');
+        const icon = item.querySelector('.faq-icon');
+        if (!btn || !panel) return;
+        btn.addEventListener('click', function () {
+            const open = item.classList.contains('is-open');
+            document.querySelectorAll('[data-faq].is-open').forEach(function (other) {
+                if (other === item) return;
+                other.classList.remove('is-open');
+                other.querySelector('.faq-trigger').setAttribute('aria-expanded', 'false');
+                other.querySelector('.faq-panel').style.maxHeight = '0px';
+                other.querySelector('.faq-panel').style.opacity = '0';
+                const oi = other.querySelector('.faq-icon');
+                if (oi) oi.style.transform = '';
+            });
+            if (open) {
+                item.classList.remove('is-open');
+                btn.setAttribute('aria-expanded', 'false');
+                panel.style.maxHeight = '0px';
+                panel.style.opacity = '0';
+                if (icon) icon.style.transform = '';
+            } else {
+                item.classList.add('is-open');
+                btn.setAttribute('aria-expanded', 'true');
+                panel.style.maxHeight = panel.scrollHeight + 'px';
+                panel.style.opacity = '1';
+                if (icon) icon.style.transform = 'rotate(45deg)';
+            }
+        });
+    });
+
+    // Subtle parallax on hero image
+    const heroMedia = document.querySelector('.landing-hero-media');
+    if (heroMedia && window.matchMedia('(prefers-reduced-motion: no-preference)').matches) {
+        window.addEventListener('scroll', function () {
+            const y = Math.min(window.scrollY, 600);
+            heroMedia.style.transform = 'scale(1.05) translateY(' + (y * 0.18) + 'px)';
+        }, { passive: true });
+    }
+});
+</script>
+@endpush

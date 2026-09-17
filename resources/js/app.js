@@ -6,13 +6,31 @@ window.Alpine = Alpine;
 Alpine.start();
 
 document.addEventListener('DOMContentLoaded', () => {
-    const toggleBtn = document.getElementById('mobile-menu-toggle');
-    const menu = document.getElementById('mobile-menu');
+    document.documentElement.classList.add('js-anim');
 
-    if (toggleBtn && menu) {
-        toggleBtn.addEventListener('click', () => {
-            menu.classList.toggle('hidden');
+    // Global scroll reveal (progressive enhancement)
+    const revealEls = document.querySelectorAll('.reveal');
+    if (revealEls.length && 'IntersectionObserver' in window) {
+        const io = new IntersectionObserver((entries) => {
+            entries.forEach((entry) => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                    io.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.08, rootMargin: '0px 0px -24px 0px' });
+        revealEls.forEach((el) => io.observe(el));
+        // Reveal anything already in viewport immediately
+        requestAnimationFrame(() => {
+            revealEls.forEach((el) => {
+                const rect = el.getBoundingClientRect();
+                if (rect.top < window.innerHeight && rect.bottom > 0) {
+                    el.classList.add('visible');
+                }
+            });
         });
+    } else {
+        revealEls.forEach((el) => el.classList.add('visible'));
     }
 });
 
@@ -54,7 +72,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (deferredPrompt && shouldShowTeaser()) {
                 renderTeaser();
             }
-        }, 5000);
+        }, 20000);
     }
 
     function removeTeaser() {
@@ -210,3 +228,46 @@ document.addEventListener('DOMContentLoaded', () => {
         document.body.appendChild(overlay);
     }
 })();
+
+// Scroll progress bar
+(function () {
+    const progressBar = document.createElement('div');
+    progressBar.id = 'scroll-progress';
+    document.body.appendChild(progressBar);
+
+    window.addEventListener('scroll', function () {
+        const scrollTop = window.scrollY;
+        const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+        const progress = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
+        progressBar.style.width = progress + '%';
+    });
+})();
+
+// Toast notification helper
+window.showToast = function (message, type) {
+    type = type || 'info';
+    const toast = document.createElement('div');
+    toast.className = 'toast ' + type;
+    toast.textContent = message;
+    document.body.appendChild(toast);
+    requestAnimationFrame(function () {
+        toast.classList.add('show');
+    });
+    setTimeout(function () {
+        toast.classList.remove('show');
+        setTimeout(function () { toast.remove(); }, 400);
+    }, 3000);
+};
+
+// Smooth scroll for anchor links
+document.addEventListener('DOMContentLoaded', function () {
+    document.querySelectorAll('a[href^="#"]').forEach(function (anchor) {
+        anchor.addEventListener('click', function (e) {
+            const target = document.querySelector(this.getAttribute('href'));
+            if (target) {
+                e.preventDefault();
+                target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        });
+    });
+});
