@@ -34,6 +34,13 @@ export default {
           800: '#9a3412',
           900: '#7c2d12',
         },
+        night: {
+          DEFAULT: '#0c1222',
+          50: '#f4f6fb',
+          100: '#e8ecf4',
+          800: '#151d33',
+          900: '#0c1222',
+        },
       },
       fontFamily: {
         sans: ['Inter', 'ui-sans-serif', 'system-ui'],

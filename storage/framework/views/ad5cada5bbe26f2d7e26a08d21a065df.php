@@ -1,15 +1,15 @@
-@extends('layouts.app')
-@section('title', "Demander une intervention")
-@section('hide_footer')
-@endsection
-@section('content')
 
-{{-- Barre flux invite --}}
+<?php $__env->startSection('title', "Demander une intervention"); ?>
+<?php $__env->startSection('hide_footer'); ?>
+<?php $__env->stopSection(); ?>
+<?php $__env->startSection('content'); ?>
+
+
 <div class="bg-night text-white border-b border-white/10 no-print sticky top-0 z-40">
     <div class="max-w-3xl mx-auto px-4 py-3 flex items-center justify-between">
         <div class="flex items-center gap-2.5">
             <span class="inline-flex items-center justify-center w-9 h-9 rounded-xl bg-white/10 backdrop-blur-sm overflow-hidden ring-1 ring-white/10">
-                <img src="{{ asset('favicon.jpg') }}" alt="SamaRemorque" class="w-6 h-6 object-contain">
+                <img src="<?php echo e(asset('favicon.jpg')); ?>" alt="SamaRemorque" class="w-6 h-6 object-contain">
             </span>
             <span class="font-display font-bold tracking-tight text-[15px]">Assistance</span>
         </div>
@@ -26,20 +26,20 @@
         <p>Position, vehicule, panne &mdash; puis envoi. Aucun compte requis.</p>
     </div>
 
-    @if($errors->any())
+    <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php endif; ?><?php if($errors->any()): ?>
         <div class="bg-red-50 border border-red-200/80 text-red-700 rounded-2xl p-4 mb-6 animate-scale-in ring-1 ring-red-100">
             <div class="flex items-start gap-3">
                 <svg class="w-5 h-5 text-red-500 flex-shrink-0 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
                 <div class="space-y-0.5">
-                    @foreach($errors->all() as $error)
-                        <p class="text-sm">{{ $error }}</p>
-                    @endforeach
+                    <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php \Livewire\Features\SupportCompiledWireKeys\SupportCompiledWireKeys::openLoop(); ?><?php endif; ?><?php $__currentLoopData = $errors->all(); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $error): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><?php \Livewire\Features\SupportCompiledWireKeys\SupportCompiledWireKeys::startLoopIteration(); ?><?php endif; ?>
+                        <p class="text-sm"><?php echo e($error); ?></p>
+                    <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><?php \Livewire\Features\SupportCompiledWireKeys\SupportCompiledWireKeys::endLoop(); ?><?php endif; ?><?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if ENDBLOCK]><![endif]--><?php \Livewire\Features\SupportCompiledWireKeys\SupportCompiledWireKeys::closeLoop(); ?><?php endif; ?>
                 </div>
             </div>
         </div>
-    @endif
+    <?php endif; ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if ENDBLOCK]><![endif]--><?php endif; ?>
 
-    {{-- 1. Localisation --}}
+    
     <div class="card p-6 mb-5 animate-slide-up reveal-delay-2">
         <div class="flex items-center justify-between mb-3">
             <h2 class="font-semibold text-slate-900 flex items-center gap-2.5">
@@ -77,51 +77,59 @@
         </div>
     </div>
 
-    {{-- 2. Vehicule, panne, photo, contact --}}
+    
     <div class="card p-6 animate-slide-up reveal-delay-3">
         <h2 class="font-semibold text-slate-900 flex items-center gap-2.5 mb-5">
             <span class="inline-flex items-center justify-center w-7 h-7 rounded-lg bg-gradient-to-br from-orange-500 to-orange-600 text-white text-xs font-bold shadow-sm shadow-orange-500/25">2</span>
             Vehicule, panne et contact
         </h2>
 
-        <form method="POST" action="{{ route('guest.store') }}" enctype="multipart/form-data" class="space-y-5" id="intervention-form">
-            @csrf
+        <form method="POST" action="<?php echo e(route('guest.store')); ?>" enctype="multipart/form-data" class="space-y-5" id="intervention-form">
+            <?php echo csrf_field(); ?>
             <input type="hidden" name="client_lat" id="client_lat">
             <input type="hidden" name="client_lng" id="client_lng">
             <input type="hidden" name="client_address" id="client_address">
             <input type="hidden" name="manual_position" id="manual_position">
             <input type="hidden" name="selected_professional_id" id="selected_professional_id">
 
-            @if($vehicles->isNotEmpty())
+            <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php endif; ?><?php if($vehicles->isNotEmpty()): ?>
                 <div>
                     <label for="vehicle_id" class="label">Vehicule enregistre</label>
                     <select id="vehicle_id" name="vehicle_id" class="input">
                         <option value="">Selectionnez un vehicule</option>
-                        @foreach($vehicles as $vehicle)
-                            <option value="{{ $vehicle->id }}">{{ $vehicle->brand ?? $vehicle->type }} {{ $vehicle->plate_number ?? '' }}</option>
-                        @endforeach
+                        <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php \Livewire\Features\SupportCompiledWireKeys\SupportCompiledWireKeys::openLoop(); ?><?php endif; ?><?php $__currentLoopData = $vehicles; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $vehicle): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><?php \Livewire\Features\SupportCompiledWireKeys\SupportCompiledWireKeys::startLoopIteration(); ?><?php endif; ?>
+                            <option value="<?php echo e($vehicle->id); ?>"><?php echo e($vehicle->brand ?? $vehicle->type); ?> <?php echo e($vehicle->plate_number ?? ''); ?></option>
+                        <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><?php \Livewire\Features\SupportCompiledWireKeys\SupportCompiledWireKeys::endLoop(); ?><?php endif; ?><?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if ENDBLOCK]><![endif]--><?php \Livewire\Features\SupportCompiledWireKeys\SupportCompiledWireKeys::closeLoop(); ?><?php endif; ?>
                     </select>
                     <input type="hidden" id="vehicle_type_hidden" name="vehicle_type_hidden" value="">
                 </div>
-            @endif
+            <?php endif; ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if ENDBLOCK]><![endif]--><?php endif; ?>
 
             <div>
-                @php $expectedVehicleType = old('vehicle_type'); @endphp
+                <?php $expectedVehicleType = old('vehicle_type'); ?>
                 <fieldset class="m-0 p-0 border-0 min-w-0">
                     <legend class="label mb-2">Type de vehicule *</legend>
                     <div class="grid grid-cols-3 gap-2.5" id="vehicle-type-grid">
-                    @foreach(['voiture' => 'Voiture', 'moto' => 'Moto', 'camion' => 'Camion', 'bus' => 'Bus', 'autre' => 'Autre'] as $value => $label)
-                        <button type="button" data-value="{{ $value }}"
-                            class="vehicle-type-btn px-3 py-3 rounded-xl border-2 text-sm font-medium transition-all duration-200 {{ ($expectedVehicleType ?? '') === $value ? 'border-orange-500 bg-orange-50 text-orange-700 shadow-sm shadow-orange-500/10' : 'border-slate-200 bg-white text-slate-600 hover:border-orange-300 hover:bg-orange-50/30' }}">
-                            {{ $label }}
+                    <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php \Livewire\Features\SupportCompiledWireKeys\SupportCompiledWireKeys::openLoop(); ?><?php endif; ?><?php $__currentLoopData = ['voiture' => 'Voiture', 'moto' => 'Moto', 'camion' => 'Camion', 'bus' => 'Bus', 'autre' => 'Autre']; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $value => $label): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><?php \Livewire\Features\SupportCompiledWireKeys\SupportCompiledWireKeys::startLoopIteration(); ?><?php endif; ?>
+                        <button type="button" data-value="<?php echo e($value); ?>"
+                            class="vehicle-type-btn px-3 py-3 rounded-xl border-2 text-sm font-medium transition-all duration-200 <?php echo e(($expectedVehicleType ?? '') === $value ? 'border-orange-500 bg-orange-50 text-orange-700 shadow-sm shadow-orange-500/10' : 'border-slate-200 bg-white text-slate-600 hover:border-orange-300 hover:bg-orange-50/30'); ?>">
+                            <?php echo e($label); ?>
+
                         </button>
-                    @endforeach
+                    <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><?php \Livewire\Features\SupportCompiledWireKeys\SupportCompiledWireKeys::endLoop(); ?><?php endif; ?><?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if ENDBLOCK]><![endif]--><?php \Livewire\Features\SupportCompiledWireKeys\SupportCompiledWireKeys::closeLoop(); ?><?php endif; ?>
                 </div>
-                    <input type="hidden" name="vehicle_type" id="vehicle_type" value="{{ old('vehicle_type') }}">
+                    <input type="hidden" name="vehicle_type" id="vehicle_type" value="<?php echo e(old('vehicle_type')); ?>">
                 </fieldset>
-                @error('vehicle_type')
-                    <p class="mt-2 text-sm text-red-600 flex items-center gap-1.5"><svg class="w-4 h-4 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg> {{ $message }}</p>
-                @enderror
+                <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php endif; ?><?php $__errorArgs = ['vehicle_type'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
+                    <p class="mt-2 text-sm text-red-600 flex items-center gap-1.5"><svg class="w-4 h-4 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg> <?php echo e($message); ?></p>
+                <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if ENDBLOCK]><![endif]--><?php endif; ?>
             </div>
 
             <div>
@@ -129,7 +137,7 @@
                     <legend class="label mb-2">Type d'assistance *</legend>
                     <div class="grid grid-cols-2 gap-2.5">
                     <button type="button" data-service="remorquage" id="svc-remorquage"
-                        class="service-btn px-4 py-4 rounded-xl border-2 text-left transition-all duration-200 {{ old('service_type') === 'remorquage' ? 'border-orange-500 bg-orange-50 text-orange-700 shadow-sm shadow-orange-500/10' : 'border-slate-200 bg-white text-slate-600 hover:border-orange-300 hover:bg-orange-50/30' }}">
+                        class="service-btn px-4 py-4 rounded-xl border-2 text-left transition-all duration-200 <?php echo e(old('service_type') === 'remorquage' ? 'border-orange-500 bg-orange-50 text-orange-700 shadow-sm shadow-orange-500/10' : 'border-slate-200 bg-white text-slate-600 hover:border-orange-300 hover:bg-orange-50/30'); ?>">
                         <span class="flex items-center gap-2 text-sm font-semibold">
                             <svg class="w-5 h-5 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="3" width="15" height="13" rx="1"/><path d="M16 8h4l3 3v5h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
                             Remorquage
@@ -137,7 +145,7 @@
                         <span class="block text-xs text-slate-400 font-normal mt-1.5 ml-7">Le vehicule est transporte a une destination</span>
                     </button>
                     <button type="button" data-service="depannage" id="svc-depannage"
-                        class="service-btn px-4 py-4 rounded-xl border-2 text-left transition-all duration-200 {{ old('service_type') === 'depannage' ? 'border-orange-500 bg-orange-50 text-orange-700 shadow-sm shadow-orange-500/10' : 'border-slate-200 bg-white text-slate-600 hover:border-orange-300 hover:bg-orange-50/30' }}">
+                        class="service-btn px-4 py-4 rounded-xl border-2 text-left transition-all duration-200 <?php echo e(old('service_type') === 'depannage' ? 'border-orange-500 bg-orange-50 text-orange-700 shadow-sm shadow-orange-500/10' : 'border-slate-200 bg-white text-slate-600 hover:border-orange-300 hover:bg-orange-50/30'); ?>">
                         <span class="flex items-center gap-2 text-sm font-semibold">
                             <svg class="w-5 h-5 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
                             Depannage sur place
@@ -145,14 +153,21 @@
                         <span class="block text-xs text-slate-400 font-normal mt-1.5 ml-7">Reparation directe (batterie, crevaison...)</span>
                     </button>
                 </div>
-                    <input type="hidden" name="service_type" id="service_type" value="{{ old('service_type') }}">
+                    <input type="hidden" name="service_type" id="service_type" value="<?php echo e(old('service_type')); ?>">
                 </fieldset>
-                @error('service_type')
-                    <p class="mt-2 text-sm text-red-600 flex items-center gap-1.5"><svg class="w-4 h-4 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg> {{ $message }}</p>
-                @enderror
+                <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php endif; ?><?php $__errorArgs = ['service_type'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
+                    <p class="mt-2 text-sm text-red-600 flex items-center gap-1.5"><svg class="w-4 h-4 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg> <?php echo e($message); ?></p>
+                <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if ENDBLOCK]><![endif]--><?php endif; ?>
             </div>
 
-            {{-- 3. Professionnels proches --}}
+            
             <div class="bg-slate-50 rounded-2xl p-5 border border-slate-100">
                 <h2 class="font-semibold text-slate-900 flex items-center gap-2.5 mb-1">
                     <span class="inline-flex items-center justify-center w-7 h-7 rounded-lg bg-gradient-to-br from-orange-500 to-orange-600 text-white text-xs font-bold shadow-sm shadow-orange-500/25">3</span>
@@ -176,7 +191,7 @@
 
             <div>
                 <label for="destination" class="label">Destination (si remorquage)</label>
-                <input type="text" id="destination" name="destination" value="{{ old('destination') }}" class="input" placeholder="Ou doit etre transporte le vehicule ?">
+                <input type="text" id="destination" name="destination" value="<?php echo e(old('destination')); ?>" class="input" placeholder="Ou doit etre transporte le vehicule ?">
                 <div id="destinations-wrap" class="hidden mt-2.5">
                     <p class="text-xs font-medium text-slate-500 mb-2">Suggestions</p>
                     <div id="destinations-list" class="flex flex-wrap gap-2"></div>
@@ -185,7 +200,7 @@
 
             <div>
                 <label for="description" class="label">Description de la panne</label>
-                <textarea id="description" name="description" rows="3" class="input" placeholder="Decrivez brievement ce qui s'est passe">{{ old('description') }}</textarea>
+                <textarea id="description" name="description" rows="3" class="input" placeholder="Decrivez brievement ce qui s'est passe"><?php echo e(old('description')); ?></textarea>
             </div>
 
             <div>
@@ -206,7 +221,7 @@
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-2">
                 <div>
                     <label for="client_phone" class="label">Telephone du conducteur</label>
-                    <input type="tel" id="client_phone" name="client_phone" value="{{ old('client_phone') }}"
+                    <input type="tel" id="client_phone" name="client_phone" value="<?php echo e(old('client_phone')); ?>"
                            class="input" placeholder="Ex : 77 123 45 67" inputmode="tel">
                     <p class="text-xs text-slate-400 mt-1.5 flex items-center gap-1">
                         <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.12.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.58 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
@@ -215,7 +230,7 @@
                 </div>
                 <div>
                     <label for="client_name" class="label">Votre prenom (optionnel)</label>
-                    <input type="text" id="client_name" name="client_name" value="{{ old('client_name') }}" class="input" placeholder="Ex : Awa">
+                    <input type="text" id="client_name" name="client_name" value="<?php echo e(old('client_name')); ?>" class="input" placeholder="Ex : Awa">
                 </div>
             </div>
 
@@ -339,7 +354,7 @@
             const st = getServiceType();
             if (st) params.set('service_type', st);
 
-            fetch('{{ route('guest.nearby') }}?' + params.toString(), {
+            fetch('<?php echo e(route('guest.nearby')); ?>?' + params.toString(), {
                 headers: { 'X-Requested-With': 'XMLHttpRequest' }
             })
             .then(r => r.json())
@@ -593,4 +608,6 @@
         locate();
     });
 </script>
-@endsection
+<?php $__env->stopSection(); ?>
+
+<?php echo $__env->make('layouts.app', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH C:\xampp\htdocs\samaRemorque\senegal-towing\resources\views/guest/create.blade.php ENDPATH**/ ?>

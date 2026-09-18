@@ -1,9 +1,12 @@
 import './bootstrap';
-import Alpine from 'alpinejs';
+import L from 'leaflet';
+import 'leaflet/dist/leaflet.css';
+import iconRetinaUrl from 'leaflet/dist/images/marker-icon-2x.png';
+import iconUrl from 'leaflet/dist/images/marker-icon.png';
+import shadowUrl from 'leaflet/dist/images/marker-shadow.png';
 
-window.Alpine = Alpine;
-
-Alpine.start();
+L.Icon.Default.mergeOptions({ iconRetinaUrl, iconUrl, shadowUrl });
+window.L = L;
 
 document.addEventListener('DOMContentLoaded', () => {
     document.documentElement.classList.add('js-anim');
