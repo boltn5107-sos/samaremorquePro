@@ -32,7 +32,10 @@ RUN composer install --no-dev --no-scripts --no-autoloader --no-interaction --pr
 COPY . .
 
 # Installation + optimisations (les assets seront copiés à l'étape suivante)
-RUN composer install --no-dev --no-interaction --prefer-dist --optimize-autoloader \
+# Les dossiers storage/framework sont exclus par .dockerignore : on les recrée
+# sinon realpath(storage_path('framework/views')) -> false -> echec package:discover
+RUN mkdir -p storage/framework/cache storage/framework/sessions storage/framework/views storage/logs \
+    && composer install --no-dev --no-interaction --prefer-dist --optimize-autoloader \
     && php artisan livewire:publish --assets --force \
     && chown -R www-data:www-data storage bootstrap/cache
 
