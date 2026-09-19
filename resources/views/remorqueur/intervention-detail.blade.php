@@ -84,6 +84,36 @@
                                 Intervention terminee
                             </h2>
                             <p class="text-sm text-emerald-600">Merci pour votre travail. Vous redevenez disponible pour de nouvelles demandes.</p>
+
+                            @if($intervention->price !== null)
+                                <div class="mt-4 p-4 rounded-xl bg-white border border-emerald-200/70">
+                                    <p class="text-sm font-semibold text-slate-900">
+                                        Prix propose : {{ number_format((float) $intervention->price, 0, ',', ' ') }} FCFA
+                                    </p>
+                                    @if($intervention->priceConfirmed())
+                                        <p class="text-xs text-emerald-600 mt-1">
+                                            Confirme par le client le {{ $intervention->price_confirmed_at->format('d/m/Y H:i') }}. Commission de {{ number_format((float) config('wave.commission_amount', 750), 0, ',', ' ') }} FCFA due.
+                                        </p>
+                                    @elseif($intervention->priceContested())
+                                        <p class="text-xs text-red-600 mt-1">
+                                            Le client conteste ce prix. Corrigez-le pour qu'il puisse le valider.
+                                        </p>
+                                        <form method="POST" action="{{ route('remorqueur.intervention.price', $intervention) }}" class="mt-3 flex flex-col sm:flex-row gap-2">
+                                            @csrf
+                                            <input type="number" name="price" min="100" max="1000000" step="1" required
+                                                value="{{ (int) $intervention->price }}"
+                                                class="input flex-1" placeholder="Nouveau prix (FCFA)">
+                                            <button type="submit" class="btn-primary text-sm py-2.5">
+                                                Corriger le prix
+                                            </button>
+                                        </form>
+                                    @else
+                                        <p class="text-xs text-amber-600 mt-1">
+                                            En attente de confirmation par le client.
+                                        </p>
+                                    @endif
+                                </div>
+                            @endif
                         </div>
                     @elseif($intervention->status === 'annulee')
                         <div class="card p-6 bg-slate-50 border-slate-200">
@@ -105,6 +135,14 @@
                                           onsubmit="var b=this.querySelector('button'); b.disabled=true; b.classList.add('opacity-50');">
                                         @csrf
                                         <input type="hidden" name="status" value="{{ $next }}">
+                                        @if($next === \App\Models\Intervention::STATUS_COMPLETED)
+                                            <div class="mb-3">
+                                                <label for="price" class="label">Prix de la course (FCFA) *</label>
+                                                <input type="number" name="price" id="price" min="100" max="1000000" step="1" required
+                                                    class="input w-full" placeholder="Ex : 15000" value="{{ old('price') }}">
+                                                <p class="text-xs text-slate-400 mt-1">Le client devra confirmer ce prix. Une commission de {{ number_format((float) config('wave.commission_amount', 750), 0, ',', ' ') }} FCFA sera due.</p>
+                                            </div>
+                                        @endif
                                         <button type="submit" class="btn-primary w-full">
                                             <x-icon name="check" class="w-4 h-4" />
                                             Passer au statut : {{ $intervention->statusLabelFor($next) }}

@@ -71,6 +71,51 @@
         </div>
     </div>
 
+    @if($paiementNotice === 'success')
+        <div class="card px-5 py-4 mb-6 flex items-start gap-3 border-l-4 border-l-emerald-500 reveal">
+            <x-icon name="check-circle" class="w-5 h-5 mt-0.5 text-emerald-600" />
+            <p class="text-sm text-emerald-800">Paiement de vos commissions effectue avec succes. Merci !</p>
+        </div>
+    @elseif($paiementNotice === 'error')
+        <div class="card px-5 py-4 mb-6 flex items-start gap-3 border-l-4 border-l-red-500 reveal">
+            <x-icon name="x" class="w-5 h-5 mt-0.5 text-red-600" />
+            <p class="text-sm text-red-700">Paiement non abouti. Vous pouvez reessayer.</p>
+        </div>
+    @endif
+
+    <div class="card p-5 mb-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 reveal">
+        <div class="flex items-center gap-4">
+            <span class="flex-shrink-0 w-12 h-12 rounded-xl {{ $blocked ? 'bg-red-100 text-red-600' : 'bg-amber-100 text-amber-600' }} flex items-center justify-center">
+                <x-icon name="credit-card" class="w-6 h-6" />
+            </span>
+            <div>
+                <p class="text-sm font-medium text-slate-500">Solde des commissions</p>
+                <p class="text-2xl font-bold {{ $blocked ? 'text-red-600' : 'text-slate-900' }}">
+                    {{ number_format($soldeDu, 0, ',', ' ') }} FCFA
+                    @if($soldeDu === 0)
+                        <span class="ml-2 text-xs font-semibold text-emerald-600">a jour</span>
+                    @elseif($blocked)
+                        <span class="ml-2 text-xs font-semibold text-red-600">bloque</span>
+                    @endif
+                </p>
+                @if($blocked)
+                    <p class="text-xs text-red-600 mt-0.5">Solde atteint ({{ number_format($blocageThreshold, 0, ',', ' ') }} FCFA) : vous ne recevez plus de nouvelles demandes tant que vous n'avez pas regle vos commissions.</p>
+                @elseif($soldeDu > 0)
+                    <p class="text-xs text-slate-400 mt-0.5">Blocage des nouvelles demandes a partir de {{ number_format($blocageThreshold, 0, ',', ' ') }} FCFA de solde.</p>
+                @endif
+            </div>
+        </div>
+        @if($soldeDu > 0)
+            <form method="POST" action="{{ route('depanneur.commissions.pay') }}">
+                @csrf
+                <button type="submit" class="btn-primary shadow-lg shadow-emerald-500/20 !bg-emerald-600">
+                    <x-icon name="credit-card" class="w-4 h-4" />
+                    Payer mes commissions ({{ number_format($soldeDu, 0, ',', ' ') }} FCFA)
+                </button>
+            </form>
+        @endif
+    </div>
+
     @if($activeIntervention)
         <div class="card p-6 mb-8 border-l-4 border-l-orange-500 shadow-glow reveal reveal-delay-2">
             <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-5">
@@ -222,13 +267,23 @@
                     </div>
                 </div>
             @empty
-                <div class="empty-state">
-                    <span class="w-16 h-16 rounded-2xl bg-orange-100 text-orange-400 flex items-center justify-center mx-auto">
-                        <x-icon name="bell" class="w-8 h-8" />
-                    </span>
-                    <h3>Aucune demande en attente</h3>
-                    <p>Les nouvelles demandes apparaîtront ici.</p>
-                </div>
+                @if(isset($blocked) && $blocked)
+                    <div class="empty-state">
+                        <span class="w-16 h-16 rounded-2xl bg-red-100 text-red-400 flex items-center justify-center mx-auto">
+                            <x-icon name="credit-card" class="w-8 h-8" />
+                        </span>
+                        <h3>Demandes mises en attente</h3>
+                        <p>Reglez vos commissions ({!! number_format($soldeDu, 0, ',', ' ') !!} FCFA) pour recommencer a recevoir des demandes.</p>
+                    </div>
+                @else
+                    <div class="empty-state">
+                        <span class="w-16 h-16 rounded-2xl bg-orange-100 text-orange-400 flex items-center justify-center mx-auto">
+                            <x-icon name="bell" class="w-8 h-8" />
+                        </span>
+                        <h3>Aucune demande en attente</h3>
+                        <p>Les nouvelles demandes apparaîtront ici.</p>
+                    </div>
+                @endif
             @endforelse
         </div>
     </div>

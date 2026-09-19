@@ -48,4 +48,18 @@ return [
     | fortement recommande pour securiser la confirmation des paiements).
     */
     'webhook_secret' => env('WAVE_WEBHOOK_SECRET', ''),
+
+    /*
+    |----------------------------------------------------------------------
+    | Commission (Option B) et seuil de blocage
+    |----------------------------------------------------------------------
+    |
+    | commission_amount    : montant fixe (FCFA) que le professionnel doit
+    |                        payer a chaque intervention terminee ET validee.
+    | commission_block_after : nombre de commissions impayees au-dela duquel
+    |                          le pro ne recoit plus de nouvelles demandes.
+    |  Ex. 750 FCFA x 3 = 2250 FCFA : solde dû >= 2250 -> blocage.
+    */
+    'commission_amount' => (int) env('WAVE_COMMISSION_AMOUNT', 750),
+    'commission_block_after' => (int) env('WAVE_COMMISSION_BLOCK_AFTER', 3),
 ];

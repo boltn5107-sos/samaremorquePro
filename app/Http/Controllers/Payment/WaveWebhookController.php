@@ -3,9 +3,12 @@
 namespace App\Http\Controllers\Payment;
 
 use App\Http\Controllers\Controller;
+use App\Models\Intervention;
 use App\Models\Payment;
+use App\Models\User;
 use App\Services\WavePaymentService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
 /**
@@ -100,6 +103,10 @@ class WaveWebhookController extends Controller
                 'raw_payload' => $data,
                 'paid_at' => now(),
             ]);
+
+            // Paiement en lot "Payer mes commissions" (payable = Professionnel) :
+            // toutes les commissions ouvertes (payable = Intervention) du pro sont soldees.
+            $this->settleOpenCommissions($payment, $data);
         } elseif (($data['checkout_status'] ?? null) === 'expired') {
             // Session arrivera a expiration sans validation : reinit possible plus tard.
             $payment->update([
@@ -119,5 +126,42 @@ class WaveWebhookController extends Controller
         }
 
         return response()->json(['status' => 'ok']);
+    }
+
+    /**
+     * Solde les commissions en attente d'un professionnel quand son paiement en lot
+     * ("Payer mes commissions") est confirme par Wave. Transaction atomique : si un
+     * update echoue, rien n'est partiellement applique.
+     *
+     * @param  array<string, mixed>  $data  Payload brut du webhook Wave.
+     */
+    protected function settleOpenCommissions(Payment $payment, array $data): void
+    {
+        if ($payment->payable_type !== User::class || $payment->user_id === null) {
+            return;
+        }
+
+        DB::transaction(function () use ($payment, $data) {
+            $commissions = Payment::where('payable_type', Intervention::class)
+                ->where('user_id', $payment->user_id)
+                ->whereNotIn('status', [Payment::STATUS_PAID, Payment::STATUS_REFUNDED])
+                ->get();
+
+            foreach ($commissions as $commission) {
+                $commission->update([
+                    'status' => Payment::STATUS_PAID,
+                    'payment_status' => 'succeeded',
+                    'checkout_status' => 'complete',
+                    'paid_at' => $payment->paid_at,
+                    'raw_payload' => $data,
+                ]);
+            }
+
+            Log::info('Commissions en lot reglees', [
+                'professional_id' => $payment->user_id,
+                'bulk_payment_id' => $payment->id,
+                'commissions_settled' => $commissions->count(),
+            ]);
+        });
     }
 }

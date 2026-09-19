@@ -57,6 +57,51 @@
                 </div>
             </div>
 
+            @if($paiementNotice === 'success')
+                <div class="mb-6 flex items-start gap-3 bg-emerald-50 border border-emerald-200 text-emerald-800 rounded-2xl px-5 py-4">
+                    <x-icon name="check-circle" class="w-5 h-5 mt-0.5" />
+                    <p class="text-sm">Paiement de vos commissions effectue avec succes. Merci !</p>
+                </div>
+            @elseif($paiementNotice === 'error')
+                <div class="mb-6 flex items-start gap-3 bg-red-50 border border-red-200 text-red-700 rounded-2xl px-5 py-4">
+                    <x-icon name="x" class="w-5 h-5 mt-0.5" />
+                    <p class="text-sm">Paiement non abouti. Vous pouvez reessayer.</p>
+                </div>
+            @endif
+
+            <div class="bg-white rounded-2xl border border-slate-100 shadow-sm p-5 mb-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                <div class="flex items-center gap-4">
+                    <span class="flex-shrink-0 w-12 h-12 rounded-xl {{ $blocked ? 'bg-red-100 text-red-600' : 'bg-amber-100 text-amber-600' }} flex items-center justify-center">
+                        <x-icon name="credit-card" class="w-6 h-6" />
+                    </span>
+                    <div>
+                        <p class="text-sm text-slate-500">Solde des commissions</p>
+                        <p class="text-2xl font-bold {{ $blocked ? 'text-red-600' : 'text-slate-900' }}">
+                            {{ number_format($soldeDu, 0, ',', ' ') }} FCFA
+                            @if($soldeDu === 0)
+                                <span class="ml-2 text-xs font-semibold text-emerald-600">a jour</span>
+                            @elseif($blocked)
+                                <span class="ml-2 text-xs font-semibold text-red-600">bloque</span>
+                            @endif
+                        </p>
+                        @if($blocked)
+                            <p class="text-xs text-red-600 mt-0.5">Solde atteint ({{ number_format($blocageThreshold, 0, ',', ' ') }} FCFA) : vous ne recevez plus de nouvelles demandes tant que vous n'avez pas regle vos commissions.</p>
+                        @elseif($soldeDu > 0)
+                            <p class="text-xs text-slate-400 mt-0.5">Blocage des nouvelles demandes a partir de {{ number_format($blocageThreshold, 0, ',', ' ') }} FCFA de solde.</p>
+                        @endif
+                    </div>
+                </div>
+                @if($soldeDu > 0)
+                    <form method="POST" action="{{ route('remorqueur.commissions.pay') }}">
+                        @csrf
+                        <button type="submit" class="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold text-white bg-emerald-600 hover:bg-emerald-700 shadow-md shadow-emerald-500/25 transition-all duration-300">
+                            <x-icon name="credit-card" class="w-4 h-4" />
+                            Payer mes commissions ({{ number_format($soldeDu, 0, ',', ' ') }} FCFA)
+                        </button>
+                    </form>
+                @endif
+            </div>
+
             @if($activeIntervention)
                 <div class="bg-white rounded-2xl border border-slate-100 shadow-lg shadow-orange-500/5 overflow-hidden mb-8">
                     <div class="bg-gradient-to-r from-orange-500 to-amber-500 px-6 py-1.5 flex items-center justify-between">
@@ -170,13 +215,23 @@
                                 </div>
                             </li>
                         @empty
-                            <li class="px-6 py-14 text-center">
-                                <span class="w-16 h-16 rounded-2xl bg-orange-50 text-orange-300 flex items-center justify-center mx-auto mb-3">
-                                    <x-icon name="bell" class="w-8 h-8" />
-                                </span>
-                                <p class="font-semibold text-slate-700">Aucune demande en attente</p>
-                                <p class="mt-1 text-sm text-slate-500">Les nouvelles demandes de remorquage apparaîtront ici.</p>
-                            </li>
+                            @if(isset($blocked) && $blocked)
+                                <li class="px-6 py-14 text-center">
+                                    <span class="w-16 h-16 rounded-2xl bg-red-50 text-red-300 flex items-center justify-center mx-auto mb-3">
+                                        <x-icon name="credit-card" class="w-8 h-8" />
+                                    </span>
+                                    <p class="font-semibold text-red-600">Demandes mises en attente</p>
+                                    <p class="mt-1 text-sm text-slate-500">Reglez vos commissions ({!! number_format($soldeDu, 0, ',', ' ') !!} FCFA) pour recommencer a recevoir des demandes.</p>
+                                </li>
+                            @else
+                                <li class="px-6 py-14 text-center">
+                                    <span class="w-16 h-16 rounded-2xl bg-orange-50 text-orange-300 flex items-center justify-center mx-auto mb-3">
+                                        <x-icon name="bell" class="w-8 h-8" />
+                                    </span>
+                                    <p class="font-semibold text-slate-700">Aucune demande en attente</p>
+                                    <p class="mt-1 text-sm text-slate-500">Les nouvelles demandes de remorquage apparaîtront ici.</p>
+                                </li>
+                            @endif
                         @endforelse
                     </ul>
                 </div>

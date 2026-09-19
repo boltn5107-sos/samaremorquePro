@@ -211,18 +211,18 @@ WAVE_WEBHOOK_SECRET=&lt;webhook_secret&gt;</code></pre>
                     </tr>
                     <tr class="border-t border-slate-100">
                         <td class="px-3 py-2 font-mono">app/Http/Controllers/Payment/*</td>
-                        <td class="px-3 py-2 text-amber-600 font-semibold">En cours</td>
-                        <td class="px-3 py-2">Checkout initie par le <strong>pro</strong> + webhook de confirmation.</td>
+                        <td class="px-3 py-2 text-emerald-600 font-semibold">Pret</td>
+                        <td class="px-3 py-2">Checkout initie par le <strong>pro</strong> + webhook de confirmation (paiement en lot solde les commissions).</td>
                     </tr>
                     <tr class="border-t border-slate-100 bg-slate-50">
                         <td class="px-3 py-2 font-mono">commission du solde pro</td>
-                        <td class="px-3 py-2 text-red-600 font-semibold">A construire</td>
-                        <td class="px-3 py-2">Colonne solde / montant commission, prix valide par le client, seuil de blocage dans InterventionMatchingService.</td>
+                        <td class="px-3 py-2 text-emerald-600 font-semibold">Fait</td>
+                        <td class="px-3 py-2">Prix renseigne par le pro a la cloture, valide/conteste par le client, solde dû derive des <code class="bg-slate-100 px-1 rounded">payments</code> (config <code class="bg-slate-100 px-1 rounded">wave.commission_*</code>), seuil de blocage applique dans InterventionMatchingService, listes incoming et dashboards.</td>
                     </tr>
                     <tr class="border-t border-slate-100">
                         <td class="px-3 py-2 font-mono">bouton "Payer" dashboard pro</td>
-                        <td class="px-3 py-2 text-red-600 font-semibold">A construire</td>
-                        <td class="px-3 py-2">Parcours UI pro : solde dû + lancer le checkout Wave.</td>
+                        <td class="px-3 py-2 text-emerald-600 font-semibold">Fait</td>
+                        <td class="px-3 py-2">Carte solde dû + "Payer mes commissions" (checkout Wave restreint au numero du pro) ; le webhook solde les commissions ouvertes du pro.</td>
                     </tr>
                 </tbody>
             </table>

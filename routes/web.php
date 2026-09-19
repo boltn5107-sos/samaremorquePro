@@ -32,6 +32,7 @@ use App\Http\Controllers\Admin\{
     AdminIntegrationController
 };
 use App\Http\Controllers\Payment\WaveWebhookController;
+use App\Http\Controllers\Payment\CommissionPaymentController;
 use App\Http\Controllers\{
     Auth\AuthenticatedSessionController,
     Auth\AuthenticatedRegistrationController,
@@ -83,6 +84,8 @@ Route::get('/suivi/{trackingCode}/pro-position', [GuestInterventionController::c
 Route::get('/suivi/{trackingCode}/statut', [GuestInterventionController::class, 'statusJson'])->name('guest.status');
 Route::post('/suivi/{trackingCode}/annuler', [GuestInterventionController::class, 'cancel'])->name('guest.cancel');
 Route::post('/suivi/{trackingCode}/noter', [GuestInterventionController::class, 'rate'])->name('guest.rate');
+Route::post('/suivi/{trackingCode}/prix/confirmer', [GuestInterventionController::class, 'confirmPrice'])->name('guest.price-confirm');
+Route::post('/suivi/{trackingCode}/prix/contester', [GuestInterventionController::class, 'contestPrice'])->name('guest.price-contest');
 
 // Confidentialite
 Route::view('/confidentialite', 'pages.confidentialite')->name('privacy');
@@ -129,6 +132,8 @@ Route::middleware('auth')->group(function () {
             Route::get('/intervention/{intervention}', [ClientInterventionController::class, 'show'])->name('intervention.show');
             Route::post('/intervention/{intervention}/annuler', [ClientInterventionController::class, 'cancel'])->name('intervention.cancel');
             Route::post('/intervention/{intervention}/noter', [ClientInterventionController::class, 'rate'])->name('intervention.rate');
+            Route::post('/intervention/{intervention}/prix/confirmer', [ClientInterventionController::class, 'confirmPrice'])->name('intervention.price-confirm');
+            Route::post('/intervention/{intervention}/prix/contester', [ClientInterventionController::class, 'contestPrice'])->name('intervention.price-contest');
             Route::post('/profile', [ClientProfileController::class, 'update'])->name('profile.update');
             Route::post('/profile/phone', [ClientProfileController::class, 'updatePhone'])->name('profile.phone');
             Route::post('/profile/photo', [ClientProfileController::class, 'updatePhoto'])->name('profile.photo');
@@ -146,6 +151,8 @@ Route::middleware('auth')->group(function () {
             Route::get('/interventions', [RemorqueurInterventionController::class, 'index'])->name('intervention.index');
             Route::get('/intervention/{intervention}', [RemorqueurInterventionController::class, 'show'])->name('intervention.show');
             Route::post('/intervention/{intervention}/statut', [RemorqueurInterventionController::class, 'updateStatus'])->name('intervention.status');
+            Route::post('/intervention/{intervention}/prix', [RemorqueurInterventionController::class, 'updatePrice'])->name('intervention.price');
+            Route::post('/commissions/payer', [CommissionPaymentController::class, 'pay'])->name('commissions.pay');
             Route::post('/location', [RemorqueurAvailabilityController::class, 'updateLocation'])->name('location.update');
             Route::post('/profile', [RemorqueurProfileController::class, 'update'])->name('profile.update');
             Route::post('/remorque', [RemorqueurProfileController::class, 'updateRemorque'])->name('remorque.update');
@@ -161,6 +168,8 @@ Route::middleware('auth')->group(function () {
             Route::get('/interventions', [DepanneurInterventionController::class, 'index'])->name('intervention.index');
             Route::get('/intervention/{intervention}', [DepanneurInterventionController::class, 'show'])->name('intervention.show');
             Route::post('/intervention/{intervention}/statut', [DepanneurInterventionController::class, 'updateStatus'])->name('intervention.status');
+            Route::post('/intervention/{intervention}/prix', [DepanneurInterventionController::class, 'updatePrice'])->name('intervention.price');
+            Route::post('/commissions/payer', [CommissionPaymentController::class, 'pay'])->name('commissions.pay');
             Route::post('/location', [DepanneurAvailabilityController::class, 'updateLocation'])->name('location.update');
             Route::post('/profile', [DepanneurProfileController::class, 'update'])->name('profile.update');
             Route::post('/services', [DepanneurProfileController::class, 'updateServices'])->name('services.update');

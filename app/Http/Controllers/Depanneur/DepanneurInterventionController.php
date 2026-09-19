@@ -17,10 +17,20 @@ class DepanneurInterventionController extends Controller
 
     public function incoming()
     {
-        $rejectedIds = ProfessionalRejection::where('professional_id', Auth::id())
+        $user = Auth::user();
+
+        if ($user->isCommissionBlocked()) {
+            return view('depanneur.demands', [
+                'interventions' => collect(),
+                'blocked' => true,
+                'soldeDu' => $user->commissionBalanceDue(),
+            ]);
+        }
+
+        $rejectedIds = ProfessionalRejection::where('professional_id', $user->id)
             ->pluck('intervention_id');
 
-        $userId = Auth::id();
+        $userId = $user->id;
 
         $interventions = Intervention::with('client')
             ->where('status', Intervention::STATUS_AWAITING_PROFESSIONAL)
@@ -118,18 +128,37 @@ class DepanneurInterventionController extends Controller
         $validated = $request->validate([
             'status' => ['required', 'in:depanneur_en_route,arrivee_sur_place,vehicule_pris_en_charge,intervention_terminee'],
             'note' => ['nullable', 'string', 'max:1000'],
+            'price' => ['nullable', 'numeric', 'min:100', 'max:1000000'],
         ]);
 
         if (! $intervention->canTransitionTo($validated['status'])) {
             return back()->with('error', 'Impossible de passer a ce statut (statut actuel : ' . $intervention->status_label . ').');
         }
 
-        $intervention->update(['status' => $validated['status']]);
+        if ($validated['status'] === Intervention::STATUS_COMPLETED) {
+            $price = $validated['price'] ?? null;
+
+            if ($price === null) {
+                return back()->with('error', "Pour terminer l'intervention, renseignez le prix de la course (le client devra le confirmer).");
+            }
+
+            $intervention->update([
+                'status' => $validated['status'],
+                'price' => $price,
+                'price_status' => Intervention::PRICE_STATUS_PENDING,
+                'price_set_at' => now(),
+                'price_confirmed_at' => null,
+            ]);
+        } else {
+            $intervention->update(['status' => $validated['status']]);
+        }
 
         InterventionStatus::create([
             'intervention_id' => $intervention->id,
             'status' => $validated['status'],
-            'note' => $validated['note'] ?? null,
+            'note' => $validated['note'] ?? ($validated['status'] === Intervention::STATUS_COMPLETED && isset($validated['price'])
+                ? 'Prix propose : ' . number_format((float) $validated['price'], 0, ',', ' ') . ' FCFA'
+                : null),
             'user_id' => Auth::id(),
         ]);
 
@@ -140,6 +169,37 @@ class DepanneurInterventionController extends Controller
         $this->notifyClient($intervention, ucfirst(str_replace('_', ' ', $validated['status'])));
 
         return back()->with('status', 'status-updated');
+    }
+
+    public function updatePrice(Request $request, Intervention $intervention)
+    {
+        abort_if($intervention->professional_id !== Auth::id(), 403);
+
+        if ($intervention->status !== Intervention::STATUS_COMPLETED) {
+            return back()->with('error', "Le prix ne peut etre mis a jour que sur une intervention terminee.");
+        }
+
+        if ($intervention->priceConfirmed()) {
+            return back()->with('error', 'Le prix a deja ete confirme par le client.');
+        }
+
+        $validated = $request->validate([
+            'price' => ['required', 'numeric', 'min:100', 'max:1000000'],
+        ]);
+
+        $intervention->update([
+            'price' => $validated['price'],
+            'price_status' => Intervention::PRICE_STATUS_PENDING,
+            'price_set_at' => now(),
+            'price_confirmed_at' => null,
+        ]);
+
+        $this->notifyClient(
+            $intervention,
+            'Le depanneur a propose un nouveau prix : ' . number_format((float) $validated['price'], 0, ',', ' ') . ' FCFA. Merci de le confirmer.'
+        );
+
+        return back()->with('status', 'price-updated');
     }
 
     protected function notifyClient(Intervention $intervention, string $body): void

@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\Intervention;
 use App\Models\InterventionStatus;
+use App\Models\Notification;
 use App\Models\Service;
+use App\Services\CommissionService;
 use App\Services\GeolocationService;
 use App\Services\InterventionMatchingService;
 use App\Services\NearbyProfessionalsService;
@@ -17,7 +19,8 @@ class GuestInterventionController extends Controller
     public function __construct(
         protected GeolocationService $geo,
         protected InterventionMatchingService $matcher,
-        protected NearbyProfessionalsService $nearby
+        protected NearbyProfessionalsService $nearby,
+        protected CommissionService $commissions
     ) {}
 
     public function create()
@@ -221,6 +224,64 @@ class GuestInterventionController extends Controller
         return back()->with('status', 'intervention-cancelled');
     }
 
+    public function confirmPrice(string $trackingCode)
+    {
+        $intervention = Intervention::findByTrackingCode($trackingCode);
+
+        abort_if($intervention === null, 404);
+
+        if ($intervention->status !== Intervention::STATUS_COMPLETED || $intervention->price === null) {
+            return back()->with('error', 'Aucun prix a confirmer.');
+        }
+
+        if ($intervention->priceConfirmed()) {
+            return back()->with('error', 'Le prix a deja ete confirme.');
+        }
+
+        $intervention->update([
+            'price_status' => Intervention::PRICE_STATUS_VALIDATED,
+            'price_confirmed_at' => now(),
+        ]);
+
+        $payment = $this->commissions->charge($intervention);
+
+        $this->notifyProfessional(
+            $intervention,
+            $payment
+                ? 'Prix confirme par le client. Commission de ' . number_format((float) $payment->amount, 0, ',', ' ') . ' FCFA due.'
+                : 'Prix confirme par le client.'
+        );
+
+        return back()->with('status', 'price-confirmed');
+    }
+
+    public function contestPrice(string $trackingCode)
+    {
+        $intervention = Intervention::findByTrackingCode($trackingCode);
+
+        abort_if($intervention === null, 404);
+
+        if ($intervention->status !== Intervention::STATUS_COMPLETED || $intervention->price === null) {
+            return back()->with('error', 'Aucun prix a contester.');
+        }
+
+        if ($intervention->priceConfirmed()) {
+            return back()->with('error', 'Le prix a deja ete confirme, il ne peut plus etre conteste.');
+        }
+
+        $intervention->update([
+            'price_status' => Intervention::PRICE_STATUS_CONTESTED,
+            'price_confirmed_at' => null,
+        ]);
+
+        $this->notifyProfessional(
+            $intervention,
+            'Le client conteste le prix de ' . number_format((float) $intervention->price, 0, ',', ' ') . ' FCFA. Corrigez le prix.'
+        );
+
+        return back()->with('status', 'price-contested');
+    }
+
     public function rate(Request $request, string $trackingCode)
     {
         $intervention = Intervention::findByTrackingCode($trackingCode);
@@ -247,6 +308,25 @@ class GuestInterventionController extends Controller
         ]);
 
         return back()->with('status', 'intervention-rated');
+    }
+
+    protected function notifyProfessional(Intervention $intervention, string $body): void
+    {
+        if (! $intervention->professional_id) {
+            return;
+        }
+
+        Notification::create([
+            'user_id' => $intervention->professional_id,
+            'type' => 'intervention_update',
+            'notifiable_type' => Intervention::class,
+            'notifiable_id' => $intervention->id,
+            'data' => [
+                'title' => 'Prix de l\u2019intervention',
+                'body' => $body,
+                'url' => '/pro/dashboard',
+            ],
+        ]);
     }
 
     protected function storePhoto(Request $request): ?string

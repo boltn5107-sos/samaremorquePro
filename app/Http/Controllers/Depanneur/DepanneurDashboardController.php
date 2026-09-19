@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Auth;
 
 class DepanneurDashboardController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         $user = Auth::user();
         $activeIntervention = Intervention::where('professional_id', $user->id)
@@ -17,15 +17,19 @@ class DepanneurDashboardController extends Controller
             ->latest()
             ->first();
 
-        $pendingDemands = Intervention::where('status', Intervention::STATUS_AWAITING_PROFESSIONAL)
-            ->where('service_type', 'depannage')
-            ->where(function ($q) use ($user) {
-                $q->whereNull('target_professional_id')
-                    ->orWhere('target_professional_id', $user->id);
-            })
-            ->orderByDesc('created_at')
-            ->limit(10)
-            ->get();
+        $blocked = $user->isCommissionBlocked();
+
+        $pendingDemands = $blocked
+            ? collect()
+            : Intervention::where('status', Intervention::STATUS_AWAITING_PROFESSIONAL)
+                ->where('service_type', 'depannage')
+                ->where(function ($q) use ($user) {
+                    $q->whereNull('target_professional_id')
+                        ->orWhere('target_professional_id', $user->id);
+                })
+                ->orderByDesc('created_at')
+                ->limit(10)
+                ->get();
 
         $completedInterventions = Intervention::where('professional_id', $user->id)
             ->where('status', 'intervention_terminee')
@@ -33,6 +37,18 @@ class DepanneurDashboardController extends Controller
             ->limit(10)
             ->get();
 
-        return view('depanneur.dashboard', compact('activeIntervention', 'pendingDemands', 'completedInterventions'));
+        $soldeDu = $user->commissionBalanceDue();
+        $blocageThreshold = $user->commissionBlockThreshold();
+        $paiementNotice = $request->query('paiement');
+
+        return view('depanneur.dashboard', compact(
+            'activeIntervention',
+            'pendingDemands',
+            'completedInterventions',
+            'soldeDu',
+            'blocageThreshold',
+            'blocked',
+            'paiementNotice'
+        ));
     }
 }

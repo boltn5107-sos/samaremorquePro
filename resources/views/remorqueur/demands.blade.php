@@ -15,6 +15,13 @@
                 @endif
             </div>
 
+            @if(isset($blocked) && $blocked)
+                <div class="card p-5 mb-4 border-l-4 border-l-red-500">
+                    <p class="font-semibold text-red-600">Commissions impayees</p>
+                    <p class="text-sm text-slate-600 mt-1">Votre solde ({!! number_format($soldeDu, 0, ',', ' ') !!} FCFA) a atteint le seuil : vous ne recevez plus de nouvelles demandes tant qu'il n'est pas regle. Payez vos commissions depuis votre tableau de bord.</p>
+                </div>
+            @endif
+
             @if($interventions->isEmpty())
                 <div class="card p-12 text-center text-slate-500">
                     <x-icon name="bell" class="w-12 h-12 mx-auto mb-3 text-slate-300" />

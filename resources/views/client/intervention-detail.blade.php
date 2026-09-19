@@ -160,6 +160,47 @@
                             </button>
                         </form>
                     @else
+                        @if($intervention->price !== null)
+                            <div class="card p-6 mb-6">
+                                <h2 class="text-lg font-semibold text-slate-900 mb-2 flex items-center gap-2">
+                                    <x-icon name="credit-card" class="w-5 h-5 text-orange-500" />
+                                    Prix de la course
+                                </h2>
+                                <p class="text-sm font-bold text-slate-900 mb-3">
+                                    {{ number_format((float) $intervention->price, 0, ',', ' ') }} FCFA
+                                    @if($intervention->priceConfirmed())
+                                        <span class="ml-2 text-xs font-semibold text-emerald-600">Confirme</span>
+                                    @elseif($intervention->priceContested())
+                                        <span class="ml-2 text-xs font-semibold text-red-600">Conteste</span>
+                                    @else
+                                        <span class="ml-2 text-xs font-semibold text-amber-600">En attente de votre confirmation</span>
+                                    @endif
+                                </p>
+                                @if($intervention->priceConfirmed())
+                                    <p class="text-xs text-slate-500">Merci d'avoir confirme ce prix. Le professionnel regle sa commission ({!! number_format((float) config('wave.commission_amount', 750), 0, ',', ' ') !!} FCFA) directement a la plateforme.</p>
+                                @elseif($intervention->priceContested())
+                                    <p class="text-xs text-slate-500">Vous avez conteste ce prix. Le professionnel a ete prevenu et proposera un nouveau prix.</p>
+                                @else
+                                    <p class="text-sm text-slate-600 mb-4">Le professionnel vous regle sur place (Wave ou cash). Validez ce prix pour clore la course.</p>
+                                    <div class="flex flex-col sm:flex-row gap-3">
+                                        <form method="POST" action="{{ route('client.intervention.price-confirm', $intervention) }}" class="flex-1">
+                                            @csrf
+                                            <button type="submit" class="btn-primary w-full">
+                                                <x-icon name="check" class="w-4 h-4" />
+                                                Confirmer le prix
+                                            </button>
+                                        </form>
+                                        <form method="POST" action="{{ route('client.intervention.price-contest', $intervention) }}" class="flex-1">
+                                            @csrf
+                                            <button type="submit" class="btn-secondary w-full">
+                                                <x-icon name="x" class="w-4 h-4" />
+                                                Contester le prix
+                                            </button>
+                                        </form>
+                                    </div>
+                                @endif
+                            </div>
+                        @endif
                         <div class="card p-6">
                             <h2 class="text-lg font-semibold text-slate-900 mb-2 flex items-center gap-2">
                                 <x-icon name="star" class="w-5 h-5 text-orange-500" />

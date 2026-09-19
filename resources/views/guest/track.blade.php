@@ -259,6 +259,50 @@
                 </button>
             </form>
         @elseif($intervention->status === 'intervention_terminee')
+            @if($intervention->price !== null)
+                <section class="card p-6 mb-6">
+                    <h2 class="font-semibold text-slate-900 flex items-center gap-2.5 mb-2">
+                        <span class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-orange-50 text-orange-600">
+                            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2"/><path d="M1 10h22"/></svg>
+                        </span>
+                        Prix de la course
+                    </h2>
+                    <p class="font-bold text-slate-900 mb-3">
+                        {{ number_format((float) $intervention->price, 0, ',', ' ') }} FCFA
+                        @if($intervention->priceConfirmed())
+                            <span class="ml-2 text-xs font-semibold text-emerald-600">Confirme</span>
+                        @elseif($intervention->priceContested())
+                            <span class="ml-2 text-xs font-semibold text-red-600">Conteste</span>
+                        @else
+                            <span class="ml-2 text-xs font-semibold text-amber-600">En attente de votre confirmation</span>
+                        @endif
+                    </p>
+                    @if($intervention->priceConfirmed())
+                        <p class="text-xs text-slate-500">Merci d'avoir confirme ce prix. Le professionnel regle sa commission ({!! number_format((float) config('wave.commission_amount', 750), 0, ',', ' ') !!} FCFA) directement a la plateforme.</p>
+                    @elseif($intervention->priceContested())
+                        <p class="text-xs text-slate-500">Vous avez conteste ce prix. Le professionnel a ete prevenu et proposera un nouveau prix.</p>
+                    @else
+                        <p class="text-sm text-slate-600 mb-4">Le professionnel vous regle sur place (Wave ou cash). Validez ce prix pour clore la course.</p>
+                        <div class="flex flex-col sm:flex-row gap-3">
+                            <form method="POST" action="{{ route('guest.price-confirm', $intervention->tracking_code) }}" class="flex-1">
+                                @csrf
+                                <button type="submit" class="w-full inline-flex items-center justify-center gap-2 py-3 rounded-xl text-sm font-semibold text-white bg-gradient-to-r from-orange-600 to-orange-500 hover:from-orange-700 hover:to-orange-600 shadow-lg shadow-orange-600/20 transition-all duration-300">
+                                    <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                                    Confirmer le prix
+                                </button>
+                            </form>
+                            <form method="POST" action="{{ route('guest.price-contest', $intervention->tracking_code) }}" class="flex-1">
+                                @csrf
+                                <button type="submit" class="w-full inline-flex items-center justify-center gap-2 py-3 rounded-xl text-sm font-semibold text-slate-600 bg-slate-100 hover:bg-red-50 hover:text-red-600 border border-slate-200 transition-all duration-300">
+                                    <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
+                                    Contester le prix
+                                </button>
+                            </form>
+                        </div>
+                    @endif
+                </section>
+            @endif
+
             <section class="card p-6 mb-6">
                 <h2 class="font-semibold text-slate-900 flex items-center gap-2.5 mb-2">
                     <span class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-orange-50 text-orange-600">

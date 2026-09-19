@@ -136,4 +136,59 @@ class User extends Authenticatable
     {
         return $this->role === 'admin';
     }
+
+    public function isProfessional(): bool
+    {
+        return in_array($this->role, ['remorqueur', 'depanneur'], true);
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | Commission / solde dû (Option B)
+    |--------------------------------------------------------------------------
+    |
+    | Une commission est "due" tant que la ligne `payments` qui la represente
+    | (payable = intervention, user_id = pro) n'est pas `paid` (ou `refunded`).
+    | Le solde dû se calcule donc directement sur la table payments : pas de
+    | colonne a synchroniser, le webhook fait baisser le solde tout seul.
+    */
+    public function payments()
+    {
+        return $this->hasMany(Payment::class);
+    }
+
+    public function commissionPaymentsDue()
+    {
+        return $this->payments()
+            ->where('payable_type', Intervention::class)
+            ->whereNotIn('status', [Payment::STATUS_PAID, Payment::STATUS_REFUNDED]);
+    }
+
+    public function commissionBalanceDue(): int
+    {
+        return (int) round((float) $this->commissionPaymentsDue()->sum('amount'));
+    }
+
+    public function commissionBlockThreshold(): int
+    {
+        return config('wave.commission_amount', 750) * max(1, (int) config('wave.commission_block_after', 3));
+    }
+
+    public function isCommissionBlocked(): bool
+    {
+        return $this->commissionBalanceDue() >= $this->commissionBlockThreshold();
+    }
+
+    public function scopeAllowsNewDemands($query)
+    {
+        $threshold = config('wave.commission_amount', 750) * max(1, (int) config('wave.commission_block_after', 3));
+
+        return $query->whereRaw(
+            "(SELECT COALESCE(SUM(p.amount), 0) FROM payments p
+              WHERE p.user_id = users.id
+                AND p.payable_type = ?
+                AND p.status NOT IN ('paid', 'refunded')) < ?",
+            [Intervention::class, $threshold]
+        );
+    }
 }

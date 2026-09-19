@@ -21,6 +21,37 @@ class Intervention extends Model
     public const STATUS_COMPLETED = 'intervention_terminee';
     public const STATUS_CANCELLED = 'annulee';
 
+    public const PRICE_STATUS_PENDING = 'en_attente_confirmation';
+    public const PRICE_STATUS_VALIDATED = 'valide';
+    public const PRICE_STATUS_CONTESTED = 'conteste';
+
+    public const PRICE_STATUS_LABELS = [
+        'en_attente_confirmation' => 'En attente de confirmation',
+        'valide' => 'Confirme par le client',
+        'conteste' => 'Conteste par le client',
+    ];
+
+    public function getPriceStatusLabelAttribute(): ?string
+    {
+        return $this->price_status ? (self::PRICE_STATUS_LABELS[$this->price_status] ?? $this->price_status) : null;
+    }
+
+    public function priceAwaitingConfirmation(): bool
+    {
+        return $this->status === self::STATUS_COMPLETED
+            && $this->price_status === self::PRICE_STATUS_PENDING;
+    }
+
+    public function priceConfirmed(): bool
+    {
+        return $this->price_status === self::PRICE_STATUS_VALIDATED;
+    }
+
+    public function priceContested(): bool
+    {
+        return $this->price_status === self::PRICE_STATUS_CONTESTED;
+    }
+
     public const STATUS_LABELS = [
         'en_attente_professionnel' => 'En attente d\'un professionnel',
         'demande_recue' => 'Demande recue',
@@ -78,6 +109,10 @@ class Intervention extends Model
         'rating',
         'rating_comment',
         'rated_at',
+        'price',
+        'price_status',
+        'price_set_at',
+        'price_confirmed_at',
     ];
 
     protected $casts = [
@@ -88,6 +123,9 @@ class Intervention extends Model
         'distance_km' => 'decimal:2',
         'rating' => 'integer',
         'rated_at' => 'datetime',
+        'price' => 'decimal:2',
+        'price_set_at' => 'datetime',
+        'price_confirmed_at' => 'datetime',
     ];
 
     public const STATUS_PROGRESSION_REMORQUEUR = [
@@ -196,6 +234,18 @@ class Intervention extends Model
     public function rejections(): HasMany
     {
         return $this->hasMany(ProfessionalRejection::class);
+    }
+
+    public function payments()
+    {
+        return $this->morphMany(Payment::class, 'payable');
+    }
+
+    public function commissionPayment()
+    {
+        return $this->morphOne(Payment::class, 'payable')
+            ->where('payable_type', self::class)
+            ->latestOfMany();
     }
 
     public function scopeAvailableForProfessional($query, $serviceType, $lat, $lng, $radiusKm = 50)
