@@ -188,6 +188,14 @@
                         <dd class="font-medium text-slate-900 text-right">{{ $intervention->destination }}</dd>
                     </div>
                 @endif
+                @if($intervention->client_lat && $intervention->client_lng && $intervention->destination_lat && $intervention->destination_lng)
+                    <div class="py-2.5">
+                        <a href="{{ gmaps_route_url($intervention) }}" target="_blank" rel="noopener" class="inline-flex items-center gap-2 px-4 py-2.5 text-sm font-semibold rounded-xl text-white bg-[#4285F4] hover:bg-[#3367D6] transition-colors shadow-sm shadow-blue-500/20">
+                            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/><line x1="8" y1="2" x2="8" y2="18"/><line x1="16" y1="6" x2="16" y2="22"/></svg>
+                            Itineraire optimise sur Google Maps
+                        </a>
+                    </div>
+                @endif
                 @if($intervention->description)
                     <div class="flex justify-between gap-3 py-2.5 border-b border-slate-100 last:border-0">
                         <dt class="text-slate-500 shrink-0">Description</dt>
@@ -341,7 +349,7 @@
         </p>
     </div>
 
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             const lat = {{ $intervention->client_lat ?? 14.7167 }};
@@ -353,10 +361,12 @@
             const positionUrl = '{{ route('guest.pro-position', $intervention->tracking_code) }}';
 
             const map = L.map('map').setView([lat, lng], 13);
-            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                attribution: '&copy; OpenStreetMap contributors',
+            L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+                attribution: '&copy; OpenStreetMap contributors &copy; CARTO',
+                subdomains: 'abcd',
                 maxZoom: 19
             }).addTo(map);
+            setTimeout(function () { map.invalidateSize(); }, 300);
 
             const clientIcon = L.divIcon({
                 className: 'custom-div-icon',
@@ -367,6 +377,20 @@
             L.marker([lat, lng], { icon: clientIcon }).addTo(map)
                 .bindPopup('<strong>Point de prise en charge</strong>')
                 .openPopup();
+
+            @if($intervention->destination_lat && $intervention->destination_lng && $intervention->client_lat && $intervention->client_lng)
+            const destLat = {{ $intervention->destination_lat }};
+            const destLng = {{ $intervention->destination_lng }};
+            const destIcon = L.divIcon({
+                className: 'custom-div-icon',
+                html: '<div class="marker-dot marker-pro-selected"></div>',
+                iconSize: [20, 20],
+                iconAnchor: [10, 10]
+            });
+            L.marker([destLat, destLng], { icon: destIcon }).addTo(map)
+                .bindPopup('<strong>Destination</strong><br><span class="text-xs">{{ $intervention->destination }}</span>');
+            L.polyline([[lat, lng], [destLat, destLng]], { color: '#0ea5e9', weight: 3, opacity: 0.85, dashArray: '6,8' }).addTo(map);
+            @endif
 
             const proIcon = L.divIcon({
                 className: 'custom-div-icon',

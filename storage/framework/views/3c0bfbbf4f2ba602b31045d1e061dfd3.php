@@ -1,3 +1,4 @@
+
 <?php $__env->startSection('content'); ?>
 <div class="space-y-6">
     <div class="text-center mb-6">

@@ -1,3 +1,4 @@
+
 <?php $__env->startSection('title', 'Editer professionnel'); ?>
 <?php $__env->startSection('content'); ?>
     <section class="relative overflow-hidden reveal">

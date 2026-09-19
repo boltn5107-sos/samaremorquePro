@@ -1,3 +1,4 @@
+
 <?php $__env->startSection('title', 'Connexion'); ?>
 <?php $__env->startSection('content'); ?>
 <div class="relative overflow-hidden">

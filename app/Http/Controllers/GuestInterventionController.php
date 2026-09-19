@@ -73,6 +73,8 @@ class GuestInterventionController extends Controller
             'vehicle_id' => ['nullable', 'exists:vehicles,id'],
             'service_type' => ['required', 'string', 'max:100'],
             'destination' => ['nullable', 'string', 'max:255'],
+            'destination_lat' => ['nullable', 'numeric', 'between:-90,90'],
+            'destination_lng' => ['nullable', 'numeric', 'between:-180,180'],
             'description' => ['nullable', 'string', 'max:2000'],
             'photo' => ['nullable', 'image', 'max:2048'],
             'client_name' => ['nullable', 'string', 'max:100'],
@@ -102,6 +104,8 @@ class GuestInterventionController extends Controller
             'client_lng' => $validated['client_lng'],
             'client_address' => $validated['client_address'] ?? null,
             'destination' => $validated['destination'] ?? null,
+            'destination_lat' => $validated['destination_lat'] ?? null,
+            'destination_lng' => $validated['destination_lng'] ?? null,
             'client_manual_position' => $validated['manual_position'] ?? null,
         ]);
 

@@ -1,3 +1,4 @@
+
 <?php $__env->startSection('title', 'Confirmer le mot de passe'); ?>
 <?php $__env->startSection('content'); ?>
 <div class="space-y-6">

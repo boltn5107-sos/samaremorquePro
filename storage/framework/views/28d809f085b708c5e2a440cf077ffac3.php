@@ -1,3 +1,4 @@
+
 <?php $__env->startSection('title', 'Politique de confidentialite - SamaRemorque'); ?>
 <?php $__env->startSection('content'); ?>
     <section class="relative overflow-hidden reveal py-24 lg:py-32 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white">

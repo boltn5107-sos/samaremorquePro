@@ -1,3 +1,4 @@
+
 <?php $__env->startSection('title', 'SamaRemorque'); ?>
 <?php $__env->startSection('content'); ?>
 
@@ -81,6 +82,36 @@
             <a href="#suivi" class="landing-cta-ghost">
                 Suivre ma demande
             </a>
+        </div>
+
+        <div class="mt-12 flex flex-wrap items-center gap-x-8 gap-y-3 hero-anim hero-anim-5">
+            <div class="flex items-center gap-2.5">
+                <span class="inline-flex w-9 h-9 rounded-xl bg-white/10 ring-1 ring-white/15 items-center justify-center">
+                    <svg class="w-4.5 h-4.5" viewBox="0 0 24 24" fill="none" stroke="#f97316" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                </span>
+                <div class="text-sm">
+                    <p class="font-semibold text-white leading-tight">Professionnels vérifiés</p>
+                    <p class="text-white/50 leading-tight">Profil et notes vérifiés</p>
+                </div>
+            </div>
+            <div class="flex items-center gap-2.5">
+                <span class="inline-flex w-9 h-9 rounded-xl bg-white/10 ring-1 ring-white/15 items-center justify-center">
+                    <svg class="w-4.5 h-4.5" viewBox="0 0 24 24" fill="none" stroke="#f97316" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                </span>
+                <div class="text-sm">
+                    <p class="font-semibold text-white leading-tight">Disponible 24/7</p>
+                    <p class="text-white/50 leading-tight">À Dakar et sa région</p>
+                </div>
+            </div>
+            <div class="flex items-center gap-2.5">
+                <span class="inline-flex w-9 h-9 rounded-xl bg-white/10 ring-1 ring-white/15 items-center justify-center">
+                    <svg class="w-4.5 h-4.5" viewBox="0 0 24 24" fill="none" stroke="#f97316" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+                </span>
+                <div class="text-sm">
+                    <p class="font-semibold text-white leading-tight">Suivi GPS en direct</p>
+                    <p class="text-white/50 leading-tight">Intervention tracée</p>
+                </div>
+            </div>
         </div>
     </div>
 

@@ -1,3 +1,4 @@
+
 <?php $__env->startSection('title', 'Remorquage Senegal - SamaRemorque | Remorqueur partout au Senegal'); ?>
 <?php $__env->startSection('content'); ?>
     <header class="relative bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white overflow-hidden">

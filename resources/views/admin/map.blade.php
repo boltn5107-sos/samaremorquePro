@@ -57,9 +57,10 @@
         document.addEventListener('DOMContentLoaded', function () {
             const map = L.map('admin-map').setView([14.7167, -17.4677], 13);
 
-            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                attribution: '&copy; OpenStreetMap contributors',
-                maxZoom: 19,
+L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+                attribution: '&copy; OpenStreetMap contributors &copy; CARTO',
+                subdomains: 'abcd',
+                maxZoom: 19
             }).addTo(map);
 
             const professionals = {!! $proData !!};

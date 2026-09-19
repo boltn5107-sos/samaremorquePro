@@ -21,14 +21,14 @@
                         <span class="inline-flex items-center justify-center w-6 h-6 rounded-full bg-orange-100 text-orange-600 text-xs font-bold">1</span>
                         Ma position (GPS)
                     </h2>
-                    <button type="button" id="locate-btn" class="btn-secondary text-xs px-3 py-2">
-                        <x-icon name="refresh" class="w-4 h-4" />
-                        Actualiser
+                    <button type="button" id="locate-btn" class="inline-flex items-center gap-1.5 text-xs font-semibold px-3.5 py-2 rounded-xl text-white bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-400 hover:to-orange-500 shadow-lg shadow-orange-500/25 transition-all duration-300">
+                        <x-icon name="map-pin" class="w-4 h-4" />
+                        Localiser ma position
                     </button>
                 </div>
                 <p id="loc-status" class="mb-3 text-sm text-slate-500 flex items-center gap-2">
                     <span class="w-2 h-2 rounded-full bg-slate-300"></span>
-                    Recuperation de votre position GPS...
+                    Cliquez sur &laquo; Localiser ma position &raquo; pour activer le GPS. En cas de refus ou de panne, la saisie manuelle s'affichera automatiquement.
                 </p>
                 <div class="map-shell" style="height: 260px;">
                     <div id="map" style="height: 100%; width: 100%;"></div>
@@ -62,6 +62,8 @@
                     <input type="hidden" name="client_lat" id="client_lat">
                     <input type="hidden" name="client_lng" id="client_lng">
                     <input type="hidden" name="client_address" id="client_address">
+                    <input type="hidden" name="destination_lat" id="destination_lat">
+                    <input type="hidden" name="destination_lng" id="destination_lng">
                     <input type="hidden" name="manual_position" id="manual_position">
                     <input type="hidden" name="selected_professional_id" id="selected_professional_id">
 
@@ -136,14 +138,27 @@
                     </div>
 
                     <div>
-                        <label for="destination" class="label">Destination (si remorquage) *</label>
-                        <input type="text" id="destination" name="destination" value="{{ old('destination') }}" required class="input" placeholder="Ou doit etre transporte le vehicule ?">
+                        <label for="destination" class="label">Destination (si remorquage)</label>
+                        <input type="text" id="destination" name="destination" value="{{ old('destination') }}" class="input" placeholder="Ou doit etre transporte le vehicule ?">
                         @error('destination')
                             <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
                         @enderror
                         <div id="destinations-wrap" class="hidden mt-2">
                             <p class="text-xs font-medium text-slate-500 mb-1.5">Suggestions</p>
                             <div id="destinations-list" class="flex flex-wrap gap-2"></div>
+                        </div>
+                        <div id="destination-zone" class="hidden mt-3">
+                            <label class="label mb-1">Ou placer la destination sur la carte *</label>
+                            <div class="map-shell" style="height: 240px;">
+                                <div id="dest-map" style="height: 100%; width: 100%;"></div>
+                            </div>
+                            <p class="mt-2 text-xs text-slate-500">Touchez la carte pour placer la destination. Le nom du lieu s'affichera automatiquement (au lieu des coordonnees).</p>
+                            <div id="dest-used" class="mt-2 text-sm text-slate-600 hidden">
+                                <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-50 border border-emerald-100">
+                                    <x-icon name="map-pin" class="w-4 h-4 text-emerald-600 flex-shrink-0" />
+                                    <span>Destination : <span id="dest-used-text" class="font-semibold text-slate-900"></span></span>
+                                </span>
+                            </div>
                         </div>
                     </div>
 
@@ -210,10 +225,12 @@
                 window.prosData = [];
 
                 const map = L.map('map').setView([DEFAULT_POS.lat, DEFAULT_POS.lng], 12);
-                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                    attribution: '&copy; OpenStreetMap contributors',
+                L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+                    attribution: '&copy; OpenStreetMap contributors &copy; CARTO',
+                    subdomains: 'abcd',
                     maxZoom: 19
                 }).addTo(map);
+                setTimeout(function () { map.invalidateSize(); }, 250);
 
                 const clientIcon = L.divIcon({
                     className: 'custom-div-icon',
@@ -244,7 +261,7 @@
                     latInput.value = lat.toFixed(6);
                     lngInput.value = lng.toFixed(6);
                     usedPosBox.classList.remove('hidden');
-                    usedPosText.textContent = lat.toFixed(5) + ', ' + lng.toFixed(5);
+                    usedPosText.textContent = 'Recherche du nom du lieu...';
 
                     if (!clientMarker) {
                         clientMarker = L.marker([lat, lng], { icon: clientIcon, draggable: true }).addTo(map)
@@ -261,19 +278,22 @@
                     if (options.fetch !== false) {
                         fetchNearby();
                     }
-                    if (navigator.geolocation) {
-                        fetch('https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=' + lat + '&lon=' + lng + '&countrycodes=sn', {
-                            headers: { 'User-Agent': 'SamaRemorque/1.0' }
-                        }).then(r => r.json()).then(data => {
-                            const addr = data.display_name || (data.address && (data.address.road + (data.address.city ? ', ' + data.address.city : ''))) || '';
-                            if (addr) {
-                                addressInput.value = addr;
-                                const reverseGeocode = document.getElementById('reverse-geocode');
-                                if (reverseGeocode) reverseGeocode.textContent = addr;
-                                document.getElementById('used-position-text').textContent = addr;
-                            }
-                        }).catch(() => {});
-                    }
+                    fetch('https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=' + lat + '&lon=' + lng + '&countrycodes=sn', {
+                        headers: { 'User-Agent': 'SamaRemorque/1.0' }
+                    }).then(r => r.json()).then(data => {
+                        const addr = data.display_name || (data.address && (data.address.road + (data.address.city ? ', ' + data.address.city : ''))) || '';
+                        if (addr) {
+                            addressInput.value = addr;
+                            const reverseGeocode = document.getElementById('reverse-geocode');
+                            if (reverseGeocode) reverseGeocode.textContent = addr;
+                            document.getElementById('used-position-text').textContent = addr;
+                        } else {
+                            addressInput.value = '';
+                            document.getElementById('used-position-text').textContent = 'Position enregistree';
+                        }
+                    }).catch(() => {
+                        document.getElementById('used-position-text').textContent = 'Position enregistree';
+                    });
                 }
 
                 function fetchNearby() {
@@ -436,14 +456,16 @@
 
                     proMarkers.clearLayers();
                     window.prosData.forEach(p => {
-                        const marker = L.marker([p.lat, p.lng], {
-                            icon: p.id === pro.id ? proSelectedIcon : proIcon
-                        }).addTo(proMarkers);
-                        marker.bindPopup('<strong>' + p.full_name + '</strong><br><span class="text-xs">' + formatDistance(p.distance_km) + '</span>');
-                        marker.on('click', function () { selectPro(p, true); });
+                        if (p.lat !== null && p.lng !== null) {
+                            const marker = L.marker([p.lat, p.lng], {
+                                icon: p.id === pro.id ? proSelectedIcon : proIcon
+                            }).addTo(proMarkers);
+                            marker.bindPopup('<strong>' + p.full_name + '</strong><br><span class="text-xs">' + formatDistance(p.distance_km) + '</span>');
+                            marker.on('click', function () { selectPro(p, true); });
+                        }
                     });
 
-                    if (window.clientPosition) {
+                    if (window.clientPosition && pro.lat !== null && pro.lng !== null) {
                         polyline = L.polyline([[window.clientPosition.lat, window.clientPosition.lng], [pro.lat, pro.lng]], {
                             color: '#f97316', dashArray: '5,5', weight: 2, opacity: 0.7
                         }).addTo(map);
@@ -451,14 +473,83 @@
                     if (pro.suggested_destination) {
                         document.getElementById('destination').value = pro.suggested_destination;
                     }
-                    if (!fromMap) {
-                        map.flyTo([pro.lat, pro.lng], Math.max(map.getZoom(), 13));
+                    if (pro.lat !== null && pro.lng !== null) {
+                        if (!fromMap) {
+                            map.flyTo([pro.lat, pro.lng], Math.max(map.getZoom(), 13));
+                        }
                     }
+                }
+
+                // ===== Destination sur la carte =====
+                const destLatInput = document.getElementById('destination_lat');
+                const destLngInput = document.getElementById('destination_lng');
+                const destZone = document.getElementById('destination-zone');
+                const destUsed = document.getElementById('dest-used');
+                const destUsedText = document.getElementById('dest-used-text');
+                let destMap = null;
+                let destMarker = null;
+
+                const destIcon = L.divIcon({
+                    className: 'custom-div-icon',
+                    html: '<div class="marker-dot marker-pro-selected"></div>',
+                    iconSize: [20, 20],
+                    iconAnchor: [10, 10]
+                });
+
+                function initDestMap() {
+                    if (destMap) return;
+                    destMap = L.map('dest-map', { scrollWheelZoom: false }).setView([DEFAULT_POS.lat, DEFAULT_POS.lng], 11);
+                    L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+                        attribution: '&copy; OpenStreetMap contributors &copy; CARTO',
+                        subdomains: 'abcd',
+                        maxZoom: 19
+                    }).addTo(destMap);
+                    destMap.on('click', function (e) {
+                        setDestination(e.latlng.lat, e.latlng.lng);
+                    });
+                    setTimeout(function () { destMap.invalidateSize(); }, 250);
+                }
+
+                function setDestination(lat, lng) {
+                    destLatInput.value = lat.toFixed(6);
+                    destLngInput.value = lng.toFixed(6);
+                    if (!destMarker) {
+                        destMarker = L.marker([lat, lng], { icon: destIcon, draggable: true }).addTo(destMap)
+                            .bindPopup('<strong>Destination</strong>');
+                        destMarker.on('dragend', function (e) {
+                            const p = e.target.getLatLng();
+                            setDestination(p.lat, p.lng);
+                        });
+                    } else {
+                        destMarker.setLatLng([lat, lng]);
+                    }
+                    destMap.setView([lat, lng], Math.max(destMap.getZoom(), 13));
+                    destUsed.classList.remove('hidden');
+                    destUsedText.textContent = 'Recherche du nom du lieu...';
+                    const input = document.getElementById('destination');
+                    input.value = '';
+                    fetch('https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=' + lat + '&lon=' + lng + '&countrycodes=sn', {
+                        headers: { 'User-Agent': 'SamaRemorque/1.0' }
+                    }).then(r => r.json()).then(data => {
+                        const addr = data.display_name || (data.address && (data.address.road + (data.address.city ? ', ' + data.address.city : ''))) || '';
+                        const label = addr || (lat.toFixed(5) + ', ' + lng.toFixed(5));
+                        input.value = label;
+                        destUsedText.textContent = label;
+                    }).catch(() => {
+                        input.value = lat.toFixed(5) + ', ' + lng.toFixed(5);
+                        destUsedText.textContent = input.value;
+                    });
+                }
+
+                function toggleDestinationZone() {
+                    const isRemorquage = getServiceType() === 'remorquage';
+                    destZone.classList.toggle('hidden', !isRemorquage);
+                    if (isRemorquage) initDestMap();
                 }
 
                 function locate() {
                     if (!navigator.geolocation) {
-                        setStatus('Geolocalisation non supportee.', 'red');
+                        setStatus('La geolocalisation n\'est pas supportee par ce navigateur. Saisissez votre position manuellement.', 'red');
                         enableManual();
                         return;
                     }
@@ -467,13 +558,29 @@
                         setStatus('Position GPS obtenue.', 'emerald');
                         setPosition(position.coords.latitude, position.coords.longitude, { fetch: true });
                         manualZone.classList.add('hidden');
-                    }, function () {
-                        setStatus('GPS indisponible. Saisissez votre position manuellement.', 'red');
+                    }, function (error) {
+                        if (error && error.code === 1) {
+                            setStatus('Acces a la position bloque par le navigateur. Autorisez le GPS pour ce site dans les reglages, puis cliquez a nouveau sur « Localiser ».', 'red');
+                        } else {
+                            setStatus('GPS indisponible. Saisissez votre position manuellement.', 'red');
+                        }
                         enableManual();
                         if (window.clientPosition) {
                             setPosition(window.clientPosition.lat, window.clientPosition.lng, { fetch: true });
                         }
                     }, { enableHighAccuracy: true, timeout: 15000, maximumAge: 60000 });
+                }
+
+                function checkPermissionState() {
+                    if (!navigator.permissions || !navigator.permissions.query) return;
+                    navigator.permissions.query({ name: 'geolocation' })
+                        .then(function (result) {
+                            if (result.state === 'denied') {
+                                setStatus('La position est bloquee par votre navigateur. Autorisez le GPS pour ce site, puis cliquez sur « Localiser ».', 'red');
+                                enableManual();
+                            }
+                        })
+                        .catch(function () {});
                 }
 
                 function enableManual() {
@@ -522,6 +629,7 @@
                         });
                         btn.className = 'service-btn px-3 py-3 rounded-lg border text-sm font-semibold border-orange-500 bg-orange-50 text-orange-700';
                         document.getElementById('service_type').value = btn.dataset.service;
+                        toggleDestinationZone();
                         if (window.clientPosition) fetchNearby();
                     });
                 });
@@ -542,7 +650,15 @@
                     document.getElementById('photo-preview').classList.remove('hidden');
                 });
 
-                locate();
+                checkPermissionState();
+                toggleDestinationZone();
+
+                // Detection automatique de la position au chargement
+                setTimeout(function () {
+                    if (!window.clientPosition && navigator.geolocation) {
+                        locate();
+                    }
+                }, 300);
             });
         </script>
     @endpush

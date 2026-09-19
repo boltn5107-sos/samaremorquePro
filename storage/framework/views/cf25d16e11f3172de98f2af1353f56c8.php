@@ -1,3 +1,4 @@
+
 <?php $__env->startSection('title', 'Verification email'); ?>
 <?php $__env->startSection('content'); ?>
 <div class="space-y-6">

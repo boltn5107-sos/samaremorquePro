@@ -1,5 +1,5 @@
 <nav id="main-nav" class="sticky top-0 z-50 text-white no-print">
-    <div class="backdrop-blur-2xl bg-white/[0.07] border-b border-white/[0.08] shadow-[0_4px_30px_rgba(0,0,0,0.12)]">
+    <div class="backdrop-blur-2xl bg-night/[0.92] border-b border-white/[0.08] shadow-[0_4px_30px_rgba(0,0,0,0.12)]">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between h-16 md:h-[4.25rem] items-center">
 
