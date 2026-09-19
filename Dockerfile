@@ -36,7 +36,7 @@ COPY . .
 # sinon realpath(storage_path('framework/views')) -> false -> echec package:discover
 RUN mkdir -p storage/framework/cache storage/framework/sessions storage/framework/views storage/logs \
     && composer install --no-dev --no-interaction --prefer-dist --optimize-autoloader \
-    && php artisan livewire:publish --assets --force \
+    && php artisan livewire:publish --assets --no-interaction \
     && chown -R www-data:www-data storage bootstrap/cache
 
 # ---------- Stage 2 : Build des assets (Vite) ----------
