@@ -9,6 +9,10 @@ return [
     | Les cles se recuperent depuis le portail Wave Business (Dev Portal).
     | Laisser les variables vides tant que vous n'avez pas recu vos cles.
     |
+    | Modele metier (Option B) : la commission est payee PAR LE PROFESSIONNEL.
+    | Le client regle le pro sur place ; la plateforme encaisse uniquement les
+    | commissions des pros via Wave Checkout. Pas de produit "payout" requis.
+    |
     */
 
     'environment' => env('WAVE_ENVIRONMENT', 'sandbox'),

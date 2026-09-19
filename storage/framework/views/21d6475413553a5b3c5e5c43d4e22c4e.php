@@ -1,39 +1,37 @@
-@extends('layouts.app')
+<?php $__env->startSection('title', 'Integration Wave & Business Model'); ?>
 
-@section('title', 'Integration Wave & Business Model')
-
-@section('content')
+<?php $__env->startSection('content'); ?>
     <div class="max-w-4xl mx-auto py-6 px-4 sm:px-6 lg:px-8 space-y-8">
         <h1 class="text-2xl font-bold text-slate-900">Integration Wave & Business Model</h1>
 
-        {{-- Etat actuel de la config --}}
+        
         <div class="card p-6">
             <h2 class="text-lg font-semibold text-slate-900 mb-4">Etat de la configuration Wave</h2>
             <dl class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
                 <div>
                     <dt class="text-slate-500">Environnement</dt>
-                    <dd class="font-semibold {{ $wave['environment'] === 'sandbox' ? 'text-amber-600' : 'text-emerald-600' }}">{{ ucfirst($wave['environment']) }}</dd>
+                    <dd class="font-semibold <?php echo e($wave['environment'] === 'sandbox' ? 'text-amber-600' : 'text-emerald-600'); ?>"><?php echo e(ucfirst($wave['environment'])); ?></dd>
                 </div>
                 <div>
                     <dt class="text-slate-500">Cle API Sandbox</dt>
-                    <dd class="font-semibold {{ str_contains($wave['sandbox_key'], 'vide') ? 'text-red-600' : 'text-emerald-600' }}">{{ $wave['sandbox_key'] }}</dd>
+                    <dd class="font-semibold <?php echo e(str_contains($wave['sandbox_key'], 'vide') ? 'text-red-600' : 'text-emerald-600'); ?>"><?php echo e($wave['sandbox_key']); ?></dd>
                 </div>
                 <div>
                     <dt class="text-slate-500">Cle API Production</dt>
-                    <dd class="font-semibold {{ str_contains($wave['production_key'], 'vide') ? 'text-red-600' : 'text-emerald-600' }}">{{ $wave['production_key'] }}</dd>
+                    <dd class="font-semibold <?php echo e(str_contains($wave['production_key'], 'vide') ? 'text-red-600' : 'text-emerald-600'); ?>"><?php echo e($wave['production_key']); ?></dd>
                 </div>
                 <div>
                     <dt class="text-slate-500">Webhook Secret</dt>
-                    <dd class="font-semibold {{ str_contains($wave['webhook_secret'], 'vide') ? 'text-red-600' : 'text-emerald-600' }}">{{ $wave['webhook_secret'] }}</dd>
+                    <dd class="font-semibold <?php echo e(str_contains($wave['webhook_secret'], 'vide') ? 'text-red-600' : 'text-emerald-600'); ?>"><?php echo e($wave['webhook_secret']); ?></dd>
                 </div>
                 <div class="sm:col-span-2">
                     <dt class="text-slate-500">Webhook URL (a declarer dans Wave Dev Portal)</dt>
-                    <dd class="font-mono text-xs bg-slate-50 rounded-lg p-2 mt-1">{{ route('payment.wave.webhook') }}</dd>
+                    <dd class="font-mono text-xs bg-slate-50 rounded-lg p-2 mt-1"><?php echo e(route('payment.wave.webhook')); ?></dd>
                 </div>
             </dl>
         </div>
 
-        {{-- Le modele choisi : Option B renforcee --}}
+        
         <div class="card p-6">
             <h2 class="text-lg font-semibold text-slate-900 mb-4">Le modele retenu — La commission est payee par le professionnel</h2>
 
@@ -120,7 +118,7 @@
             </table>
         </div>
 
-        {{-- Etape 1 : Creer un compte Wave Business --}}
+        
         <div class="card p-6">
             <h2 class="text-lg font-semibold text-slate-900 mb-4">Etape 1 — Creer un compte Wave Business</h2>
             <ol class="list-decimal list-inside space-y-3 text-sm text-slate-700">
@@ -135,7 +133,7 @@
             </p>
         </div>
 
-        {{-- Etape 2 : Creer les cles API --}}
+        
         <div class="card p-6">
             <h2 class="text-lg font-semibold text-slate-900 mb-4">Etape 2 — Creer les cles API (Dev Portal)</h2>
             <ol class="list-decimal list-inside space-y-3 text-sm text-slate-700">
@@ -148,7 +146,7 @@
             <p class="mt-3 text-xs text-slate-500">Les cles ne sont affichees qu'une seule fois. Conservez-les dans un gestionnaire de mots de passe.</p>
         </div>
 
-        {{-- Etape 3 : Variables .env --}}
+        
         <div class="card p-6">
             <h2 class="text-lg font-semibold text-slate-900 mb-4">Etape 3 — Parametrer les variables .env</h2>
             <p class="text-sm text-slate-600 mb-4">Ajoutez ces lignes dans votre fichier <code class="bg-slate-100 px-2 py-0.5 rounded">.env</code> :</p>
@@ -163,19 +161,19 @@ WAVE_WEBHOOK_SECRET=&lt;webhook_secret&gt;</code></pre>
             <p class="mt-3 text-sm text-slate-600">Passez <code class="bg-slate-100 px-2 py-0.5 rounded">WAVE_ENVIRONMENT</code> a <code class="bg-slate-100 px-2 py-0.5 rounded">production</code> une fois les tests termines.</p>
         </div>
 
-        {{-- Etape 4 : Webhook --}}
+        
         <div class="card p-6">
             <h2 class="text-lg font-semibold text-slate-900 mb-4">Etape 4 — Enregistrer l'URL Webhook</h2>
             <ol class="list-decimal list-inside space-y-3 text-sm text-slate-700">
                 <li>Dans le Dev Portal, allez dans <strong>Webhooks</strong>.</li>
-                <li>Ajoutez l'URL : <code class="bg-slate-100 px-2 py-0.5 rounded">{{ route('payment.wave.webhook') }}</code></li>
+                <li>Ajoutez l'URL : <code class="bg-slate-100 px-2 py-0.5 rounded"><?php echo e(route('payment.wave.webhook')); ?></code></li>
                 <li>Selectionnez l'evenement <code class="bg-slate-100 px-2 py-0.5 rounded">checkout.completed</code>.</li>
                 <li>Collez le <strong>Webhook signing secret</strong> dans <code class="bg-slate-100 px-2 py-0.5 rounded">WAVE_WEBHOOK_SECRET</code> dans .env.</li>
             </ol>
             <p class="mt-3 text-xs text-slate-500">Le webhook recoit un POST unique quand le professionnel valide son paiement Wave. La signature est verifiee avant traitement dans <code class="bg-slate-100 px-2 py-0.5 rounded">WaveWebhookController</code>.</p>
         </div>
 
-        {{-- Etape 5 : Tester --}}
+        
         <div class="card p-6">
             <h2 class="text-lg font-semibold text-slate-900 mb-4">Etape 5 — Tester en sandbox</h2>
             <ol class="list-decimal list-inside space-y-3 text-sm text-slate-700">
@@ -187,7 +185,7 @@ WAVE_WEBHOOK_SECRET=&lt;webhook_secret&gt;</code></pre>
             </ol>
         </div>
 
-        {{-- Composants techniques impliques dans le modele --}}
+        
         <div class="card p-6">
             <h2 class="text-lg font-semibold text-slate-900 mb-4">Code concerne — mise en place prevue en V1</h2>
             <table class="w-full border border-slate-200 rounded-xl overflow-hidden text-xs">
@@ -228,4 +226,5 @@ WAVE_WEBHOOK_SECRET=&lt;webhook_secret&gt;</code></pre>
             </table>
         </div>
     </div>
-@endsection
+<?php $__env->stopSection(); ?>
+<?php echo $__env->make('layouts.app', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH C:\xampp\htdocs\samaRemorque\senegal-towing\resources\views/admin/integration.blade.php ENDPATH**/ ?>

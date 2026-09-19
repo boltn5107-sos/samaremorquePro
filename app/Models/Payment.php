@@ -8,6 +8,17 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
+/**
+ * Trace d'un paiement effectue via un prestataire mobile money (Wave, bientot Orange Money).
+ *
+ * Modele metier (Option B — commission payee par le professionnel) :
+ *  - le CLIENT regle le professionnel sur place (cash / Wave P2P), hors plateforme ;
+ *  - le PROFESSIONNEL paie une commission fixe a SamaRemorque via Wave Checkout ;
+ *  - chaque commission encaissee est enregistree ici (payable = intervention ou pro, user_id = pro).
+ *
+ * Polymorphisme : payable_type / payable_id permettent de rattacher le paiement a
+ * n'importe quel objet metier (intervention, porte-monnaie pro, abonnement...).
+ */
 class Payment extends Model
 {
     use HasFactory, SoftDeletes;
@@ -69,6 +80,12 @@ class Payment extends Model
         return $this->belongsTo(User::class);
     }
 
+    /**
+     * Marque le paiement comme encaisse apres validation Wave.
+     * Appele par le webhook (WaveWebhookController) quand l'evenement checkout.completed est recu.
+     *
+     * @param  array<string, mixed>|null  $payload  Payload brut Wave (trace de la transaction).
+     */
     public function markAsPaid(?array $payload = null): void
     {
         $this->update([

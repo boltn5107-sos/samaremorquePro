@@ -28,8 +28,10 @@ use App\Http\Controllers\Admin\{
     AdminDashboardController,
     AdminInterventionController,
     AdminProfessionalController,
-    AdminClientController
+    AdminClientController,
+    AdminIntegrationController
 };
+use App\Http\Controllers\Payment\WaveWebhookController;
 use App\Http\Controllers\{
     Auth\AuthenticatedSessionController,
     Auth\AuthenticatedRegistrationController,
@@ -61,6 +63,10 @@ Route::get('/', function () {
 // SEO
 Route::get('/sitemap.xml', [SeoController::class, 'sitemap'])->name('sitemap');
 Route::get('/robots.txt', [SeoController::class, 'robots'])->name('robots');
+
+// Webhook Wave : recu quand le payeur valide / expire son checkout dans l'app Wave.
+// URL a declarer dans le Dev Portal Wave : https://samaRemorque.sn/webhook/wave
+Route::post('/webhook/wave', [WaveWebhookController::class, 'handle'])->name('payment.wave.webhook');
 
 Route::view('/depannage-dakar', 'pages.depannage-dakar')->name('seo.depannage-dakar');
 Route::view('/remorquage-dakar', 'pages.remorquage-dakar')->name('seo.remorquage-dakar');
@@ -181,6 +187,7 @@ Route::middleware('auth')->group(function () {
             Route::post('/professionnel/{professional}/reactiver', [AdminProfessionalController::class, 'reactivate'])->name('professionnels.reactivate');
             Route::get('/carte', [AdminDashboardController::class, 'map'])->name('map');
             Route::get('/statistiques', [AdminDashboardController::class, 'stats'])->name('stats');
+            Route::get('/integration', [AdminIntegrationController::class, 'index'])->name('integration');
         });
 
         Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');

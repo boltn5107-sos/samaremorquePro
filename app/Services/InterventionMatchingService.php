@@ -34,11 +34,13 @@ class InterventionMatchingService
 
         $distanceSql = "(
             6371 * acos(
-                cos(radians(?)) *
-                cos(radians(locations.lat)) *
-                cos(radians(locations.lng) - radians(?)) +
-                sin(radians(?)) *
-                sin(radians(locations.lat))
+                GREATEST(-1, LEAST(1,
+                    cos(radians(?)) *
+                    cos(radians(locations.lat)) *
+                    cos(radians(locations.lng) - radians(?)) +
+                    sin(radians(?)) *
+                    sin(radians(locations.lat))
+                ))
             )
         )";
 

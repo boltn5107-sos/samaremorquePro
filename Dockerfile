@@ -33,6 +33,7 @@ COPY . .
 
 # Installation + optimisations (les assets seront copiés à l'étape suivante)
 RUN composer install --no-dev --no-interaction --prefer-dist --optimize-autoloader \
+    && php artisan livewire:publish --assets --force \
     && chown -R www-data:www-data storage bootstrap/cache
 
 # ---------- Stage 2 : Build des assets (Vite) ----------

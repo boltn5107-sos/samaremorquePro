@@ -12,6 +12,13 @@ use Illuminate\Support\Facades\Log;
  * Documentation : https://docs.wave.com/checkout
  * Auth : Bearer <api_key> (cles creees dans le Dev Portal Wave Business).
  * Request signing (optionnel) : header Wave-Signature.
+ *
+ * Contexte metier (Option B) :
+ *  - C'est le PROFESSIONNEL (remorqueur / depanneur) qui paie sa commission a la plateforme.
+ *  - Le payeur du checkout est donc le telephone du pro : on passe son numero dans
+ *    l'option `restrict_payer_mobile` afin que seul son compte Wave puisse valider.
+ *  - Le client ne transite JAMAIS par ce service : il regle le pro sur place.
+ *  - Ce modele n'utilise pas le produit "payout" Wave (pas de versement sortant).
  */
 class WavePaymentService
 {
@@ -20,6 +27,10 @@ class WavePaymentService
         $this->config = $config ?: $this->loadConfig();
     }
 
+    /**
+     * Charge la configuration Wave depuis config/wave.php (elle-meme alimentee par le .env).
+     * A noter : la cle utilisee depend de WAVE_ENVIRONMENT (sandbox ou production).
+     */
     protected function loadConfig(): array
     {
         $environment = config('wave.environment', 'sandbox');
@@ -41,6 +52,10 @@ class WavePaymentService
 
     /**
      * Cree une session de checkout Wave.
+     *
+     * Debut du flux de paiement : l'app cree la session, Wave renvoie un
+     * `wave_launch_url` sur lequel on redirige l'utilisateur (le pro). Wave
+     * notifie ensuite le telephone du payeur qui valide avec son code PIN.
      *
      * @param  int|string  $amount  Montant (XOF : entier, pas de decimales).
      * @param  array<string, mixed>  $options  client_reference, success_url, error_url,
@@ -127,6 +142,10 @@ class WavePaymentService
 
     /**
      * Verifie la signature d'un webhook Wave.
+     *
+     * Securite : seuls les webhooks dont la signature correspond a WAVE_WEBHOOK_SECRET
+     * sont traites. Compare en temps constant (hash_equals) pour eviter les attaques timing.
+     * Si aucun secret n'est configure (dev), on accepte tout en le signalant dans les logs.
      */
     public function verifyWebhookSignature(string $payload, string $signatureHeader): bool
     {
@@ -143,6 +162,10 @@ class WavePaymentService
 
     /**
      * Envoie une requete HTTP signee vers l'API Wave.
+     *
+     * Signe le corps de la requete avec Wave-Signature (HMAC SHA-256) si un
+     * signing_secret est fourni. Toute reponse non 2xx est journalisee puis
+     * transformee en RuntimeException : un echec de paiement doit etre visible.
      *
      * @return array<string, mixed>
      */

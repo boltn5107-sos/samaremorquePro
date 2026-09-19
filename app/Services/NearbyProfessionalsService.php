@@ -19,19 +19,17 @@ class NearbyProfessionalsService
     ): array {
         $distanceSql = "(
             6371 * acos(
-                cos(radians({$lat})) *
-                cos(radians(locations.lat)) *
-                cos(radians(locations.lng) - radians({$lng})) +
-                sin(radians({$lat})) *
-                sin(radians(locations.lat))
+                GREATEST(-1, LEAST(1,
+                    cos(radians({$lat})) *
+                    cos(radians(locations.lat)) *
+                    cos(radians(locations.lng) - radians({$lng})) +
+                    sin(radians({$lat})) *
+                    sin(radians(locations.lat))
+                ))
             )
         )";
 
-        $distanceCondition = "CASE
-            WHEN {$distanceSql} IS NULL THEN FALSE
-            WHEN {$distanceSql} < 0 THEN FALSE
-            ELSE {$distanceSql} <= {$radiusKm}
-        END";
+        $distanceCondition = "{$distanceSql} <= {$radiusKm}";
 
         $baseQuery = DB::table('locations')
             ->join('users', 'users.id', '=', 'locations.user_id')
@@ -204,18 +202,16 @@ class NearbyProfessionalsService
     {
         $distanceSql = "(
             6371 * acos(
-                cos(radians({$lat})) *
-                cos(radians(locations.lat)) *
-                cos(radians(locations.lng) - radians({$lng})) +
-                sin(radians({$lat})) *
-                sin(radians(locations.lat))
+                GREATEST(-1, LEAST(1,
+                    cos(radians({$lat})) *
+                    cos(radians(locations.lat)) *
+                    cos(radians(locations.lng) - radians({$lng})) +
+                    sin(radians({$lat})) *
+                    sin(radians(locations.lat))
+                ))
             )
         )";
-        $distanceCondition = "CASE
-            WHEN {$distanceSql} IS NULL THEN FALSE
-            WHEN {$distanceSql} < 0 THEN FALSE
-            ELSE {$distanceSql} <= {$radiusKm}
-        END";
+        $distanceCondition = "{$distanceSql} <= {$radiusKm}";
 
         $destinations = DB::table('locations')
             ->join('users', 'users.id', '=', 'locations.user_id')
