@@ -60,7 +60,6 @@
                             </div>
                             <div>
                                 <dt class="text-slate-500 flex items-center gap-1.5"><x-icon name="map-pin" class="w-4 h-4" /> Destination</dt>
-<<<<<<< HEAD
                                 <dd class="font-medium text-slate-900">{{ $intervention->destination ?: 'Non renseignee' }}</dd>
                             </div>
                             @if($intervention->client_lat && $intervention->client_lng && $intervention->destination_lat && $intervention->destination_lng)
@@ -71,10 +70,6 @@
                                     </a>
                                 </div>
                             @endif
-=======
-                                <dd class="font-medium text-slate-900">{{ $intervention->destination }}</dd>
-                            </div>
->>>>>>> 7970f17421e6d1edcccd6a22043c16037bb61c90
                             @if($intervention->description)
                                 <div>
                                     <dt class="text-slate-500 flex items-center gap-1.5"><x-icon name="alert-triangle" class="w-4 h-4" /> Description</dt>
@@ -173,8 +168,6 @@
                             </button>
                         </form>
                     @else
-<<<<<<< HEAD
-=======
                         @if($intervention->price !== null)
                             <div class="card p-6 mb-6">
                                 <h2 class="text-lg font-semibold text-slate-900 mb-2 flex items-center gap-2">
@@ -216,7 +209,6 @@
                                 @endif
                             </div>
                         @endif
->>>>>>> 7970f17421e6d1edcccd6a22043c16037bb61c90
                         <div class="card p-6">
                             <h2 class="text-lg font-semibold text-slate-900 mb-2 flex items-center gap-2">
                                 <x-icon name="star" class="w-5 h-5 text-orange-500" />
@@ -299,19 +291,12 @@
 
                 const map = L.map('map').setView([lat, lng], 13);
 
-<<<<<<< HEAD
                 L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
                     attribution: '&copy; OpenStreetMap contributors &copy; CARTO',
                     subdomains: 'abcd',
                     maxZoom: 19
                 }).addTo(map);
                 setTimeout(function () { map.invalidateSize(); }, 300);
-=======
-                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                    attribution: '&copy; OpenStreetMap contributors',
-                    maxZoom: 19
-                }).addTo(map);
->>>>>>> 7970f17421e6d1edcccd6a22043c16037bb61c90
 
                 const clientIcon = L.divIcon({
                     className: 'custom-div-icon',
@@ -324,7 +309,6 @@
                     .bindPopup('<strong>Point de prise en charge</strong>')
                     .openPopup();
 
-<<<<<<< HEAD
                 @if($intervention->destination_lat && $intervention->destination_lng && $intervention->client_lat && $intervention->client_lng)
                 const destLat = {{ $intervention->destination_lat }};
                 const destLng = {{ $intervention->destination_lng }};
@@ -339,8 +323,6 @@
                 L.polyline([[lat, lng], [destLat, destLng]], { color: '#0ea5e9', weight: 3, opacity: 0.85, dashArray: '6,8' }).addTo(map);
                 @endif
 
-=======
->>>>>>> 7970f17421e6d1edcccd6a22043c16037bb61c90
                 const proIcon = L.divIcon({
                     className: 'custom-div-icon',
                     html: '<div class="marker-dot marker-pro"></div>',

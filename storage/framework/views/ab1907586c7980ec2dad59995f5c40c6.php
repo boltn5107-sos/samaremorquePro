@@ -1,4 +1,4 @@
-
+extends('layouts.app')
 <?php $__env->startSection('title', "Nouvelle demande d'intervention"); ?>
 <?php $__env->startSection('content'); ?>
     <section class="relative overflow-hidden reveal">
@@ -687,7 +687,7 @@ unset($__errorArgs, $__bag); ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendB
                         manualZone.classList.add('hidden');
                     }, function (error) {
                         if (error && error.code === 1) {
-                            setStatus('Acces a la position bloque par le navigateur. Autorisez le GPS pour ce site dans les reglages, puis cliquez a nouveau sur « Localiser ».', 'red');
+                            setStatus('Acces a la position bloque par le navigateur. Autorisez le GPS pour ce site dans les reglages, puis cliquez a nouveau sur ┬½ Localiser ┬╗.', 'red');
                         } else {
                             setStatus('GPS indisponible. Saisissez votre position manuellement.', 'red');
                         }
@@ -703,7 +703,7 @@ unset($__errorArgs, $__bag); ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendB
                     navigator.permissions.query({ name: 'geolocation' })
                         .then(function (result) {
                             if (result.state === 'denied') {
-                                setStatus('La position est bloquee par votre navigateur. Autorisez le GPS pour ce site, puis cliquez sur « Localiser ».', 'red');
+                                setStatus('La position est bloquee par votre navigateur. Autorisez le GPS pour ce site, puis cliquez sur ┬½ Localiser ┬╗.', 'red');
                                 enableManual();
                             }
                         })
@@ -790,4 +790,4 @@ unset($__errorArgs, $__bag); ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendB
         </script>
     <?php $__env->stopPush(); ?>
 <?php $__env->stopSection(); ?>
-<?php echo $__env->make('layouts.app', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH C:\Users\moradmin\Desktop\samaremorquePro-main\samaremorquePro-main\resources\views\client\intervention-create.blade.php ENDPATH**/ ?>
+<?php /**PATH C:\Users\moradmin\Desktop\samaremorquePro-main\samaremorquePro-main\resources\views\client\intervention-create.blade.php ENDPATH**/ ?>
