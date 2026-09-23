@@ -60,6 +60,7 @@
                             </div>
                             <div>
                                 <dt class="text-slate-500 flex items-center gap-1.5"><x-icon name="map-pin" class="w-4 h-4" /> Destination</dt>
+<<<<<<< HEAD
                                 <dd class="font-medium text-slate-900">{{ $intervention->destination ?: 'Non renseignee' }}</dd>
                             </div>
                             @if($intervention->client_lat && $intervention->client_lng && $intervention->destination_lat && $intervention->destination_lng)
@@ -70,6 +71,10 @@
                                     </a>
                                 </div>
                             @endif
+=======
+                                <dd class="font-medium text-slate-900">{{ $intervention->destination }}</dd>
+                            </div>
+>>>>>>> 7970f17421e6d1edcccd6a22043c16037bb61c90
                             @if($intervention->description)
                                 <div>
                                     <dt class="text-slate-500 flex items-center gap-1.5"><x-icon name="alert-triangle" class="w-4 h-4" /> Description</dt>
@@ -168,6 +173,50 @@
                             </button>
                         </form>
                     @else
+<<<<<<< HEAD
+=======
+                        @if($intervention->price !== null)
+                            <div class="card p-6 mb-6">
+                                <h2 class="text-lg font-semibold text-slate-900 mb-2 flex items-center gap-2">
+                                    <x-icon name="credit-card" class="w-5 h-5 text-orange-500" />
+                                    Prix de la course
+                                </h2>
+                                <p class="text-sm font-bold text-slate-900 mb-3">
+                                    {{ number_format((float) $intervention->price, 0, ',', ' ') }} FCFA
+                                    @if($intervention->priceConfirmed())
+                                        <span class="ml-2 text-xs font-semibold text-emerald-600">Confirme</span>
+                                    @elseif($intervention->priceContested())
+                                        <span class="ml-2 text-xs font-semibold text-red-600">Conteste</span>
+                                    @else
+                                        <span class="ml-2 text-xs font-semibold text-amber-600">En attente de votre confirmation</span>
+                                    @endif
+                                </p>
+                                @if($intervention->priceConfirmed())
+                                    <p class="text-xs text-slate-500">Merci d'avoir confirme ce prix. Le professionnel regle sa commission ({!! number_format((float) config('wave.commission_amount', 750), 0, ',', ' ') !!} FCFA) directement a la plateforme.</p>
+                                @elseif($intervention->priceContested())
+                                    <p class="text-xs text-slate-500">Vous avez conteste ce prix. Le professionnel a ete prevenu et proposera un nouveau prix.</p>
+                                @else
+                                    <p class="text-sm text-slate-600 mb-4">Le professionnel vous regle sur place (Wave ou cash). Validez ce prix pour clore la course.</p>
+                                    <div class="flex flex-col sm:flex-row gap-3">
+                                        <form method="POST" action="{{ route('client.intervention.price-confirm', $intervention) }}" class="flex-1">
+                                            @csrf
+                                            <button type="submit" class="btn-primary w-full">
+                                                <x-icon name="check" class="w-4 h-4" />
+                                                Confirmer le prix
+                                            </button>
+                                        </form>
+                                        <form method="POST" action="{{ route('client.intervention.price-contest', $intervention) }}" class="flex-1">
+                                            @csrf
+                                            <button type="submit" class="btn-secondary w-full">
+                                                <x-icon name="x" class="w-4 h-4" />
+                                                Contester le prix
+                                            </button>
+                                        </form>
+                                    </div>
+                                @endif
+                            </div>
+                        @endif
+>>>>>>> 7970f17421e6d1edcccd6a22043c16037bb61c90
                         <div class="card p-6">
                             <h2 class="text-lg font-semibold text-slate-900 mb-2 flex items-center gap-2">
                                 <x-icon name="star" class="w-5 h-5 text-orange-500" />
@@ -250,12 +299,19 @@
 
                 const map = L.map('map').setView([lat, lng], 13);
 
+<<<<<<< HEAD
                 L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
                     attribution: '&copy; OpenStreetMap contributors &copy; CARTO',
                     subdomains: 'abcd',
                     maxZoom: 19
                 }).addTo(map);
                 setTimeout(function () { map.invalidateSize(); }, 300);
+=======
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    attribution: '&copy; OpenStreetMap contributors',
+                    maxZoom: 19
+                }).addTo(map);
+>>>>>>> 7970f17421e6d1edcccd6a22043c16037bb61c90
 
                 const clientIcon = L.divIcon({
                     className: 'custom-div-icon',
@@ -268,6 +324,7 @@
                     .bindPopup('<strong>Point de prise en charge</strong>')
                     .openPopup();
 
+<<<<<<< HEAD
                 @if($intervention->destination_lat && $intervention->destination_lng && $intervention->client_lat && $intervention->client_lng)
                 const destLat = {{ $intervention->destination_lat }};
                 const destLng = {{ $intervention->destination_lng }};
@@ -282,6 +339,8 @@
                 L.polyline([[lat, lng], [destLat, destLng]], { color: '#0ea5e9', weight: 3, opacity: 0.85, dashArray: '6,8' }).addTo(map);
                 @endif
 
+=======
+>>>>>>> 7970f17421e6d1edcccd6a22043c16037bb61c90
                 const proIcon = L.divIcon({
                     className: 'custom-div-icon',
                     html: '<div class="marker-dot marker-pro"></div>',

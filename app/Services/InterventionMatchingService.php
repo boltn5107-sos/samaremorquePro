@@ -7,9 +7,15 @@ use App\Models\User;
 use App\Models\Notification;
 use App\Events\InterventionCreated;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class InterventionMatchingService
 {
+    protected function commissionBlockThreshold(): int
+    {
+        return (int) config('wave.commission_amount', 750) * max(1, (int) config('wave.commission_block_after', 3));
+    }
+
     public function findAndNotify(Intervention $intervention, ?int $targetUserId = null): void
     {
         $lat = $intervention->client_lat;
@@ -18,7 +24,14 @@ class InterventionMatchingService
         if ($targetUserId) {
             $candidate = User::find($targetUserId);
             if ($candidate && in_array($candidate->role, ['remorqueur', 'depanneur'])) {
-                $this->notifyCandidate($candidate, $intervention);
+                if ($candidate->isCommissionBlocked()) {
+                    Log::info('Professionnel bloque (commissions impayees) : demande non notifiee', [
+                        'professional_id' => $candidate->id,
+                        'intervention_id' => $intervention->id,
+                    ]);
+                } else {
+                    $this->notifyCandidate($candidate, $intervention);
+                }
             }
 
             broadcast(new InterventionCreated($intervention));
@@ -34,17 +47,26 @@ class InterventionMatchingService
 
         $distanceSql = "(
             6371 * acos(
-                cos(radians(?)) *
-                cos(radians(locations.lat)) *
-                cos(radians(locations.lng) - radians(?)) +
-                sin(radians(?)) *
-                sin(radians(locations.lat))
+                GREATEST(-1, LEAST(1,
+                    cos(radians(?)) *
+                    cos(radians(locations.lat)) *
+                    cos(radians(locations.lng) - radians(?)) +
+                    sin(radians(?)) *
+                    sin(radians(locations.lat))
+                ))
             )
         )";
 
         $candidates = User::whereIn('role', ['remorqueur', 'depanneur'])
             ->where('is_validated', true)
             ->where('is_active', true)
+            ->whereRaw(
+                "(SELECT COALESCE(SUM(p.amount), 0) FROM payments p
+                  WHERE p.user_id = users.id
+                    AND p.payable_type = ?
+                    AND p.status NOT IN ('paid', 'refunded')) < ?",
+                [Intervention::class, $this->commissionBlockThreshold()]
+            )
             ->join('locations', 'locations.user_id', '=', 'users.id')
             ->whereRaw($distanceSql . ' <= ?', [$lat, $lng, $lat, $radiusKm])
             ->orderByRaw($distanceSql, [$lat, $lng, $lat])

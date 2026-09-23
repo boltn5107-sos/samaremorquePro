@@ -5,8 +5,10 @@ namespace App\Http\Controllers\Client;
 use App\Http\Controllers\Controller;
 use App\Models\Intervention;
 use App\Models\InterventionStatus;
+use App\Models\Notification;
 use App\Models\Service;
 use App\Models\Vehicle;
+use App\Services\CommissionService;
 use App\Services\GeolocationService;
 use App\Services\InterventionMatchingService;
 use App\Services\NearbyProfessionalsService;
@@ -19,7 +21,8 @@ class ClientInterventionController extends Controller
     public function __construct(
         protected GeolocationService $geo,
         protected InterventionMatchingService $matcher,
-        protected NearbyProfessionalsService $nearby
+        protected NearbyProfessionalsService $nearby,
+        protected CommissionService $commissions
     ) {}
 
     public function index()
@@ -70,9 +73,7 @@ class ClientInterventionController extends Controller
             'vehicle_type' => ['required', 'string', 'max:100'],
             'vehicle_id' => ['nullable', 'exists:vehicles,id'],
             'service_type' => ['required', 'string', 'max:100'],
-            'destination' => ['nullable', 'string', 'max:255', 'required_if:service_type,remorquage'],
-            'destination_lat' => ['nullable', 'numeric', 'between:-90,90'],
-            'destination_lng' => ['nullable', 'numeric', 'between:-180,180'],
+            'destination' => ['required', 'string', 'max:255'],
             'description' => ['nullable', 'string', 'max:2000'],
             'photo' => ['nullable', 'image', 'max:2048'],
             'client_name' => ['nullable', 'string', 'max:100'],
@@ -80,6 +81,8 @@ class ClientInterventionController extends Controller
             'client_lat' => ['nullable', 'numeric', 'between:-90,90'],
             'client_lng' => ['nullable', 'numeric', 'between:-180,180'],
             'client_address' => ['nullable', 'string', 'max:500'],
+            'destination_lat' => ['nullable', 'numeric', 'between:-90,90'],
+            'destination_lng' => ['nullable', 'numeric', 'between:-180,180'],
             'manual_position' => ['nullable', 'string', 'max:500'],
             'selected_professional_id' => ['nullable', 'integer', 'exists:users,id'],
         ]);
@@ -216,6 +219,53 @@ class ClientInterventionController extends Controller
         return redirect()->route('client.intervention.index')->with('status', 'intervention-cancelled');
     }
 
+    public function confirmPrice(Intervention $intervention)
+    {
+        abort_if($intervention->client_id !== Auth::id(), 403);
+
+        if ($intervention->status !== Intervention::STATUS_COMPLETED || $intervention->price === null) {
+            return back()->with('error', 'Aucun prix a confirmer.');
+        }
+
+        if ($intervention->priceConfirmed()) {
+            return back()->with('error', 'Le prix a deja ete confirme.');
+        }
+
+        $intervention->update([
+            'price_status' => Intervention::PRICE_STATUS_VALIDATED,
+            'price_confirmed_at' => now(),
+        ]);
+
+        $this->chargeCommission($intervention);
+
+        return back()->with('status', 'price-confirmed');
+    }
+
+    public function contestPrice(Intervention $intervention)
+    {
+        abort_if($intervention->client_id !== Auth::id(), 403);
+
+        if ($intervention->status !== Intervention::STATUS_COMPLETED || $intervention->price === null) {
+            return back()->with('error', 'Aucun prix a contester.');
+        }
+
+        if ($intervention->priceConfirmed()) {
+            return back()->with('error', 'Le prix a deja ete confirme, il ne peut plus etre conteste.');
+        }
+
+        $intervention->update([
+            'price_status' => Intervention::PRICE_STATUS_CONTESTED,
+            'price_confirmed_at' => null,
+        ]);
+
+        $this->notifyProfessional(
+            $intervention,
+            'Le client conteste le prix de ' . number_format((float) $intervention->price, 0, ',', ' ') . ' FCFA. Corrigez le prix.'
+        );
+
+        return back()->with('status', 'price-contested');
+    }
+
     public function rate(Request $request, Intervention $intervention)
     {
         abort_if($intervention->client_id !== Auth::id(), 403);
@@ -240,6 +290,43 @@ class ClientInterventionController extends Controller
         ]);
 
         return back()->with('status', 'intervention-rated');
+    }
+
+    /**
+     * Cree la ligne de commission (Payement) des qu'un prix est confirme par le client.
+     * Tant qu'elle n'est pas `paid`, elle alimente le solde dû du professionnel.
+     */
+    protected function chargeCommission(Intervention $intervention): void
+    {
+        $payment = $this->commissions->charge($intervention);
+
+        if ($payment === null) {
+            return;
+        }
+
+        $this->notifyProfessional(
+            $intervention,
+            'Prix confirme par le client. Commission de ' . number_format((float) $payment->amount, 0, ',', ' ') . ' FCFA due.'
+        );
+    }
+
+    protected function notifyProfessional(Intervention $intervention, string $body): void
+    {
+        if (! $intervention->professional_id) {
+            return;
+        }
+
+        Notification::create([
+            'user_id' => $intervention->professional_id,
+            'type' => 'intervention_update',
+            'notifiable_type' => Intervention::class,
+            'notifiable_id' => $intervention->id,
+            'data' => [
+                'title' => 'Prix de l\u2019intervention',
+                'body' => $body,
+                'url' => '/pro/dashboard',
+            ],
+        ]);
     }
 
     protected function storePhoto(Request $request): ?string

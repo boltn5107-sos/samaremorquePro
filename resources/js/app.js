@@ -1,9 +1,12 @@
 import './bootstrap';
-import Alpine from 'alpinejs';
+import L from 'leaflet';
+import 'leaflet/dist/leaflet.css';
+import iconRetinaUrl from 'leaflet/dist/images/marker-icon-2x.png';
+import iconUrl from 'leaflet/dist/images/marker-icon.png';
+import shadowUrl from 'leaflet/dist/images/marker-shadow.png';
 
-window.Alpine = Alpine;
-
-Alpine.start();
+L.Icon.Default.mergeOptions({ iconRetinaUrl, iconUrl, shadowUrl });
+window.L = L;
 
 document.addEventListener('DOMContentLoaded', () => {
     document.documentElement.classList.add('js-anim');
@@ -35,44 +38,72 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 (function () {
-    if (!('Notification' in window) && !('serviceWorker' in navigator)) {
-        return;
-    }
+    const hasSW = 'serviceWorker' in navigator;
 
-    if ('serviceWorker' in navigator && window.isSecureContext) {
+    // Enregistrement du service worker (mode hors-ligne PWA).
+    if (hasSW && window.isSecureContext) {
         window.addEventListener('load', () => {
             navigator.serviceWorker.register('/sw.js').catch(() => {});
         });
     }
 
+    // Reference du prompt d'installation natif (Chrome / Android / desktop).
+    // Elle est gardee en memoire et utilisee quand l'utilisateur clique sur "Installer".
     let deferredPrompt = null;
-    const LS_DISMISS = 'sr-pwa-dismissed';
+    const LS_DISMISS = 'sr-reminders-dismissed';
 
     window.addEventListener('beforeinstallprompt', (event) => {
         event.preventDefault();
         deferredPrompt = event;
-        scheduleTeaser();
     });
 
+    // Application installee : on ne re-proposera plus JAMAIS l'installation.
     window.addEventListener('appinstalled', () => {
         deferredPrompt = null;
         removeTeaser();
     });
 
-    function shouldShowTeaser() {
+    // Rappel affiche a CHAQUE ouverture tant que ce n'est pas fait :
+    //  - "dismiss" ne masque le rappel que pour la session courante (sessionStorage),
+    //    il reviendra lors de la prochaine ouverture ;
+    //  - l'installation (display-mode: standalone) et le GPS accorde le desactivent pour de bon.
+    function isStandalone() {
+        return window.matchMedia('(display-mode: standalone)').matches
+            || window.navigator.standalone === true;
+    }
+
+    function shouldShowReminders() {
         try {
-            return !localStorage.getItem(LS_DISMISS);
+            return sessionStorage.getItem(LS_DISMISS) === null;
         } catch (e) {
             return true;
         }
     }
 
+    // Etat de la permission GPS, quand la detection est possible.
+    async function geolocationStatus() {
+        if (!('geolocation' in navigator)) {
+            return 'unsupported';
+        }
+
+        if (navigator.permissions && navigator.permissions.query) {
+            try {
+                const { state } = await navigator.permissions.query({ name: 'geolocation' });
+                return state; // 'granted' | 'denied' | 'prompt'
+            } catch (e) {
+                // La requete de permission peut echouer sur certains navigateurs.
+            }
+        }
+
+        return 'unknown';
+    }
+
     function scheduleTeaser() {
         setTimeout(() => {
-            if (deferredPrompt && shouldShowTeaser()) {
+            if (shouldShowReminders()) {
                 renderTeaser();
             }
-        }, 20000);
+        }, 12000);
     }
 
     function removeTeaser() {
@@ -83,64 +114,128 @@ document.addEventListener('DOMContentLoaded', () => {
     function dismissTeaser() {
         removeTeaser();
         try {
-            localStorage.setItem(LS_DISMISS, '1');
+            sessionStorage.setItem(LS_DISMISS, '1');
         } catch (e) {}
     }
 
     function renderTeaser() {
         if (document.getElementById('sr-pwa-teaser')) return;
-        if (window.matchMedia('(display-mode: standalone)').matches) return;
 
-        const teaser = document.createElement('div');
-        teaser.id = 'sr-pwa-teaser';
-        teaser.className = 'fixed bottom-0 inset-x-0 z-50 p-4';
-        teaser.style.paddingBottom = 'env(safe-area-inset-bottom)';
-        teaser.innerHTML = `
-            <div class="max-w-md mx-auto bg-slate-900 text-white rounded-2xl shadow-2xl p-5 border border-slate-700">
-                <div class="flex items-start gap-3">
-                    <span class="inline-flex items-center justify-center w-10 h-10 rounded-xl bg-white overflow-hidden flex-shrink-0">
-                        <img src="/favicon.png" alt="SamaRemorque" class="w-7 h-7 object-contain">
-                    </span>
-                    <div class="flex-1">
-                        <p class="font-semibold text-sm">Installer SamaRemorque ?</p>
-                        <p class="text-xs text-slate-300 mt-1">Votre application de remorquage et depannage, accessible en un geste depuis votre ecran. Aucune installation forcee : vous restez libre.</p>
+        const installed = isStandalone();
+        // Le GPS est considere actif si la permission est deja accordee ou si le navigateur
+        // ne sait pas rendre compte (on n'embete pas l'utilisateur dans ce cas).
+        geolocationStatus().then((state) => {
+            const gpsOK = state === 'granted' || state === 'unknown' || state === 'unsupported';
+
+            // Plus rien a rappeler : application installee + GPS deja actif.
+            if (installed && gpsOK) return;
+
+            const teaser = document.createElement('div');
+            teaser.id = 'sr-pwa-teaser';
+            teaser.className = 'fixed bottom-0 inset-x-0 z-50 p-4';
+            teaser.style.paddingBottom = 'env(safe-area-inset-bottom)';
+            teaser.innerHTML = `
+                <div class="max-w-md mx-auto bg-slate-900 text-white rounded-2xl shadow-2xl p-5 border border-slate-700">
+                    <div class="flex items-start gap-3">
+                        <span class="inline-flex items-center justify-center w-10 h-10 rounded-xl bg-white overflow-hidden flex-shrink-0">
+                            <img src="/favicon.png" alt="SamaRemorque" class="w-7 h-7 object-contain">
+                        </span>
+                        <div class="flex-1">
+                            <p class="font-semibold text-sm">${installed ? 'Activez votre GPS' : 'Installer SamaRemorque ?'}</p>
+                            <p class="text-xs text-slate-300 mt-1">${installed
+                                ? 'Pour trouver les remorqueurs proches et vous situer sur la carte.'
+                                : 'Votre application de remorquage et depannage, accessible en un geste depuis votre ecran.'}</p>
+                        </div>
+                        <button type="button" data-action="close" class="text-slate-400 hover:text-white text-xl leading-none p-1" aria-label="Fermer">&times;</button>
                     </div>
+
+                    <div class="mt-4 space-y-3">
+                        ${installed ? '' : `
+                        <div class="flex items-center justify-between gap-3 bg-white/[0.06] rounded-xl p-3">
+                            <div>
+                                <p class="text-sm font-semibold">Installation</p>
+                                <p class="text-[11px] text-slate-300 mt-0.5 data-install-hint" hidden>
+                                    Sur iPhone : Partager &gt; « Ajouter à l&rsquo;écran d&rsquo;accueil ».
+                                    Sur Android : menu Chrome &gt; « Installer l&rsquo;application ».
+                                </p>
+                            </div>
+                            <button type="button" data-action="install" class="flex-shrink-0 bg-orange-600 hover:bg-orange-700 text-white text-xs font-semibold px-3 py-2 rounded-lg">Installer</button>
+                        </div>
+                        `}
+                        <div class="flex items-center justify-between gap-3 bg-white/[0.06] rounded-xl p-3" data-gps-row>
+                            <div>
+                                <p class="text-sm font-semibold">Position GPS</p>
+                                <p class="text-[11px] text-slate-300 mt-0.5" data-gps-status>${state === 'denied' ? 'GPS bloqué dans les réglages de votre appareil.' : 'Permet au pro de vous trouver rapidement.'}</p>
+                            </div>
+                            <button type="button" data-action="gps" class="flex-shrink-0 bg-orange-600 hover:bg-orange-700 text-white text-xs font-semibold px-3 py-2 rounded-lg">${state === 'denied' ? 'Ouvrir les réglages' : 'Activer'}</button>
+                        </div>
+                    </div>
+
+                    <p class="mt-3 text-[11px] text-slate-400">Cette installation et localisation restent sous votre controle. Vous pouvez les modifier a tout moment.</p>
                 </div>
-                <div class="mt-3 flex flex-wrap gap-2">
-                    <button type="button" data-action="install" class="flex-1 bg-orange-600 hover:bg-orange-700 text-white text-sm font-semibold px-4 py-2.5 rounded-lg">Installer</button>
-                    <button type="button" data-action="permissions" class="text-slate-200 hover:text-white bg-white/10 hover:bg-white/20 text-sm font-medium px-3 py-2.5 rounded-lg">Permissions</button>
-                    <button type="button" data-action="dismiss" class="text-slate-400 hover:text-slate-200 text-sm px-2 py-2.5">Plus tard</button>
-                </div>
-                <p class="mt-3 text-[11px] text-slate-400">L'installation ne demarre pas seule : confirmez-la, vous pouvez aussi l'annuler. D'autres permissions restent a votre controle (voir « Permissions »).</p>
-            </div>
-        `;
+            `;
 
-        teaser.querySelector('[data-action="install"]').addEventListener('click', async () => {
-            if (!deferredPrompt) {
-                openPermissionsDialog();
-                return;
-            }
-            deferredPrompt.prompt();
-            const choice = await deferredPrompt.userChoice.catch(() => ({}));
-            deferredPrompt = null;
-            if (choice.outcome === 'accepted') {
+            // Bouton fermer = masque pour la session courante uniquement.
+            teaser.querySelector('[data-action="close"]').addEventListener('click', () => {
                 dismissTeaser();
-            } else {
+            });
+
+            // Bouton installer.
+            teaser.querySelector('[data-action="install"]')?.addEventListener('click', async () => {
+                // Pas de prompt natif (iOS) : on affiche le mode d'emploi manuel.
+                if (!deferredPrompt) {
+                    const hint = teaser.querySelector('.data-install-hint');
+                    if (hint) {
+                        hint.hidden = !hint.hidden;
+                    }
+                    return;
+                }
+
+                deferredPrompt.prompt();
+                await deferredPrompt.userChoice.catch(() => ({}));
+                deferredPrompt = null;
+                // Quand l'installation est acceptee, 'appinstalled' retire le teaser.
                 dismissTeaser();
-            }
-        });
+            });
 
-        teaser.querySelector('[data-action="permissions"]').addEventListener('click', () => {
-            openPermissionsDialog();
-        });
+            // Bouton GPS : demande la position ou ouvre un message de blocage.
+            const gpsButton = teaser.querySelector('[data-action="gps"]');
+            const gpsStatus = teaser.querySelector('[data-gps-status]');
+            const gpsRow = teaser.querySelector('[data-gps-row]');
+            gpsButton.addEventListener('click', () => {
+                if (state === 'denied' || !navigator.geolocation) {
+                    gpsStatus.textContent = 'Allez dans Paramètres &gt; Confidentialité &gt; Localisation, puis autorisez SamaRemorque.';
+                    return;
+                }
 
-        teaser.querySelector('[data-action="dismiss"]').addEventListener('click', () => {
-            dismissTeaser();
-        });
+                gpsButton.disabled = true;
+                gpsStatus.textContent = 'Recuperation de votre position...';
+                navigator.geolocation.getCurrentPosition(() => {
+                    // GPS accorde : on retire la ligne de rappel GPS.
+                    gpsRow.remove();
+                    // S'il ne reste plus rien, on ferme le rappel pour la session.
+                    if (!teaser.querySelector('[data-action="install"]') && !teaser.querySelector('[data-gps-row]')) {
+                        dismissTeaser();
+                    }
+                }, () => {
+                    gpsStatus.textContent = 'GPS bloqué ou indisponible. Vérifiez vos réglages puis réessayez.';
+                    gpsButton.disabled = false;
+                }, { enableHighAccuracy: true, timeout: 10000, maximumAge: 30000 });
+            });
 
-        document.body.appendChild(teaser);
+            document.body.appendChild(teaser);
+        });
     }
 
+    // Ouverture : on lance le rappel a chaque visite tant que tout n'est pas fait.
+    if (shouldShowReminders()) {
+        scheduleTeaser();
+    }
+
+    /*
+     * Dialog « Permissions et confidentialite » : rappel optionnel des permissions.
+     * L'action cliquer le rend quand le rappel principal est trop peu explicite.
+     */
     function openPermissionsDialog() {
         if (document.getElementById('sr-permissions-dialog')) return;
 

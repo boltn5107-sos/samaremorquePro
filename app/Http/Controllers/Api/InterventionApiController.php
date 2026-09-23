@@ -82,6 +82,15 @@ class InterventionApiController extends Controller
     {
         $userId = $request->user()->id;
 
+        if ($request->user()->isCommissionBlocked()) {
+            return response()->json([
+                'message' => 'Commissions impayees. Regler votre solde pour recevoir de nouvelles demandes.',
+                'interventions' => [],
+                'blocked' => true,
+                'solde_du' => $request->user()->commissionBalanceDue(),
+            ]);
+        }
+
         $interventions = Intervention::with('client')
             ->where('status', Intervention::STATUS_AWAITING_PROFESSIONAL)
             ->where('service_type', $request->user()->isDepanneur() ? 'depannage' : 'remorquage')
@@ -184,9 +193,28 @@ class InterventionApiController extends Controller
         $validated = $request->validate([
             'status' => ['required', 'string'],
             'note' => ['nullable', 'string', 'max:1000'],
+            'price' => ['nullable', 'numeric', 'min:100', 'max:1000000'],
         ]);
 
-        $intervention->update(['status' => $validated['status']]);
+        if ($validated['status'] === Intervention::STATUS_COMPLETED) {
+            $price = $validated['price'] ?? null;
+
+            if ($price === null) {
+                return response()->json([
+                    'message' => "Pour terminer l'intervention, renseignez le prix de la course (le client devra le confirmer).",
+                ], 422);
+            }
+
+            $intervention->update([
+                'status' => $validated['status'],
+                'price' => $price,
+                'price_status' => Intervention::PRICE_STATUS_PENDING,
+                'price_set_at' => now(),
+                'price_confirmed_at' => null,
+            ]);
+        } else {
+            $intervention->update(['status' => $validated['status']]);
+        }
 
         InterventionStatus::create([
             'intervention_id' => $intervention->id,

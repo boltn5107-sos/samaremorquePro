@@ -21,14 +21,24 @@
                         <span class="inline-flex items-center justify-center w-6 h-6 rounded-full bg-orange-100 text-orange-600 text-xs font-bold">1</span>
                         Ma position (GPS)
                     </h2>
+<<<<<<< HEAD
                     <button type="button" id="locate-btn" class="inline-flex items-center gap-1.5 text-xs font-semibold px-3.5 py-2 rounded-xl text-white bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-400 hover:to-orange-500 shadow-lg shadow-orange-500/25 transition-all duration-300">
                         <x-icon name="map-pin" class="w-4 h-4" />
                         Localiser ma position
+=======
+                    <button type="button" id="locate-btn" class="btn-secondary text-xs px-3 py-2">
+                        <x-icon name="refresh" class="w-4 h-4" />
+                        Actualiser
+>>>>>>> 7970f17421e6d1edcccd6a22043c16037bb61c90
                     </button>
                 </div>
                 <p id="loc-status" class="mb-3 text-sm text-slate-500 flex items-center gap-2">
                     <span class="w-2 h-2 rounded-full bg-slate-300"></span>
+<<<<<<< HEAD
                     Cliquez sur &laquo; Localiser ma position &raquo; pour activer le GPS. En cas de refus ou de panne, la saisie manuelle s'affichera automatiquement.
+=======
+                    Recuperation de votre position GPS...
+>>>>>>> 7970f17421e6d1edcccd6a22043c16037bb61c90
                 </p>
                 <div class="map-shell" style="height: 260px;">
                     <div id="map" style="height: 100%; width: 100%;"></div>
@@ -62,8 +72,11 @@
                     <input type="hidden" name="client_lat" id="client_lat">
                     <input type="hidden" name="client_lng" id="client_lng">
                     <input type="hidden" name="client_address" id="client_address">
+<<<<<<< HEAD
                     <input type="hidden" name="destination_lat" id="destination_lat">
                     <input type="hidden" name="destination_lng" id="destination_lng">
+=======
+>>>>>>> 7970f17421e6d1edcccd6a22043c16037bb61c90
                     <input type="hidden" name="manual_position" id="manual_position">
                     <input type="hidden" name="selected_professional_id" id="selected_professional_id">
 
@@ -138,8 +151,13 @@
                     </div>
 
                     <div>
+<<<<<<< HEAD
                         <label for="destination" class="label">Destination (si remorquage)</label>
                         <input type="text" id="destination" name="destination" value="{{ old('destination') }}" class="input" placeholder="Ou doit etre transporte le vehicule ?">
+=======
+                        <label for="destination" class="label">Destination (si remorquage) *</label>
+                        <input type="text" id="destination" name="destination" value="{{ old('destination') }}" required class="input" placeholder="Ou doit etre transporte le vehicule ?">
+>>>>>>> 7970f17421e6d1edcccd6a22043c16037bb61c90
                         @error('destination')
                             <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
                         @enderror
@@ -147,6 +165,7 @@
                             <p class="text-xs font-medium text-slate-500 mb-1.5">Suggestions</p>
                             <div id="destinations-list" class="flex flex-wrap gap-2"></div>
                         </div>
+<<<<<<< HEAD
                         <div id="destination-zone" class="hidden mt-3">
                             <label class="label mb-1">Ou placer la destination sur la carte *</label>
                             <div class="map-shell" style="height: 240px;">
@@ -160,6 +179,8 @@
                                 </span>
                             </div>
                         </div>
+=======
+>>>>>>> 7970f17421e6d1edcccd6a22043c16037bb61c90
                     </div>
 
                     <div>
@@ -225,12 +246,19 @@
                 window.prosData = [];
 
                 const map = L.map('map').setView([DEFAULT_POS.lat, DEFAULT_POS.lng], 12);
+<<<<<<< HEAD
                 L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
                     attribution: '&copy; OpenStreetMap contributors &copy; CARTO',
                     subdomains: 'abcd',
                     maxZoom: 19
                 }).addTo(map);
                 setTimeout(function () { map.invalidateSize(); }, 250);
+=======
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    attribution: '&copy; OpenStreetMap contributors',
+                    maxZoom: 19
+                }).addTo(map);
+>>>>>>> 7970f17421e6d1edcccd6a22043c16037bb61c90
 
                 const clientIcon = L.divIcon({
                     className: 'custom-div-icon',
@@ -261,7 +289,11 @@
                     latInput.value = lat.toFixed(6);
                     lngInput.value = lng.toFixed(6);
                     usedPosBox.classList.remove('hidden');
+<<<<<<< HEAD
                     usedPosText.textContent = 'Recherche du nom du lieu...';
+=======
+                    usedPosText.textContent = lat.toFixed(5) + ', ' + lng.toFixed(5);
+>>>>>>> 7970f17421e6d1edcccd6a22043c16037bb61c90
 
                     if (!clientMarker) {
                         clientMarker = L.marker([lat, lng], { icon: clientIcon, draggable: true }).addTo(map)
@@ -278,6 +310,7 @@
                     if (options.fetch !== false) {
                         fetchNearby();
                     }
+<<<<<<< HEAD
                     fetch('https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=' + lat + '&lon=' + lng + '&countrycodes=sn', {
                         headers: { 'User-Agent': 'SamaRemorque/1.0' }
                     }).then(r => r.json()).then(data => {
@@ -294,6 +327,21 @@
                     }).catch(() => {
                         document.getElementById('used-position-text').textContent = 'Position enregistree';
                     });
+=======
+                    if (navigator.geolocation) {
+                        fetch('https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=' + lat + '&lon=' + lng + '&countrycodes=sn', {
+                            headers: { 'User-Agent': 'SamaRemorque/1.0' }
+                        }).then(r => r.json()).then(data => {
+                            const addr = data.display_name || (data.address && (data.address.road + (data.address.city ? ', ' + data.address.city : ''))) || '';
+                            if (addr) {
+                                addressInput.value = addr;
+                                const reverseGeocode = document.getElementById('reverse-geocode');
+                                if (reverseGeocode) reverseGeocode.textContent = addr;
+                                document.getElementById('used-position-text').textContent = addr;
+                            }
+                        }).catch(() => {});
+                    }
+>>>>>>> 7970f17421e6d1edcccd6a22043c16037bb61c90
                 }
 
                 function fetchNearby() {
@@ -456,6 +504,7 @@
 
                     proMarkers.clearLayers();
                     window.prosData.forEach(p => {
+<<<<<<< HEAD
                         if (p.lat !== null && p.lng !== null) {
                             const marker = L.marker([p.lat, p.lng], {
                                 icon: p.id === pro.id ? proSelectedIcon : proIcon
@@ -466,6 +515,16 @@
                     });
 
                     if (window.clientPosition && pro.lat !== null && pro.lng !== null) {
+=======
+                        const marker = L.marker([p.lat, p.lng], {
+                            icon: p.id === pro.id ? proSelectedIcon : proIcon
+                        }).addTo(proMarkers);
+                        marker.bindPopup('<strong>' + p.full_name + '</strong><br><span class="text-xs">' + formatDistance(p.distance_km) + '</span>');
+                        marker.on('click', function () { selectPro(p, true); });
+                    });
+
+                    if (window.clientPosition) {
+>>>>>>> 7970f17421e6d1edcccd6a22043c16037bb61c90
                         polyline = L.polyline([[window.clientPosition.lat, window.clientPosition.lng], [pro.lat, pro.lng]], {
                             color: '#f97316', dashArray: '5,5', weight: 2, opacity: 0.7
                         }).addTo(map);
@@ -473,6 +532,7 @@
                     if (pro.suggested_destination) {
                         document.getElementById('destination').value = pro.suggested_destination;
                     }
+<<<<<<< HEAD
                     if (pro.lat !== null && pro.lng !== null) {
                         if (!fromMap) {
                             map.flyTo([pro.lat, pro.lng], Math.max(map.getZoom(), 13));
@@ -550,6 +610,16 @@
                 function locate() {
                     if (!navigator.geolocation) {
                         setStatus('La geolocalisation n\'est pas supportee par ce navigateur. Saisissez votre position manuellement.', 'red');
+=======
+                    if (!fromMap) {
+                        map.flyTo([pro.lat, pro.lng], Math.max(map.getZoom(), 13));
+                    }
+                }
+
+                function locate() {
+                    if (!navigator.geolocation) {
+                        setStatus('Geolocalisation non supportee.', 'red');
+>>>>>>> 7970f17421e6d1edcccd6a22043c16037bb61c90
                         enableManual();
                         return;
                     }
@@ -558,12 +628,17 @@
                         setStatus('Position GPS obtenue.', 'emerald');
                         setPosition(position.coords.latitude, position.coords.longitude, { fetch: true });
                         manualZone.classList.add('hidden');
+<<<<<<< HEAD
                     }, function (error) {
                         if (error && error.code === 1) {
                             setStatus('Acces a la position bloque par le navigateur. Autorisez le GPS pour ce site dans les reglages, puis cliquez a nouveau sur « Localiser ».', 'red');
                         } else {
                             setStatus('GPS indisponible. Saisissez votre position manuellement.', 'red');
                         }
+=======
+                    }, function () {
+                        setStatus('GPS indisponible. Saisissez votre position manuellement.', 'red');
+>>>>>>> 7970f17421e6d1edcccd6a22043c16037bb61c90
                         enableManual();
                         if (window.clientPosition) {
                             setPosition(window.clientPosition.lat, window.clientPosition.lng, { fetch: true });
@@ -571,6 +646,7 @@
                     }, { enableHighAccuracy: true, timeout: 15000, maximumAge: 60000 });
                 }
 
+<<<<<<< HEAD
                 function checkPermissionState() {
                     if (!navigator.permissions || !navigator.permissions.query) return;
                     navigator.permissions.query({ name: 'geolocation' })
@@ -583,6 +659,8 @@
                         .catch(function () {});
                 }
 
+=======
+>>>>>>> 7970f17421e6d1edcccd6a22043c16037bb61c90
                 function enableManual() {
                     manualZone.classList.remove('hidden');
                 }
@@ -629,7 +707,10 @@
                         });
                         btn.className = 'service-btn px-3 py-3 rounded-lg border text-sm font-semibold border-orange-500 bg-orange-50 text-orange-700';
                         document.getElementById('service_type').value = btn.dataset.service;
+<<<<<<< HEAD
                         toggleDestinationZone();
+=======
+>>>>>>> 7970f17421e6d1edcccd6a22043c16037bb61c90
                         if (window.clientPosition) fetchNearby();
                     });
                 });
@@ -650,6 +731,7 @@
                     document.getElementById('photo-preview').classList.remove('hidden');
                 });
 
+<<<<<<< HEAD
                 checkPermissionState();
                 toggleDestinationZone();
 
@@ -659,6 +741,9 @@
                         locate();
                     }
                 }, 300);
+=======
+                locate();
+>>>>>>> 7970f17421e6d1edcccd6a22043c16037bb61c90
             });
         </script>
     @endpush
