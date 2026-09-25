@@ -33,13 +33,27 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css" rel="stylesheet">
     @php
-        $manifest = json_decode(file_get_contents(public_path('build/manifest.json')), true);
-        $cssFile = 'build/' . ($manifest['resources/css/app.css']['file'] ?? 'app.css');
+        $manifestPath = public_path('build/manifest.json');
+        $manifest = is_file($manifestPath)
+            ? (json_decode(file_get_contents($manifestPath), true) ?: [])
+            : [];
+
+        // Leaflet (JS + CSS) est importe par resources/js/app.js. Vite extrait
+        // son CSS dans des fichiers additionnels listes dans le manifest :
+        // sans eux la carte s'affiche sans style. On les charge donc ici, avant
+        // app.css, pour conserver l'ordre de cascade actuel (CDN puis app.css).
+        $cssFiles = [];
+        foreach ($manifest['resources/js/app.js']['css'] ?? [] as $entry) {
+            $cssFiles[] = 'build/' . $entry;
+        }
+        $cssFiles[] = 'build/' . ($manifest['resources/css/app.css']['file'] ?? 'app.css');
+
         $jsFile = 'build/' . ($manifest['resources/js/app.js']['file'] ?? 'app.js');
     @endphp
+    @foreach (array_unique($cssFiles) as $cssFile)
     <link rel="stylesheet" href="{{ asset($cssFile) }}">
+    @endforeach
     <script defer src="{{ asset($jsFile) }}"></script>
     @livewireStyles
 </head>
@@ -78,7 +92,6 @@
         @endif
     </div>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
     <script src="https://js.pusher.com/7.2/pusher.min.js"></script>
     <script>
         window.Laravel = {
@@ -88,6 +101,9 @@
             pusherKey: '{{ config("broadcasting.connections.reverb.key") }}',
             pusherCluster: '{{ config("broadcasting.connections.pusher.options.cluster") }}',
         };
+
+        // Source de tuiles centralisee : voir config/map.php.
+        window.mapTiles = @json(config('map.tiles'));
     </script>
     @livewireScripts
     @auth

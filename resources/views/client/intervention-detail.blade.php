@@ -291,10 +291,10 @@
 
                 const map = L.map('map').setView([lat, lng], 13);
 
-                L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
-                    attribution: '&copy; OpenStreetMap contributors &copy; CARTO',
+                L.tileLayer(window.mapTiles.url, {
+                    attribution: window.mapTiles.attribution,
                     subdomains: 'abcd',
-                    maxZoom: 19
+                    maxZoom: window.mapTiles.max_zoom
                 }).addTo(map);
                 setTimeout(function () { map.invalidateSize(); }, 300);
 

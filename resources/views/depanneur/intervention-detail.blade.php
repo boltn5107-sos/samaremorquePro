@@ -264,10 +264,10 @@
 
                 const map = L.map('map').setView([lat, lng], 15);
 
-                L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
-                    attribution: '&copy; OpenStreetMap contributors &copy; CARTO',
+                L.tileLayer(window.mapTiles.url, {
+                    attribution: window.mapTiles.attribution,
                     subdomains: 'abcd',
-                    maxZoom: 19
+                    maxZoom: window.mapTiles.max_zoom
                 }).addTo(map);
                 setTimeout(function () { map.invalidateSize(); }, 300);
 
@@ -320,7 +320,8 @@
                 }
                 const distKm = haversineKm(lat, lng, myLat, myLng);
                 const distText = distKm < 1 ? Math.round(distKm * 1000) + ' m' : distKm.toFixed(1) + ' km';
-                L.control({ position: 'topright' }).onAdd = function () {
+                const distanceControl = L.control({ position: 'topright' });
+                distanceControl.onAdd = function () {
                     const div = L.DomUtil.create('div', 'leaflet-bar');
                     div.style.padding = '6px 10px';
                     div.style.backgroundColor = 'white';
@@ -328,8 +329,8 @@
                     div.style.fontSize = '13px';
                     div.innerHTML = 'Distance: ' + distText;
                     return div;
-                }.bind(this);
-                L.control({ position: 'topright' }).addTo(map);
+                };
+                distanceControl.addTo(map);
                 @endif
             });
         </script>

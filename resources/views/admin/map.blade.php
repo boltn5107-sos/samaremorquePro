@@ -57,11 +57,11 @@
         document.addEventListener('DOMContentLoaded', function () {
             const map = L.map('admin-map').setView([14.7167, -17.4677], 13);
 
-L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
-                attribution: '&copy; OpenStreetMap contributors &copy; CARTO',
-                subdomains: 'abcd',
-                maxZoom: 19
-            }).addTo(map);
+L.tileLayer(window.mapTiles.url, {
+    attribution: window.mapTiles.attribution,
+    subdomains: 'abcd',
+    maxZoom: window.mapTiles.max_zoom
+}).addTo(map);
 
             const professionals = {!! $proData !!};
             const interventions = {!! $intData !!};

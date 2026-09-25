@@ -249,7 +249,6 @@
     </div>
 </div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function () {
         const latInput = document.getElementById('client_lat');
@@ -268,10 +267,10 @@
         window.prosData = [];
 
         const map = L.map('map').setView([DEFAULT_POS.lat, DEFAULT_POS.lng], 12);
-        L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
-            attribution: '&copy; OpenStreetMap contributors &copy; CARTO',
+        L.tileLayer(window.mapTiles.url, {
+            attribution: window.mapTiles.attribution,
             subdomains: 'abcd',
-            maxZoom: 19
+            maxZoom: window.mapTiles.max_zoom
         }).addTo(map);
         setTimeout(function () { map.invalidateSize(); }, 250);
 
@@ -542,10 +541,10 @@
         function initDestMap() {
             if (destMap) return;
             destMap = L.map('dest-map', { scrollWheelZoom: false }).setView([DEFAULT_POS.lat, DEFAULT_POS.lng], 11);
-            L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
-                attribution: '&copy; OpenStreetMap contributors &copy; CARTO',
+            L.tileLayer(window.mapTiles.url, {
+                attribution: window.mapTiles.attribution,
                 subdomains: 'abcd',
-                maxZoom: 19
+                maxZoom: window.mapTiles.max_zoom
             }).addTo(destMap);
             destMap.on('click', function (e) {
                 setDestination(e.latlng.lat, e.latlng.lng);
