@@ -2,22 +2,30 @@
 
 namespace App\Providers;
 
+use App\Events\InterventionAccepted;
+use App\Events\InterventionCreated;
+use App\Events\InterventionStatusUpdated;
+use App\Events\ProfessionalLocated;
+use App\Listeners\BroadcastProfessionalLocation;
+use App\Listeners\NotifyClientAccepted;
+use App\Listeners\NotifyInterventionStatus;
+use App\Listeners\SendInterventionNotification;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
 
 class EventServiceProvider extends ServiceProvider
 {
     protected $listen = [
-        \App\Events\InterventionCreated::class => [
-            \App\Listeners\SendInterventionNotification::class,
+        InterventionCreated::class => [
+            SendInterventionNotification::class,
         ],
-        \App\Events\InterventionAccepted::class => [
-            \App\Listeners\NotifyClientAccepted::class,
+        InterventionAccepted::class => [
+            NotifyClientAccepted::class,
         ],
-        \App\Events\InterventionStatusUpdated::class => [
-            \App\Listeners\NotifyInterventionStatus::class,
+        InterventionStatusUpdated::class => [
+            NotifyInterventionStatus::class,
         ],
-        \App\Events\ProfessionalLocated::class => [
-            \App\Listeners\BroadcastProfessionalLocation::class,
+        ProfessionalLocated::class => [
+            BroadcastProfessionalLocation::class,
         ],
     ];
 

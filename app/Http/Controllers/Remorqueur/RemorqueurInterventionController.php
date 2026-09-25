@@ -111,7 +111,7 @@ class RemorqueurInterventionController extends Controller
 
         $this->notifyClient(
             $intervention,
-            'Votre demande de remorquage a ete refusee par ' . Auth::user()->full_name . '.'
+            'Votre demande de remorquage a ete refusee par '.Auth::user()->full_name.'.'
         );
 
         return back()->with('status', 'intervention-rejected');
@@ -122,7 +122,7 @@ class RemorqueurInterventionController extends Controller
         abort_if($intervention->professional_id !== Auth::id(), 403);
 
         if (in_array($intervention->status, [Intervention::STATUS_COMPLETED, Intervention::STATUS_CANCELLED])) {
-            return back()->with('error', "Cette intervention est deja terminee ou annulee. Aucun changement necessaire.");
+            return back()->with('error', 'Cette intervention est deja terminee ou annulee. Aucun changement necessaire.');
         }
 
         $validated = $request->validate([
@@ -132,7 +132,7 @@ class RemorqueurInterventionController extends Controller
         ]);
 
         if (! $intervention->canTransitionTo($validated['status'])) {
-            return back()->with('error', 'Impossible de passer a ce statut (statut actuel : ' . $intervention->status_label . ').');
+            return back()->with('error', 'Impossible de passer a ce statut (statut actuel : '.$intervention->status_label.').');
         }
 
         if ($validated['status'] === Intervention::STATUS_COMPLETED) {
@@ -157,7 +157,7 @@ class RemorqueurInterventionController extends Controller
             'intervention_id' => $intervention->id,
             'status' => $validated['status'],
             'note' => $validated['note'] ?? ($validated['status'] === Intervention::STATUS_COMPLETED && isset($validated['price'])
-                ? 'Prix propose : ' . number_format((float) $validated['price'], 0, ',', ' ') . ' FCFA'
+                ? 'Prix propose : '.number_format((float) $validated['price'], 0, ',', ' ').' FCFA'
                 : null),
             'user_id' => Auth::id(),
         ]);
@@ -176,7 +176,7 @@ class RemorqueurInterventionController extends Controller
         abort_if($intervention->professional_id !== Auth::id(), 403);
 
         if ($intervention->status !== Intervention::STATUS_COMPLETED) {
-            return back()->with('error', "Le prix ne peut etre mis a jour que sur une intervention terminee.");
+            return back()->with('error', 'Le prix ne peut etre mis a jour que sur une intervention terminee.');
         }
 
         if ($intervention->priceConfirmed()) {
@@ -196,7 +196,7 @@ class RemorqueurInterventionController extends Controller
 
         $this->notifyClient(
             $intervention,
-            'Le remorqueur a propose un nouveau prix : ' . number_format((float) $validated['price'], 0, ',', ' ') . ' FCFA. Merci de le confirmer.'
+            'Le remorqueur a propose un nouveau prix : '.number_format((float) $validated['price'], 0, ',', ' ').' FCFA. Merci de le confirmer.'
         );
 
         return back()->with('status', 'price-updated');
@@ -216,7 +216,7 @@ class RemorqueurInterventionController extends Controller
             'data' => [
                 'title' => 'Intervention mise a jour',
                 'body' => $body,
-                'url' => '/client/intervention/' . $intervention->id,
+                'url' => '/client/intervention/'.$intervention->id,
             ],
         ]);
     }

@@ -12,7 +12,7 @@ class ServiceSeeder extends Seeder
     {
         $admin = User::where('role', 'admin')->first();
 
-        if (!$admin) {
+        if (! $admin) {
             return;
         }
 
@@ -30,7 +30,7 @@ class ServiceSeeder extends Seeder
             Service::firstOrCreate(
                 ['user_id' => $admin->id, 'name' => $service],
                 [
-                    'description' => 'Service de ' . strtolower($service),
+                    'description' => 'Service de '.strtolower($service),
                     'is_active' => true,
                 ]
             );

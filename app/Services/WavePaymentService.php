@@ -59,8 +59,8 @@ class WavePaymentService
      *
      * @param  int|string  $amount  Montant (XOF : entier, pas de decimales).
      * @param  array<string, mixed>  $options  client_reference, success_url, error_url,
-     *                                        restrict_payer_mobile...
-     * @return array<string, mixed>  Reponse de l'API Wave.
+     *                                         restrict_payer_mobile...
+     * @return array<string, mixed> Reponse de l'API Wave.
      *
      * @throws \RuntimeException Si l'API n'est pas configuree.
      */
@@ -171,19 +171,19 @@ class WavePaymentService
      */
     protected function request(string $method, string $path, array $data = []): array
     {
-        $url = rtrim($this->config['base_url'], '/') . $path;
+        $url = rtrim($this->config['base_url'], '/').$path;
 
         $body = in_array($method, ['post', 'put', 'patch'], true) ? json_encode($data) : null;
 
         $headers = [
-            'Authorization' => 'Bearer ' . $this->config['api_key'],
+            'Authorization' => 'Bearer '.$this->config['api_key'],
             'Content-Type' => 'application/json',
             'Accept' => 'application/json',
         ];
 
         if (filled($this->config['signing_secret']) && $body !== null) {
             $timestamp = time();
-            $signature = hash_hmac('sha256', $timestamp . $body, $this->config['signing_secret']);
+            $signature = hash_hmac('sha256', $timestamp.$body, $this->config['signing_secret']);
             $headers['Wave-Signature'] = "t={$timestamp},v1={$signature}";
         }
 

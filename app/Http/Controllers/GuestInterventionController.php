@@ -159,7 +159,7 @@ class GuestInterventionController extends Controller
                 'full_name' => $professional->full_name,
                 'role' => $professional->role,
                 'phone' => $professional->phone,
-                'photo' => $professional->photo ? asset('storage/' . $professional->photo) : null,
+                'photo' => $professional->photo ? asset('storage/'.$professional->photo) : null,
             ] : null,
         ]);
     }
@@ -248,7 +248,7 @@ class GuestInterventionController extends Controller
         $this->notifyProfessional(
             $intervention,
             $payment
-                ? 'Prix confirme par le client. Commission de ' . number_format((float) $payment->amount, 0, ',', ' ') . ' FCFA due.'
+                ? 'Prix confirme par le client. Commission de '.number_format((float) $payment->amount, 0, ',', ' ').' FCFA due.'
                 : 'Prix confirme par le client.'
         );
 
@@ -276,7 +276,7 @@ class GuestInterventionController extends Controller
 
         $this->notifyProfessional(
             $intervention,
-            'Le client conteste le prix de ' . number_format((float) $intervention->price, 0, ',', ' ') . ' FCFA. Corrigez le prix.'
+            'Le client conteste le prix de '.number_format((float) $intervention->price, 0, ',', ' ').' FCFA. Corrigez le prix.'
         );
 
         return back()->with('status', 'price-contested');

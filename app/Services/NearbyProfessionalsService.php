@@ -49,7 +49,7 @@ class NearbyProfessionalsService
                 'locations.lng',
                 'locations.recorded_at',
                 'locations.address as location_address',
-                DB::raw($distanceSql . ' as distance_km'),
+                DB::raw($distanceSql.' as distance_km'),
             ]);
 
         if ($serviceType) {
@@ -84,7 +84,7 @@ class NearbyProfessionalsService
                 'locations.address as location_address',
                 'remorqueurs.hourly_rate as remorqueur_rate',
                 'depanneurs.hourly_rate as depanneur_rate',
-                DB::raw($distanceSql . ' as distance_km'),
+                DB::raw($distanceSql.' as distance_km'),
             ])
             ->orderBy('distance_km', 'asc')
             ->orderByDesc('locations.recorded_at')
@@ -116,7 +116,7 @@ class NearbyProfessionalsService
                 'locations.address as location_address',
                 'remorqueurs.hourly_rate as remorqueur_rate',
                 'depanneurs.hourly_rate as depanneur_rate',
-                DB::raw($distanceSql . ' as distance_km'),
+                DB::raw($distanceSql.' as distance_km'),
             ])
             ->orderBy('distance_km', 'asc')
             ->orderByDesc('locations.recorded_at')
@@ -171,7 +171,7 @@ class NearbyProfessionalsService
                     'full_name' => trim("{$row->first_name} {$row->last_name}"),
                     'role' => $row->role,
                     'phone' => $row->phone,
-                    'photo' => $row->photo ? asset('storage/' . $row->photo) : null,
+                    'photo' => $row->photo ? asset('storage/'.$row->photo) : null,
                     'bio' => $row->bio,
                     'zone' => $row->zone_intervention,
                     'hourly_rate' => $rate ? (float) $rate : null,
@@ -219,12 +219,12 @@ class NearbyProfessionalsService
             ->where('users.is_validated', true)
             ->where('users.is_active', true)
             ->whereRaw($distanceCondition)
-            ->whereRaw($distanceSql . ' > 0')
+            ->whereRaw($distanceSql.' > 0')
             ->select([
                 'locations.address',
                 'locations.lat',
                 'locations.lng',
-                DB::raw($distanceSql . ' as distance_km'),
+                DB::raw($distanceSql.' as distance_km'),
             ])
             ->orderBy('distance_km', 'asc')
             ->limit(5)

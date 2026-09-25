@@ -61,7 +61,7 @@ class AuthController extends Controller
             'password' => ['required', 'string'],
         ]);
 
-        if (!Auth::attempt($validated)) {
+        if (! Auth::attempt($validated)) {
             return response()->json(['message' => 'Identifiants incorrects'], 401);
         }
 

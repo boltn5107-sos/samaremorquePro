@@ -14,8 +14,8 @@ use App\Models\Service;
 use App\Models\User;
 use App\Models\Vehicle;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 
 class TestDataSeeder extends Seeder
 {
@@ -280,6 +280,7 @@ class TestDataSeeder extends Seeder
             $key,
             array_diff_key($data, $key)
         );
+
         return $intervention;
     }
 
@@ -385,6 +386,7 @@ class TestDataSeeder extends Seeder
         $a = sin($dLat / 2) * sin($dLat / 2) +
             cos(deg2rad($lat1)) * cos(deg2rad($lat2)) *
             sin($dLng / 2) * sin($dLng / 2);
+
         return round($earthRadius * 2 * atan2(sqrt($a), sqrt(1 - $a)), 2);
     }
 
@@ -428,8 +430,8 @@ class TestDataSeeder extends Seeder
                     'notifiable_type' => Intervention::class,
                     'data' => [
                         'title' => 'Nouvelle demande',
-                        'body' => 'Une nouvelle demande ' . $intervention->service_type . ' est disponible pres de vous.',
-                        'url' => '/intervention/' . $intervention->id,
+                        'body' => 'Une nouvelle demande '.$intervention->service_type.' est disponible pres de vous.',
+                        'url' => '/intervention/'.$intervention->id,
                     ],
                 ]
             );

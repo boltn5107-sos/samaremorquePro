@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Intervention;
 use App\Models\User;
-use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
 class AdminDashboardController extends Controller
@@ -67,6 +66,7 @@ class AdminDashboardController extends Controller
 
         $monthlyTrend = collect(range(5, 0))->map(function ($offset) {
             $date = now()->subMonthsNoOverflow($offset);
+
             return [
                 'label' => Str::ucfirst($date->translatedFormat('M Y')),
                 'year' => $date->year,
@@ -103,12 +103,13 @@ class AdminDashboardController extends Controller
             ->get()
             ->sum(function (Intervention $intervention) {
                 $professional = $intervention->professional;
-                if (!$professional) {
+                if (! $professional) {
                     return 0;
                 }
                 $rate = $professional->isRemorqueur()
                     ? $professional->remorqueurProfile?->hourly_rate
                     : $professional->depanneurProfile?->hourly_rate;
+
                 return (float) $rate * ((float) $intervention->estimated_duration_minutes / 60);
             });
 

@@ -12,7 +12,7 @@ class ValidateProfessional
     {
         $user = $request->user();
 
-        if ($user && ($user->isRemorqueur() || $user->isDepanneur()) && !$user->is_validated) {
+        if ($user && ($user->isRemorqueur() || $user->isDepanneur()) && ! $user->is_validated) {
             abort(403, 'Votre compte professionnel est en cours de validation par l\'administrateur.');
         }
 

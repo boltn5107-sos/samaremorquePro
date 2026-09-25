@@ -1,12 +1,10 @@
 <?php
 
+use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\InterventionApiController;
+use App\Http\Controllers\Api\LocationApiController;
+use App\Http\Controllers\Api\NotificationApiController;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Api\{
-    InterventionApiController,
-    LocationApiController,
-    NotificationApiController,
-    AuthController
-};
 
 Route::post('/auth/register', [AuthController::class, 'register']);
 Route::post('/auth/login', [AuthController::class, 'login']);

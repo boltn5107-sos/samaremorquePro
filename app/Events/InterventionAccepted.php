@@ -3,7 +3,6 @@
 namespace App\Events;
 
 use App\Models\Intervention;
-use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
@@ -23,7 +22,7 @@ class InterventionAccepted implements ShouldBroadcast
 
     public function broadcastOn(): PrivateChannel
     {
-        return new PrivateChannel('intervention.' . $this->intervention->id);
+        return new PrivateChannel('intervention.'.$this->intervention->id);
     }
 
     public function broadcastWith(): array

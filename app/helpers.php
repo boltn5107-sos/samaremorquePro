@@ -19,8 +19,8 @@ if (! function_exists('gmaps_route_url')) {
         }
 
         return 'https://www.google.com/maps/dir/?api=1'
-            . '&origin=' . $intervention->client_lat . ',' . $intervention->client_lng
-            . '&destination=' . $intervention->destination_lat . ',' . $intervention->destination_lng
-            . '&travelmode=driving';
+            .'&origin='.$intervention->client_lat.','.$intervention->client_lng
+            .'&destination='.$intervention->destination_lat.','.$intervention->destination_lng
+            .'&travelmode=driving';
     }
 }

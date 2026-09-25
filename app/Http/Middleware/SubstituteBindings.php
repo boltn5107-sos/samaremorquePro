@@ -2,7 +2,6 @@
 
 namespace App\Http\Middleware;
 
-use Closure;
 use Illuminate\Routing\Middleware\SubstituteBindings as Middleware;
 
 class SubstituteBindings extends Middleware

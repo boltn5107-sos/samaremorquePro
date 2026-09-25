@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\Intervention;
 use App\Models\InterventionStatus;
-use App\Models\Location;
 use App\Models\Notification;
 use App\Models\ProfessionalRejection;
 use App\Services\InterventionMatchingService;
@@ -15,6 +14,7 @@ use Illuminate\Support\Facades\Auth;
 class InterventionApiController extends Controller
 {
     public function __construct(protected InterventionMatchingService $matcher) {}
+
     public function store(Request $request)
     {
         $validated = $request->validate([
@@ -145,7 +145,7 @@ class InterventionApiController extends Controller
                 'data' => [
                     'title' => 'Intervention acceptee',
                     'body' => 'Un professionnel est en route.',
-                    'url' => '/client/intervention/' . $intervention->id,
+                    'url' => '/client/intervention/'.$intervention->id,
                 ],
             ]);
         }
@@ -175,8 +175,8 @@ class InterventionApiController extends Controller
                 'notifiable_id' => $intervention->id,
                 'data' => [
                     'title' => 'Demande refusee',
-                    'body' => 'Votre demande a ete refusee par ' . $request->user()->full_name . '.',
-                    'url' => '/client/intervention/' . $intervention->id,
+                    'body' => 'Votre demande a ete refusee par '.$request->user()->full_name.'.',
+                    'url' => '/client/intervention/'.$intervention->id,
                 ],
             ]);
         }
@@ -239,9 +239,9 @@ class InterventionApiController extends Controller
         $user = $request->user();
 
         if ($user->isRemorqueur()) {
-            $user->remorqueurProfile()->update(['is_available' => !$user->remorqueurProfile->is_available]);
+            $user->remorqueurProfile()->update(['is_available' => ! $user->remorqueurProfile->is_available]);
         } elseif ($user->isDepanneur()) {
-            $user->depanneurProfile()->update(['is_available' => !$user->depanneurProfile->is_available]);
+            $user->depanneurProfile()->update(['is_available' => ! $user->depanneurProfile->is_available]);
         }
 
         return response()->json(['status' => 'ok']);

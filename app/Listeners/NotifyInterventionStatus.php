@@ -20,7 +20,7 @@ class NotifyInterventionStatus implements ShouldQueue
         $this->notifications->sendToUser(
             $intervention->client_id,
             'intervention_status_updated',
-            'Statut mis a jour: ' . $event->status,
+            'Statut mis a jour: '.$event->status,
             $intervention
         );
 
@@ -28,7 +28,7 @@ class NotifyInterventionStatus implements ShouldQueue
             $this->notifications->sendToUser(
                 $intervention->professional_id,
                 'intervention_status_updated',
-                'Statut mis a jour: ' . $event->status,
+                'Statut mis a jour: '.$event->status,
                 $intervention
             );
         }

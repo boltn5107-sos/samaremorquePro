@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 
 class VerifyEmailController extends Controller
 {
@@ -12,6 +11,6 @@ class VerifyEmailController extends Controller
     {
         $request->user()->markEmailAsVerified();
 
-        return redirect()->intended(route('home') . '?verified=1');
+        return redirect()->intended(route('home').'?verified=1');
     }
 }

@@ -41,13 +41,13 @@ class CommissionPaymentController extends Controller
         }
 
         $dashboard = $user->isDepanneur() ? 'depanneur.dashboard' : 'remorqueur.dashboard';
-        $reference = 'COM-PRO-' . $user->id . '-' . now()->format('YmdHis');
+        $reference = 'COM-PRO-'.$user->id.'-'.now()->format('YmdHis');
 
         $checkout = $this->wave->createCheckout($due, [
             'client_reference' => $reference,
             'restrict_payer_mobile' => $this->normalizePhone($user->phone),
-            'success_url' => route($dashboard) . '?paiement=success',
-            'error_url' => route($dashboard) . '?paiement=error',
+            'success_url' => route($dashboard).'?paiement=success',
+            'error_url' => route($dashboard).'?paiement=error',
         ]);
 
         Payment::create([
@@ -85,11 +85,11 @@ class CommissionPaymentController extends Controller
         $digits = preg_replace('/[^0-9]/', '', $phone);
 
         if (strlen($digits) === 9) {
-            return '+221' . $digits;
+            return '+221'.$digits;
         }
 
         if (strlen($digits) === 11 && str_starts_with($digits, '221')) {
-            return '+' . $digits;
+            return '+'.$digits;
         }
 
         return $digits;

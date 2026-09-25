@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Depanneur;
 
 use App\Http\Controllers\Controller;
 use App\Models\Depanneur;
-use App\Models\Service;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 

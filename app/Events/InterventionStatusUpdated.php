@@ -3,7 +3,6 @@
 namespace App\Events;
 
 use App\Models\Intervention;
-use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
@@ -15,7 +14,9 @@ class InterventionStatusUpdated implements ShouldBroadcast
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
     public $intervention;
+
     public $status;
+
     public $note;
 
     public function __construct(Intervention $intervention, string $status, ?string $note = null)
@@ -27,7 +28,7 @@ class InterventionStatusUpdated implements ShouldBroadcast
 
     public function broadcastOn(): PrivateChannel
     {
-        return new PrivateChannel('intervention.' . $this->intervention->id);
+        return new PrivateChannel('intervention.'.$this->intervention->id);
     }
 
     public function broadcastWith(): array

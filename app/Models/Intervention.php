@@ -13,16 +13,25 @@ class Intervention extends Model
     use HasFactory;
 
     public const STATUS_AWAITING_PROFESSIONAL = 'en_attente_professionnel';
+
     public const STATUS_RECEIVED = 'demande_recue';
+
     public const STATUS_REMORQUEUR_EN_ROUTE = 'remorqueur_en_route';
+
     public const STATUS_DEPANNEUR_EN_ROUTE = 'depanneur_en_route';
+
     public const STATUS_ARRIVED = 'arrivee_sur_place';
+
     public const STATUS_PICKED_UP = 'vehicule_pris_en_charge';
+
     public const STATUS_COMPLETED = 'intervention_terminee';
+
     public const STATUS_CANCELLED = 'annulee';
 
     public const PRICE_STATUS_PENDING = 'en_attente_confirmation';
+
     public const PRICE_STATUS_VALIDATED = 'valide';
+
     public const PRICE_STATUS_CONTESTED = 'conteste';
 
     public const PRICE_STATUS_LABELS = [
@@ -160,7 +169,7 @@ class Intervention extends Model
     public static function generateTrackingCode(): string
     {
         do {
-            $code = 'SR-' . strtoupper(Str::random(6));
+            $code = 'SR-'.strtoupper(Str::random(6));
         } while (self::query()->where('tracking_code', $code)->exists());
 
         return $code;
@@ -253,7 +262,7 @@ class Intervention extends Model
         return $query->where('status', self::STATUS_AWAITING_PROFESSIONAL)
             ->where('service_type', $serviceType)
             ->whereRaw(
-                "(
+                '(
                     6371 * acos(
                         cos(radians(?)) *
                         cos(radians(client_lat)) *
@@ -261,7 +270,7 @@ class Intervention extends Model
                         sin(radians(?)) *
                         sin(radians(client_lat))
                     )
-                ) <= ?",
+                ) <= ?',
                 [$lat, $lng, $lat, $radiusKm]
             );
     }
@@ -321,7 +330,7 @@ class Intervention extends Model
             ->groupBy('professional_id')
             ->get();
 
-        return $rows->mapWithKeys(fn($row) => [
+        return $rows->mapWithKeys(fn ($row) => [
             (int) $row->professional_id => [
                 'average' => round((float) $row->avg_rating, 1),
                 'count' => (int) $row->total_ratings,

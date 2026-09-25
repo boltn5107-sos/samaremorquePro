@@ -11,8 +11,8 @@ class RoleMiddleware
 {
     public function handle(Request $request, Closure $next, string $role): Response
     {
-        if (!Auth::check() || Auth::user()->role !== $role) {
-            abort(403, 'Acces refuse. Role requis : ' . $role);
+        if (! Auth::check() || Auth::user()->role !== $role) {
+            abort(403, 'Acces refuse. Role requis : '.$role);
         }
 
         return $next($request);

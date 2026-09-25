@@ -3,8 +3,8 @@
 namespace App\Listeners;
 
 use App\Events\InterventionCreated;
-use App\Services\NotificationService;
 use App\Services\InterventionMatchingService;
+use App\Services\NotificationService;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
 

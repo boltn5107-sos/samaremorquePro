@@ -3,7 +3,6 @@
 namespace App\Events;
 
 use App\Models\Location;
-use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
@@ -23,7 +22,7 @@ class ProfessionalLocated implements ShouldBroadcast
 
     public function broadcastOn(): PrivateChannel
     {
-        return new PrivateChannel('professional.' . $this->location->user_id);
+        return new PrivateChannel('professional.'.$this->location->user_id);
     }
 
     public function broadcastWith(): array

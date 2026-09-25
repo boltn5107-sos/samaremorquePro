@@ -14,7 +14,7 @@ class RemorqueurAvailabilityController extends Controller
         $profile = Remorqueur::where('user_id', Auth::id())->firstOrFail();
 
         $profile->update([
-            'is_available' => !$profile->is_available,
+            'is_available' => ! $profile->is_available,
         ]);
 
         return back()->with('status', 'availability-toggled');

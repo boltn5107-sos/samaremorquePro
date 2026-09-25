@@ -7,14 +7,12 @@ use App\Models\Intervention;
 use App\Models\InterventionStatus;
 use App\Models\Notification;
 use App\Models\Service;
-use App\Models\Vehicle;
 use App\Services\CommissionService;
 use App\Services\GeolocationService;
 use App\Services\InterventionMatchingService;
 use App\Services\NearbyProfessionalsService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 
 class ClientInterventionController extends Controller
 {
@@ -260,7 +258,7 @@ class ClientInterventionController extends Controller
 
         $this->notifyProfessional(
             $intervention,
-            'Le client conteste le prix de ' . number_format((float) $intervention->price, 0, ',', ' ') . ' FCFA. Corrigez le prix.'
+            'Le client conteste le prix de '.number_format((float) $intervention->price, 0, ',', ' ').' FCFA. Corrigez le prix.'
         );
 
         return back()->with('status', 'price-contested');
@@ -306,7 +304,7 @@ class ClientInterventionController extends Controller
 
         $this->notifyProfessional(
             $intervention,
-            'Prix confirme par le client. Commission de ' . number_format((float) $payment->amount, 0, ',', ' ') . ' FCFA due.'
+            'Prix confirme par le client. Commission de '.number_format((float) $payment->amount, 0, ',', ' ').' FCFA due.'
         );
     }
 

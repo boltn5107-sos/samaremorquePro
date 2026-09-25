@@ -2,11 +2,10 @@
 
 namespace App\Services;
 
-use App\Models\Intervention;
-use App\Models\User;
-use App\Models\Notification;
 use App\Events\InterventionCreated;
-use Illuminate\Support\Facades\DB;
+use App\Models\Intervention;
+use App\Models\Notification;
+use App\Models\User;
 use Illuminate\Support\Facades\Log;
 
 class InterventionMatchingService
@@ -45,7 +44,7 @@ class InterventionMatchingService
 
         $radiusKm = 50;
 
-        $distanceSql = "(
+        $distanceSql = '(
             6371 * acos(
                 GREATEST(-1, LEAST(1,
                     cos(radians(?)) *
@@ -55,7 +54,7 @@ class InterventionMatchingService
                     sin(radians(locations.lat))
                 ))
             )
-        )";
+        )';
 
         $candidates = User::whereIn('role', ['remorqueur', 'depanneur'])
             ->where('is_validated', true)
@@ -68,7 +67,7 @@ class InterventionMatchingService
                 [Intervention::class, $this->commissionBlockThreshold()]
             )
             ->join('locations', 'locations.user_id', '=', 'users.id')
-            ->whereRaw($distanceSql . ' <= ?', [$lat, $lng, $lat, $radiusKm])
+            ->whereRaw($distanceSql.' <= ?', [$lat, $lng, $lat, $radiusKm])
             ->orderByRaw($distanceSql, [$lat, $lng, $lat])
             ->select('users.*')
             ->distinct()
@@ -91,9 +90,9 @@ class InterventionMatchingService
             'notifiable_id' => $intervention->id,
             'data' => [
                 'title' => 'Nouvelle demande',
-                'body' => 'Une nouvelle demande ' . $intervention->service_type . ' est disponible pres de vous.',
-                'url' => '/intervention/' . $intervention->id,
-                'photo' => $intervention->photo ? asset('storage/' . $intervention->photo) : null,
+                'body' => 'Une nouvelle demande '.$intervention->service_type.' est disponible pres de vous.',
+                'url' => '/intervention/'.$intervention->id,
+                'photo' => $intervention->photo ? asset('storage/'.$intervention->photo) : null,
                 'client_address' => $intervention->client_address,
                 'client_phone' => $intervention->client_phone,
             ],

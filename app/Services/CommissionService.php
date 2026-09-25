@@ -4,7 +4,6 @@ namespace App\Services;
 
 use App\Models\Intervention;
 use App\Models\Payment;
-use App\Models\User;
 use Illuminate\Support\Str;
 
 /**
@@ -48,7 +47,7 @@ class CommissionService
                 'amount' => $amount,
                 'currency' => 'XOF',
                 'status' => Payment::STATUS_PENDING,
-                'client_reference' => 'COM-' . $intervention->id . '-' . strtoupper(Str::random(4)),
+                'client_reference' => 'COM-'.$intervention->id.'-'.strtoupper(Str::random(4)),
             ]
         );
     }

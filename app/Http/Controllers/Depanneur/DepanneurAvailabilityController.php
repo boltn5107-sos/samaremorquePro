@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Depanneur;
 
 use App\Http\Controllers\Controller;
 use App\Models\Depanneur;
-use App\Models\Location;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -15,7 +14,7 @@ class DepanneurAvailabilityController extends Controller
         $profile = Depanneur::where('user_id', Auth::id())->firstOrFail();
 
         $profile->update([
-            'is_available' => !$profile->is_available,
+            'is_available' => ! $profile->is_available,
         ]);
 
         return back()->with('status', 'availability-toggled');

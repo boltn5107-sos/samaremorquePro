@@ -1,49 +1,37 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\{
-    ProfileController,
-    NotificationController,
-    SeoController,
-    GuestInterventionController
-};
-use App\Http\Controllers\Client\{
-    ClientDashboardController,
-    ClientInterventionController,
-    ClientProfileController
-};
-use App\Http\Controllers\Remorqueur\{
-    RemorqueurDashboardController,
-    RemorqueurInterventionController,
-    RemorqueurProfileController,
-    RemorqueurAvailabilityController
-};
-use App\Http\Controllers\Depanneur\{
-    DepanneurDashboardController,
-    DepanneurInterventionController,
-    DepanneurProfileController,
-    DepanneurAvailabilityController
-};
-use App\Http\Controllers\Admin\{
-    AdminDashboardController,
-    AdminInterventionController,
-    AdminProfessionalController,
-    AdminClientController,
-    AdminIntegrationController
-};
-use App\Http\Controllers\Payment\WaveWebhookController;
+use App\Http\Controllers\Admin\AdminClientController;
+use App\Http\Controllers\Admin\AdminDashboardController;
+use App\Http\Controllers\Admin\AdminIntegrationController;
+use App\Http\Controllers\Admin\AdminInterventionController;
+use App\Http\Controllers\Admin\AdminProfessionalController;
+use App\Http\Controllers\Auth\AuthenticatedRegistrationController;
+use App\Http\Controllers\Auth\AuthenticatedSessionController;
+use App\Http\Controllers\Auth\ConfirmablePasswordController;
+use App\Http\Controllers\Auth\EmailVerificationNotificationController;
+use App\Http\Controllers\Auth\EmailVerificationPromptController;
+use App\Http\Controllers\Auth\NewPasswordController;
+use App\Http\Controllers\Auth\PasswordController;
+use App\Http\Controllers\Auth\PasswordResetLinkController;
+use App\Http\Controllers\Auth\VerifyEmailController;
+use App\Http\Controllers\Client\ClientDashboardController;
+use App\Http\Controllers\Client\ClientInterventionController;
+use App\Http\Controllers\Client\ClientProfileController;
+use App\Http\Controllers\Depanneur\DepanneurAvailabilityController;
+use App\Http\Controllers\Depanneur\DepanneurDashboardController;
+use App\Http\Controllers\Depanneur\DepanneurInterventionController;
+use App\Http\Controllers\Depanneur\DepanneurProfileController;
+use App\Http\Controllers\GuestInterventionController;
+use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\Payment\CommissionPaymentController;
-use App\Http\Controllers\{
-    Auth\AuthenticatedSessionController,
-    Auth\AuthenticatedRegistrationController,
-    Auth\ConfirmablePasswordController,
-    Auth\EmailVerificationNotificationController,
-    Auth\EmailVerificationPromptController,
-    Auth\NewPasswordController,
-    Auth\PasswordController,
-    Auth\PasswordResetLinkController,
-    Auth\VerifyEmailController
-};
+use App\Http\Controllers\Payment\WaveWebhookController;
+use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\Remorqueur\RemorqueurAvailabilityController;
+use App\Http\Controllers\Remorqueur\RemorqueurDashboardController;
+use App\Http\Controllers\Remorqueur\RemorqueurInterventionController;
+use App\Http\Controllers\Remorqueur\RemorqueurProfileController;
+use App\Http\Controllers\SeoController;
+use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     if (auth()->check()) {

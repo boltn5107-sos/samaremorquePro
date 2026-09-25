@@ -70,7 +70,7 @@ class WaveCheckoutController extends Controller
         }
 
         // Reference metier lisible pour retrouver le paiement cote Wave.
-        $reference = 'INT-' . $intervention->id . '-' . strtoupper(substr($intervention->tracking_code, -4));
+        $reference = 'INT-'.$intervention->id.'-'.strtoupper(substr($intervention->tracking_code, -4));
 
         // restric_payer_mobile : seuls les comptes Wave associes a ce numero peuvent valider.
         $checkout = $this->wave->createCheckout((int) round($validated['amount']), [
@@ -117,11 +117,11 @@ class WaveCheckoutController extends Controller
         $digits = preg_replace('/[^0-9]/', '', $phone);
 
         if (strlen($digits) === 9) {
-            return '+221' . $digits;
+            return '+221'.$digits;
         }
 
         if (strlen($digits) === 11 && str_starts_with($digits, '221')) {
-            return '+' . $digits;
+            return '+'.$digits;
         }
 
         return $digits;

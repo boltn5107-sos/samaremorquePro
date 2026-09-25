@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Intervention;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class AdminInterventionController extends Controller
@@ -64,8 +65,8 @@ class AdminInterventionController extends Controller
         $intervention->rejections()->delete();
         $intervention->delete();
 
-        if ($photo && \Illuminate\Support\Facades\Storage::disk('public')->exists($photo)) {
-            \Illuminate\Support\Facades\Storage::disk('public')->delete($photo);
+        if ($photo && Storage::disk('public')->exists($photo)) {
+            Storage::disk('public')->delete($photo);
         }
 
         return redirect()->route('admin.intervention.index')
@@ -82,7 +83,7 @@ class AdminInterventionController extends Controller
 
         $interventions = $query->orderByDesc('created_at')->get();
 
-        $filename = 'interventions_' . date('Y-m-d_His') . '.csv';
+        $filename = 'interventions_'.date('Y-m-d_His').'.csv';
 
         $columns = [
             'ID', 'Code de suivi', 'Service', 'Statut', 'Client', 'Client tel', 'Professionnel', 'Destination', 'Distance (km)',

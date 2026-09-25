@@ -15,7 +15,7 @@ class RemorqueFactory extends Factory
         return [
             'user_id' => User::factory()->remorqueur()->create()->id,
             'type' => fake()->randomElement(['plateau', 'porte-voiture', 'bras']),
-            'capacity' => fake()->randomFloat(2, 1, 10) . ' tonnes',
+            'capacity' => fake()->randomFloat(2, 1, 10).' tonnes',
             'immatriculation' => fake()->bothify('??-####-??'),
             'photo' => null,
             'informations' => fake()->sentence(),

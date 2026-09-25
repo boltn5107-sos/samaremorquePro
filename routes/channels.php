@@ -1,9 +1,11 @@
 <?php
 
+use App\Models\Intervention;
 use Illuminate\Support\Facades\Broadcast;
 
 Broadcast::channel('intervention.{interventionId}', function ($user, $interventionId) {
-    $intervention = \App\Models\Intervention::findOrFail($interventionId);
+    $intervention = Intervention::findOrFail($interventionId);
+
     return $user->id === $intervention->client_id ||
            $user->id === $intervention->professional_id ||
            $user->role === 'admin';

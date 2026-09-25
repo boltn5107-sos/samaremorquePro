@@ -23,7 +23,7 @@ class AuthenticatedSessionController extends Controller
             'password' => ['required', 'string'],
         ]);
 
-        if (!Auth::attempt($request->only('email', 'password'), $request->filled('remember'))) {
+        if (! Auth::attempt($request->only('email', 'password'), $request->filled('remember'))) {
             throw ValidationException::withMessages([
                 'email' => __('Identifiants incorrects.'),
             ]);

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Intervention;
 use App\Models\User;
 use Illuminate\Http\Request;
 
@@ -20,18 +21,18 @@ class AdminProfessionalController extends Controller
 
     public function show(User $professional)
     {
-        abort_if(!in_array($professional->role, ['remorqueur', 'depanneur']), 404);
+        abort_if(! in_array($professional->role, ['remorqueur', 'depanneur']), 404);
 
         $professional->load('remorqueurProfile', 'depanneurProfile', 'remorque', 'services', 'interventionsAsProfessional');
 
-        $rating = \App\Models\Intervention::ratingsForProfessional($professional->id);
+        $rating = Intervention::ratingsForProfessional($professional->id);
 
         return view('admin.professional-detail', compact('professional', 'rating'));
     }
 
     public function validate(Request $request, User $professional)
     {
-        abort_if(!in_array($professional->role, ['remorqueur', 'depanneur']), 404);
+        abort_if(! in_array($professional->role, ['remorqueur', 'depanneur']), 404);
 
         $professional->update(['is_validated' => true]);
 
@@ -40,7 +41,7 @@ class AdminProfessionalController extends Controller
 
     public function suspend(Request $request, User $professional)
     {
-        abort_if(!in_array($professional->role, ['remorqueur', 'depanneur']), 404);
+        abort_if(! in_array($professional->role, ['remorqueur', 'depanneur']), 404);
 
         $professional->update(['is_active' => false]);
 
@@ -49,7 +50,7 @@ class AdminProfessionalController extends Controller
 
     public function reactivate(Request $request, User $professional)
     {
-        abort_if(!in_array($professional->role, ['remorqueur', 'depanneur']), 404);
+        abort_if(! in_array($professional->role, ['remorqueur', 'depanneur']), 404);
 
         $professional->update(['is_active' => true]);
 
@@ -58,7 +59,7 @@ class AdminProfessionalController extends Controller
 
     public function edit(User $professional)
     {
-        abort_if(!in_array($professional->role, ['remorqueur', 'depanneur']), 404);
+        abort_if(! in_array($professional->role, ['remorqueur', 'depanneur']), 404);
 
         $professional->load('remorqueurProfile', 'depanneurProfile', 'remorque');
 
@@ -67,7 +68,7 @@ class AdminProfessionalController extends Controller
 
     public function update(Request $request, User $professional)
     {
-        abort_if(!in_array($professional->role, ['remorqueur', 'depanneur']), 404);
+        abort_if(! in_array($professional->role, ['remorqueur', 'depanneur']), 404);
 
         $validated = $request->validate([
             'first_name' => ['required', 'string', 'max:100'],
@@ -103,7 +104,7 @@ class AdminProfessionalController extends Controller
 
     public function destroy(Request $request, User $professional)
     {
-        abort_if(!in_array($professional->role, ['remorqueur', 'depanneur']), 404);
+        abort_if(! in_array($professional->role, ['remorqueur', 'depanneur']), 404);
 
         foreach ($professional->interventionsAsProfessional as $intervention) {
             $intervention->statuses()->delete();
