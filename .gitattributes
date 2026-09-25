@@ -1,0 +1,27 @@
+# Normalisation des fins de ligne.
+#
+# L'index est deja en LF, mais sans cet attribut un checkout sur un poste
+# Windows (core.autocrlf=true) reecrit tout le projet en CRLF. Pint impose LF,
+# donc `pint --test` echouait alors sur 80 fichiers sans aucune modification
+# reelle du code. Cet attribut rend le depot identique quel que soit le poste.
+* text=auto eol=lf
+
+# Fichiers binaires
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.webp binary
+*.ico binary
+*.woff binary
+*.woff2 binary
+*.ttf binary
+*.eot binary
+*.pdf binary
+
+# Pilotes de diff : meilleure coloration dans `git diff`
+*.blade.php diff=html
+*.css diff=css
+*.html diff=html
+*.md diff=markdown
+*.php diff=php
