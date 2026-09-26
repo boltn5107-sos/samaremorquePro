@@ -4,6 +4,7 @@ use App\Http\Controllers\Admin\AdminClientController;
 use App\Http\Controllers\Admin\AdminDashboardController;
 use App\Http\Controllers\Admin\AdminIntegrationController;
 use App\Http\Controllers\Admin\AdminInterventionController;
+use App\Http\Controllers\Admin\AdminMergeGuideController;
 use App\Http\Controllers\Admin\AdminProfessionalController;
 use App\Http\Controllers\Auth\AuthenticatedRegistrationController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
@@ -185,6 +186,7 @@ Route::middleware('auth')->group(function () {
             Route::get('/carte', [AdminDashboardController::class, 'map'])->name('map');
             Route::get('/statistiques', [AdminDashboardController::class, 'stats'])->name('stats');
             Route::get('/integration', [AdminIntegrationController::class, 'index'])->name('integration');
+            Route::get('/guide-merge', [AdminMergeGuideController::class, 'index'])->name('merge-guide');
         });
 
         Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');

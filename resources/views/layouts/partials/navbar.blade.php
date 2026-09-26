@@ -71,6 +71,9 @@
                             <a href="{{ route('admin.integration') }}" class="px-3.5 py-2 rounded-xl text-white/70 hover:text-white hover:bg-white/[0.08] transition-all duration-200 flex items-center gap-1.5">
                                 <x-icon name="credit-card" class="w-4 h-4 opacity-70" /> Integration Wave
                             </a>
+                            <a href="{{ route('admin.merge-guide') }}" class="px-3.5 py-2 rounded-xl text-white/70 hover:text-white hover:bg-white/[0.08] transition-all duration-200 flex items-center gap-1.5">
+                                <x-icon name="git-branch" class="w-4 h-4 opacity-70" /> Guide merge
+                            </a>
                         @endif
 
                         {{-- Notifications --}}
@@ -171,6 +174,7 @@
                         <a href="{{ route('admin.intervention.index') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/[0.06] transition-all"><x-icon name="car" class="w-4 h-4 opacity-60" /> Interventions</a>
                         <a href="{{ route('admin.professionnels.index') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/[0.06] transition-all"><x-icon name="user" class="w-4 h-4 opacity-60" /> Professionnels</a>
                         <a href="{{ route('admin.integration') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/[0.06] transition-all"><x-icon name="credit-card" class="w-4 h-4 opacity-60" /> Integration Wave</a>
+                        <a href="{{ route('admin.merge-guide') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/[0.06] transition-all"><x-icon name="git-branch" class="w-4 h-4 opacity-60" /> Guide merge</a>
                     @endif
 
                     <div class="border-t border-white/[0.06] my-2"></div>
